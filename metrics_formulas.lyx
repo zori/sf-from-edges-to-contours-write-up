@@ -1,0 +1,520 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage{amsmath}
+\end_preamble
+\use_default_options false
+\maintain_unincluded_children false
+\language english
+\language_package none
+\inputencoding auto
+\fontencoding default
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 0
+\use_mathdots 0
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section
+BPR
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+P=\frac{\left|S\cap\left(\bigcup\limits_{i=1}^{M}G_{i}\right)\right|}{|S|}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+R=\frac{{\sum\limits_{i=1}^{M}\left|S\cap G_{i}\right|}}{\sum\limits_{i=1}^{M}\left|G_{i}\right|}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+F=\frac{2PR}{P+R}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $S$
+\end_inset
+
+ and 
+\begin_inset Formula $\{G_{i}\}_{i=1}^{M}$
+\end_inset
+
+ are boundary maps and 
+\begin_inset Formula $\cap$
+\end_inset
+
+ does a bipartite graph assignment between them.
+\end_layout
+
+\begin_layout Section
+RI (Rand Index)
+\end_layout
+
+\begin_layout Subsection
+RI
+\end_layout
+
+\begin_layout Standard
+between two segmentations
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+RI(S,G)=\frac{1}{T}\sum\limits_{j<k}\left[\mathbb{I}\left(S(j)=S(k)\wedge G(j)=G(k)\right)+\mathbb{I}\left(S(j)\neq S(k)\wedge G(j)\neq G(k)\right)\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $\mathbb{I}$
+\end_inset
+
+ is the identity function,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $S(j)$
+\end_inset
+
+ is the label of pixel 
+\begin_inset Formula $j$
+\end_inset
+
+ in the segmentation 
+\begin_inset Formula $S$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $N=\left|S\right|=\left|G\right|$
+\end_inset
+
+ is number of pixels in the image (and each segmentation), and 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $T=\left(\frac{N}{2}\right)$
+\end_inset
+
+ is the number of possible unique pairs among 
+\begin_inset Formula $N$
+\end_inset
+
+ pixels.
+\end_layout
+
+\begin_layout Subsection
+RSRI (Random Subsample RI)
+\end_layout
+
+\begin_layout Standard
+previously CPD (Crude Patch Distance), which was a misnomer
+\end_layout
+
+\begin_layout Standard
+between two segmentations
+\end_layout
+
+\begin_layout Subsection
+PRI (Probabilistic RI)
+\end_layout
+
+\begin_layout Standard
+between a test segmentation and multiple ground truths
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+PRI(S,\{G_{i}\}_{i=1}^{M})=\frac{1}{T}\sum\limits_{j<k}\left[c_{jk}p_{jk}+\left(1-c_{jk}\right)\left(1-p_{jk}\right)\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $c_{jk}=\mathbb{I}\left(S(j)=S(k)\right)$
+\end_inset
+
+ - the event of the pair of pixels 
+\begin_inset Formula $j$
+\end_inset
+
+ and 
+\begin_inset Formula $k$
+\end_inset
+
+ having the same label in segmentation 
+\begin_inset Formula $S$
+\end_inset
+
+, and
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $p_{jk}$
+\end_inset
+
+ - probability of 
+\begin_inset Formula $c_{jk}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+SC (Segmentation Covering)
+\end_layout
+
+\begin_layout Subsection
+Overlap
+\end_layout
+
+\begin_layout Standard
+Overlap of two regions 
+\begin_inset Formula $s$
+\end_inset
+
+ and 
+\begin_inset Formula $g$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathcal{O}\left(s,g\right)=\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+IoU (intersection over Union), a.k.a.
+ Jaccard Index
+\end_layout
+
+\begin_layout Standard
+How to normalise it in the case of two segmentations 
+\begin_inset Formula $S=\left\{{s_{i}}\right\}_{i=1}^{p}$
+\end_inset
+
+ and 
+\begin_inset Formula $G=\left\{{g_{j}}\right\}_{j=1}^{q}$
+\end_inset
+
+ ?
+\begin_inset Formula 
+\[
+IoU(S,G)=\frac{\sum\limits_{i=1}^{p}\sum\limits _{j=1}^{q}\mathcal{O}\left(s_{i},g_{j}\right)}{\Gamma_{G}}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\Gamma_{S}=p$
+\end_inset
+
+ and 
+\begin_inset Formula $\Gamma_{G}=q$
+\end_inset
+
+ - number of segments in each segmentation.
+\end_layout
+
+\begin_layout Standard
+The above is not symmetric w.r.t.
+ 
+\begin_inset Formula $S$
+\end_inset
+
+ and 
+\begin_inset Formula $G$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+IoU(S,G)=\frac{\sum\limits_{i=1}^{p}\sum\limits _{j=1}^{q}\mathcal{O}\left(s_{i},g_{j}\right)}{\Gamma_{S}\Gamma_{G}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The above would penalise two equal segmentations if they have larger amount
+ of segments.
+\end_layout
+
+\begin_layout Subsection
+SC
+\end_layout
+
+\begin_layout Standard
+Asymmetric metric, therefore two possible uses:
+\end_layout
+
+\begin_layout Subsubsection
+Covering of the Test Segmentation with the Ground Truths
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+C\left(\left\{{G_{i}}\right\}_{i=1}^{M}\longrightarrow S\right)=\frac{1}{M}\sum\limits_{i=1}^{M}\frac{1}{N}\sum\limits_{s\in S}\left|s\right|\max_{g\in G_{i}}\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $N=\left|S\right|=\left|G_{i}\right|$
+\end_inset
+
+ is number of pixels in the image.
+\end_layout
+
+\begin_layout Subsubsection
+Covering of the Ground Truths with the Test Segmentation
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+C\left(S\longrightarrow\left\{{G_{i}}\right\}_{i=1}^{M}\right)=\frac{1}{M}\sum\limits_{i=1}^{M}\frac{1}{N}\sum\limits_{g\in G_{i}}\left|g\right|\max_{g\in G_{i}}\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+VPR (Volumetric Precision-Recall)
+\end_layout
+
+\begin_layout Subsection
+VPR unnormalised
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\tilde{P}=\frac{1}{M}\sum\limits_{i=1}^{M}\frac{\sum\limits_{s\in\mathbb{S}}\max\limits_{g\in\mathbb{G}_{i}}\left|s\cap g\right|}{\left|\mathbb{S}\right|}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\tilde{R}=\sum\limits_{i=1}^{M}\frac{\sum\limits_{g\in\mathbb{G}_{i}}\max\limits_{s\in\mathbb{S}}\left|s\cap g\right|}{\sum\limits_{i=1}^{M}\left|\mathbb{G}_{i}\right|}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\tilde{F}=\frac{2\tilde{P}\tilde{R}}{\tilde{P}+\tilde{R}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $\mathbb{S}$
+\end_inset
+
+ and 
+\begin_inset Formula $\{\mathbb{G}_{i}\}_{i=1}^{M}$
+\end_inset
+
+ are segmentations,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\cap$
+\end_inset
+
+ computes volume overlap between segments, and 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\left|\centerdot\right|$
+\end_inset
+
+ counts the pixels in the voxel.
+\end_layout
+
+\begin_layout Subsection
+VPR normalised (lower bound)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+P=\frac{\sum\limits_{i=1}^{M}\sum\limits_{s\in\mathbb{S}}\max\limits_{g\in\mathbb{G}_{i}}\left|s\cap g\right|-\boxed{\sum\limits _{i=1}^{M}\max\limits _{g\in\mathbb{G}_{i}}\left|g\right|}}{M\left|\mathbb{S}\right|-\boxed{\sum\limits _{i=1}^{M}\max\limits _{g\in\mathbb{G}_{i}}\left|g\right|}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+R=\sum\limits_{i=1}^{M}\frac{\sum\limits_{g\in\mathbb{G}_{i}}\max\limits_{s\in\mathbb{S}}\left|s\cap g\right|-\boxed{\sum\limits _{i=1}^{M}\Gamma_{\mathbb{G}_{i}}}}{\sum\limits_{i=1}^{M}\left|\mathbb{G}_{i}\right|-\boxed{\sum\limits _{i=1}^{M}\Gamma_{\mathbb{G}_{i}}}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+F=\frac{2PR}{P+R}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+VPR normalised (new - according to model capacity of test segmentation)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\hat{P}=\frac{\sum\limits_{i=1}^{M}\sum\limits_{s\in\mathbb{S}}\max\limits_{g\in\mathbb{G}_{i}}\left|s\cap g\right|-\boxed{M\Gamma_{\mathbb{S}}}}{M\left|\mathbb{S}\right|-\boxed{M\Gamma_{\mathbb{S}}}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\hat{{R}}=\sum\limits_{i=1}^{M}\frac{\sum\limits_{g\in\mathbb{G}_{i}}\max\limits_{s\in\mathbb{S}}\left|s\cap g\right|-\boxed{M\max_{s\in\mathbb{S}}\left|s\right|}}{\sum\limits_{i=1}^{M}\left|\mathbb{G}_{i}\right|-\boxed{M\max_{s\in\mathbb{S}}\left|s\right|}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\hat{{F}}=\frac{2\hat{P}\hat{R}}{\hat{P}+\hat{R}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
