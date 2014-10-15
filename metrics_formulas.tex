@@ -16,10 +16,10 @@
 \section{BPR}
 
 \[
-P=\frac{\left|S\cap\left(\bigcup\limits_{i=1}^{M}G_{i}\right)\right|}{|S|}
+P=\frac{\left|S\cap\left(\bigcup\limits _{i=1}^{M}G_{i}\right)\right|}{|S|}
 \]
 \[
-R=\frac{{\sum\limits_{i=1}^{M}\left|S\cap G_{i}\right|}}{\sum\limits_{i=1}^{M}\left|G_{i}\right|}
+R=\frac{{\sum\limits _{i=1}^{M}\left|S\cap G_{i}\right|}}{\sum\limits _{i=1}^{M}\left|G_{i}\right|}
 \]
 \[
 F=\frac{2PR}{P+R}
@@ -37,27 +37,43 @@ does a bipartite graph assignment between them.
 
 between two segmentations
 
-\[
-RI(S,G)=\frac{1}{T}\sum\limits_{j<k}\left[\mathbb{I}\left(S(j)=S(k)\wedge G(j)=G(k)\right)+\mathbb{I}\left(S(j)\neq S(k)\wedge G(j)\neq G(k)\right)\right]
-\]
+\begin{align*}
+RI(S,G) & =\frac{1}{T}\sum\limits _{j<k}\left[\mathbb{I}\left(S(j)=S(k)\wedge G(j)=G(k)\right)+\mathbb{I}\left(S(j)\neq S(k)\wedge G(j)\neq G(k)\right)\right]\\
+ & =\frac{1}{T}\sum\limits _{(j,k)\in A}\left[c_{jk}\mathbb{I}\left(G(j)=G(k)\right)+(1-c_{jk})\mathbb{I}\left(G(j)\neq G(k)\right)\right]
+\end{align*}
 
 
-where $\mathbb{I}$ is the identity function,
+where $\mathbb{I}$ - the identity function,
 
-$S(j)$ is the label of pixel $j$ in the segmentation $S$,
+$S(j)$ - the label of pixel $j$ in the segmentation $S$,
 
-$N=\left|S\right|=\left|G\right|$ is number of pixels in the image
+$c_{jk}=\mathbb{I}\left(S(j)=S(k)\right)$ - the event of the pair
+of pixels $j$ and $k$ having the same label in segmentation $S$,
+
+$A=\{(j,k)|j<k\}$ - the set of unique pairs of pixels,
+
+$N=\left|S\right|=\left|G\right|$ - the number of pixels in the image
 (and each segmentation), and 
 
-$T=\left(\frac{N}{2}\right)$ is the number of possible unique pairs
-among $N$ pixels.
+$T=|A|={N \choose 2}$ - the number of possible unique pairs among
+$N$ pixels.
 
 
 \subsection{RSRI (Random Subsample RI)}
 
 previously CPD (Crude Patch Distance), which was a misnomer
 
+Monte Carlo sample of the possible unique pairs of pixels.
+
 between two segmentations
+
+\[
+RSRI(S,G)=\frac{1}{T}\sum\limits _{(j,k)\in B}\left[c_{jk}\mathbb{I}\left(G(j)=G(k)\right)+(1-c_{jk})\mathbb{I}\left(G(j)\neq G(k)\right)\right]
+\]
+
+
+where $B\subsetneq A$ - a (random) subset of the pairs of pixels.
+In our experiments $|B|=256$.
 
 
 \subsection{PRI (Probabilistic RI)}
@@ -65,21 +81,18 @@ between two segmentations
 between a test segmentation and multiple ground truths
 
 \[
-PRI(S,\{G_{i}\}_{i=1}^{M})=\frac{1}{T}\sum\limits_{j<k}\left[c_{jk}p_{jk}+\left(1-c_{jk}\right)\left(1-p_{jk}\right)\right]
+PRI(S,\{G_{i}\}_{i=1}^{M})=\frac{1}{T}\sum\limits _{j<k}\left[c_{jk}p_{jk}+\left(1-c_{jk}\right)\left(1-p_{jk}\right)\right]
 \]
 
 
-where $c_{jk}=\mathbb{I}\left(S(j)=S(k)\right)$ - the event of the
-pair of pixels $j$ and $k$ having the same label in segmentation
-$S$, and
-
-$p_{jk}$ - probability of $c_{jk}$.
+where $p_{jk}$ - probability of $c_{jk}$; possible estimator of
+$p_{jk}$ is the sample mean of the corresponding Bernoulli distribution.
 
 
 \section{SC (Segmentation Covering)}
 
 
-\subsection{Overlap}
+\subsection{Overlap, a.k.a. Jaccard Index}
 
 Overlap of two regions $s$ and $g$
 
@@ -89,12 +102,12 @@ Overlap of two regions $s$ and $g$
 
 
 
-\subsection{IoU (intersection over Union), a.k.a. Jaccard Index}
+\subsection{IoU (intersection over Union)}
 
-How to normalise it in the case of two segmentations $S=\left\{{s_{i}}\right\}_{i=1}^{p}$
-and $G=\left\{{g_{j}}\right\}_{j=1}^{q}$ ?
+How to normalise it in the case of two segmentations $S=\left\{ {s_{i}}\right\} _{i=1}^{p}$
+and $G=\left\{ {g_{j}}\right\} _{j=1}^{q}$ ?
 \[
-IoU(S,G)=\frac{\sum\limits_{i=1}^{p}\sum\limits _{j=1}^{q}\mathcal{O}\left(s_{i},g_{j}\right)}{\Gamma_{G}}
+IoU(S,G)=\frac{\sum\limits _{i=1}^{p}\sum\limits _{j=1}^{q}\mathcal{O}\left(s_{i},g_{j}\right)}{\Gamma_{G}}
 \]
 where $\Gamma_{S}=p$ and $\Gamma_{G}=q$ - number of segments in
 each segmentation.
@@ -102,7 +115,7 @@ each segmentation.
 The above is not symmetric w.r.t. $S$ and $G$.
 
 \[
-IoU(S,G)=\frac{\sum\limits_{i=1}^{p}\sum\limits _{j=1}^{q}\mathcal{O}\left(s_{i},g_{j}\right)}{\Gamma_{S}\Gamma_{G}}
+IoU(S,G)=\frac{\sum\limits _{i=1}^{p}\sum\limits _{j=1}^{q}\mathcal{O}\left(s_{i},g_{j}\right)}{\Gamma_{S}\Gamma_{G}}
 \]
 
 
@@ -118,18 +131,18 @@ Asymmetric metric, therefore two possible uses:
 \subsubsection{Covering of the Test Segmentation with the Ground Truths}
 
 \[
-C\left(\left\{{G_{i}}\right\}_{i=1}^{M}\longrightarrow S\right)=\frac{1}{M}\sum\limits_{i=1}^{M}\frac{1}{N}\sum\limits_{s\in S}\left|s\right|\max_{g\in G_{i}}\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
+C\left(\left\{ {G_{i}}\right\} _{i=1}^{M}\longrightarrow S\right)=\frac{1}{M}\sum\limits _{i=1}^{M}\frac{1}{N}\sum\limits _{s\in S}\left|s\right|\max_{g\in G_{i}}\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
 \]
 
 
-where $N=\left|S\right|=\left|G_{i}\right|$ is number of pixels in
+where $N=\left|S\right|=\left|G_{i}\right|$ - number of pixels in
 the image.
 
 
 \subsubsection{Covering of the Ground Truths with the Test Segmentation}
 
 \[
-C\left(S\longrightarrow\left\{{G_{i}}\right\}_{i=1}^{M}\right)=\frac{1}{M}\sum\limits_{i=1}^{M}\frac{1}{N}\sum\limits_{g\in G_{i}}\left|g\right|\max_{g\in G_{i}}\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
+C\left(S\longrightarrow\left\{ {G_{i}}\right\} _{i=1}^{M}\right)=\frac{1}{M}\sum\limits _{i=1}^{M}\frac{1}{N}\sum\limits _{g\in G_{i}}\left|g\right|\max_{g\in G_{i}}\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
 \]
 
 
@@ -140,12 +153,12 @@ C\left(S\longrightarrow\left\{{G_{i}}\right\}_{i=1}^{M}\right)=\frac{1}{M}\sum\l
 \subsection{VPR unnormalised}
 
 \[
-\tilde{P}=\frac{1}{M}\sum\limits_{i=1}^{M}\frac{\sum\limits_{s\in\mathbb{S}}\max\limits_{g\in\mathbb{G}_{i}}\left|s\cap g\right|}{\left|\mathbb{S}\right|}
+\tilde{P}=\frac{1}{M}\sum\limits _{i=1}^{M}\frac{\sum\limits _{s\in\mathbb{S}}\max\limits _{g\in\mathbb{G}_{i}}\left|s\cap g\right|}{\left|\mathbb{S}\right|}=\frac{\sum\limits _{i=1}^{M}\sum\limits _{s\in\mathbb{S}}\max\limits _{g\in\mathbb{G}_{i}}\left|s\cap g\right|}{M\left|\mathbb{S}\right|}
 \]
 
 
 \[
-\tilde{R}=\sum\limits_{i=1}^{M}\frac{\sum\limits_{g\in\mathbb{G}_{i}}\max\limits_{s\in\mathbb{S}}\left|s\cap g\right|}{\sum\limits_{i=1}^{M}\left|\mathbb{G}_{i}\right|}
+\tilde{R}=\sum\limits _{i=1}^{M}\frac{\sum\limits _{g\in\mathbb{G}_{i}}\max\limits _{s\in\mathbb{S}}\left|s\cap g\right|}{\sum\limits _{j=1}^{M}\left|\mathbb{G}_{j}\right|}=\frac{\sum\limits_{i=1}^{M}\sum\limits _{g\in\mathbb{G}_{i}}\max\limits _{s\in\mathbb{S}}\left|s\cap g\right|}{\sum\limits _{i=1}^{M}\left|\mathbb{G}_{i}\right|}
 \]
 
 
@@ -154,7 +167,7 @@ C\left(S\longrightarrow\left\{{G_{i}}\right\}_{i=1}^{M}\right)=\frac{1}{M}\sum\l
 \]
 
 
-where $\mathbb{S}$ and $\{\mathbb{G}_{i}\}_{i=1}^{M}$ are segmentations,
+where $\mathbb{S}$ and $\{\mathbb{G}_{i}\}_{i=1}^{M}$ - segmentations,
 
 $\cap$ computes volume overlap between segments, and 
 
@@ -164,12 +177,12 @@ $\left|\centerdot\right|$ counts the pixels in the voxel.
 \subsection{VPR normalised (lower bound)}
 
 \[
-P=\frac{\sum\limits_{i=1}^{M}\sum\limits_{s\in\mathbb{S}}\max\limits_{g\in\mathbb{G}_{i}}\left|s\cap g\right|-\boxed{\sum\limits _{i=1}^{M}\max\limits _{g\in\mathbb{G}_{i}}\left|g\right|}}{M\left|\mathbb{S}\right|-\boxed{\sum\limits _{i=1}^{M}\max\limits _{g\in\mathbb{G}_{i}}\left|g\right|}}
+P=\frac{\sum\limits _{i=1}^{M}\sum\limits _{s\in\mathbb{S}}\max\limits _{g\in\mathbb{G}_{i}}\left|s\cap g\right|-\boxed{\sum\limits _{i=1}^{M}\max\limits _{g\in\mathbb{G}_{i}}\left|g\right|}}{M\left|\mathbb{S}\right|-\boxed{\sum\limits _{i=1}^{M}\max\limits _{g\in\mathbb{G}_{i}}\left|g\right|}}
 \]
 
 
 \[
-R=\sum\limits_{i=1}^{M}\frac{\sum\limits_{g\in\mathbb{G}_{i}}\max\limits_{s\in\mathbb{S}}\left|s\cap g\right|-\boxed{\sum\limits _{i=1}^{M}\Gamma_{\mathbb{G}_{i}}}}{\sum\limits_{i=1}^{M}\left|\mathbb{G}_{i}\right|-\boxed{\sum\limits _{i=1}^{M}\Gamma_{\mathbb{G}_{i}}}}
+R=\frac{\sum\limits_{i=1}^{M}\sum\limits _{g\in\mathbb{G}_{i}}\max\limits _{s\in\mathbb{S}}\left|s\cap g\right|-\boxed{\sum\limits _{i=1}^{M}\Gamma_{\mathbb{G}_{i}}}}{\sum\limits _{i=1}^{M}\left|\mathbb{G}_{i}\right|-\boxed{\sum\limits _{i=1}^{M}\Gamma_{\mathbb{G}_{i}}}}
 \]
 
 
@@ -182,12 +195,12 @@ F=\frac{2PR}{P+R}
 \subsection{VPR normalised (new - according to model capacity of test segmentation)}
 
 \[
-\hat{P}=\frac{\sum\limits_{i=1}^{M}\sum\limits_{s\in\mathbb{S}}\max\limits_{g\in\mathbb{G}_{i}}\left|s\cap g\right|-\boxed{M\Gamma_{\mathbb{S}}}}{M\left|\mathbb{S}\right|-\boxed{M\Gamma_{\mathbb{S}}}}
+\hat{P}=\frac{\sum\limits _{i=1}^{M}\sum\limits _{s\in\mathbb{S}}\max\limits _{g\in\mathbb{G}_{i}}\left|s\cap g\right|-\boxed{M\Gamma_{\mathbb{S}}}}{M\left|\mathbb{S}\right|-\boxed{M\Gamma_{\mathbb{S}}}}
 \]
 
 
 \[
-\hat{{R}}=\sum\limits_{i=1}^{M}\frac{\sum\limits_{g\in\mathbb{G}_{i}}\max\limits_{s\in\mathbb{S}}\left|s\cap g\right|-\boxed{M\max_{s\in\mathbb{S}}\left|s\right|}}{\sum\limits_{i=1}^{M}\left|\mathbb{G}_{i}\right|-\boxed{M\max_{s\in\mathbb{S}}\left|s\right|}}
+\hat{{R}}=\frac{\sum\limits_{i=1}^{M}\sum\limits _{g\in\mathbb{G}_{i}}\max\limits _{s\in\mathbb{S}}\left|s\cap g\right|-\boxed{M\max_{s\in\mathbb{S}}\left|s\right|}}{\sum\limits _{i=1}^{M}\left|\mathbb{G}_{i}\right|-\boxed{M\max_{s\in\mathbb{S}}\left|s\right|}}
 \]
 
 

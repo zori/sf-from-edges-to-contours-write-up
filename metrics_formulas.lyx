@@ -70,7 +70,7 @@ BPR
 \begin_layout Standard
 \begin_inset Formula 
 \[
-P=\frac{\left|S\cap\left(\bigcup\limits_{i=1}^{M}G_{i}\right)\right|}{|S|}
+P=\frac{\left|S\cap\left(\bigcup\limits _{i=1}^{M}G_{i}\right)\right|}{|S|}
 \]
 
 \end_inset
@@ -78,7 +78,7 @@ P=\frac{\left|S\cap\left(\bigcup\limits_{i=1}^{M}G_{i}\right)\right|}{|S|}
 
 \begin_inset Formula 
 \[
-R=\frac{{\sum\limits_{i=1}^{M}\left|S\cap G_{i}\right|}}{\sum\limits_{i=1}^{M}\left|G_{i}\right|}
+R=\frac{{\sum\limits _{i=1}^{M}\left|S\cap G_{i}\right|}}{\sum\limits _{i=1}^{M}\left|G_{i}\right|}
 \]
 
 \end_inset
@@ -124,9 +124,10 @@ between two segmentations
 
 \begin_layout Standard
 \begin_inset Formula 
-\[
-RI(S,G)=\frac{1}{T}\sum\limits_{j<k}\left[\mathbb{I}\left(S(j)=S(k)\wedge G(j)=G(k)\right)+\mathbb{I}\left(S(j)\neq S(k)\wedge G(j)\neq G(k)\right)\right]
-\]
+\begin{align*}
+RI(S,G) & =\frac{1}{T}\sum\limits _{j<k}\left[\mathbb{I}\left(S(j)=S(k)\wedge G(j)=G(k)\right)+\mathbb{I}\left(S(j)\neq S(k)\wedge G(j)\neq G(k)\right)\right]\\
+ & =\frac{1}{T}\sum\limits _{(j,k)\in A}\left[c_{jk}\mathbb{I}\left(G(j)=G(k)\right)+(1-c_{jk})\mathbb{I}\left(G(j)\neq G(k)\right)\right]
+\end{align*}
 
 \end_inset
 
@@ -138,14 +139,14 @@ where
 \begin_inset Formula $\mathbb{I}$
 \end_inset
 
- is the identity function,
+ - the identity function,
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula $S(j)$
 \end_inset
 
- is the label of pixel 
+ - the label of pixel 
 \begin_inset Formula $j$
 \end_inset
 
@@ -157,56 +158,6 @@ where
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $N=\left|S\right|=\left|G\right|$
-\end_inset
-
- is number of pixels in the image (and each segmentation), and 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula $T=\left(\frac{N}{2}\right)$
-\end_inset
-
- is the number of possible unique pairs among 
-\begin_inset Formula $N$
-\end_inset
-
- pixels.
-\end_layout
-
-\begin_layout Subsection
-RSRI (Random Subsample RI)
-\end_layout
-
-\begin_layout Standard
-previously CPD (Crude Patch Distance), which was a misnomer
-\end_layout
-
-\begin_layout Standard
-between two segmentations
-\end_layout
-
-\begin_layout Subsection
-PRI (Probabilistic RI)
-\end_layout
-
-\begin_layout Standard
-between a test segmentation and multiple ground truths
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-PRI(S,\{G_{i}\}_{i=1}^{M})=\frac{1}{T}\sum\limits_{j<k}\left[c_{jk}p_{jk}+\left(1-c_{jk}\right)\left(1-p_{jk}\right)\right]
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-where 
 \begin_inset Formula $c_{jk}=\mathbb{I}\left(S(j)=S(k)\right)$
 \end_inset
 
@@ -222,10 +173,95 @@ where
 \begin_inset Formula $S$
 \end_inset
 
-, and
+,
 \end_layout
 
 \begin_layout Standard
+\begin_inset Formula $A=\{(j,k)|j<k\}$
+\end_inset
+
+ - the set of unique pairs of pixels,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $N=\left|S\right|=\left|G\right|$
+\end_inset
+
+ - the number of pixels in the image (and each segmentation), and 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $T=|A|={N \choose 2}$
+\end_inset
+
+ - the number of possible unique pairs among 
+\begin_inset Formula $N$
+\end_inset
+
+ pixels.
+\end_layout
+
+\begin_layout Subsection
+RSRI (Random Subsample RI)
+\end_layout
+
+\begin_layout Standard
+previously CPD (Crude Patch Distance), which was a misnomer
+\end_layout
+
+\begin_layout Standard
+Monte Carlo sample of the possible unique pairs of pixels.
+\end_layout
+
+\begin_layout Standard
+between two segmentations
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+RSRI(S,G)=\frac{1}{T}\sum\limits _{(j,k)\in B}\left[c_{jk}\mathbb{I}\left(G(j)=G(k)\right)+(1-c_{jk})\mathbb{I}\left(G(j)\neq G(k)\right)\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $B\subsetneq A$
+\end_inset
+
+ - a (random) subset of the pairs of pixels.
+ In our experiments 
+\begin_inset Formula $|B|=256$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+PRI (Probabilistic RI)
+\end_layout
+
+\begin_layout Standard
+between a test segmentation and multiple ground truths
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+PRI(S,\{G_{i}\}_{i=1}^{M})=\frac{1}{T}\sum\limits _{j<k}\left[c_{jk}p_{jk}+\left(1-c_{jk}\right)\left(1-p_{jk}\right)\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
 \begin_inset Formula $p_{jk}$
 \end_inset
 
@@ -233,7 +269,11 @@ where
 \begin_inset Formula $c_{jk}$
 \end_inset
 
-.
+; possible estimator of 
+\begin_inset Formula $p_{jk}$
+\end_inset
+
+ is the sample mean of the corresponding Bernoulli distribution.
 \end_layout
 
 \begin_layout Section
@@ -241,7 +281,8 @@ SC (Segmentation Covering)
 \end_layout
 
 \begin_layout Subsection
-Overlap
+Overlap, a.k.a.
+ Jaccard Index
 \end_layout
 
 \begin_layout Standard
@@ -268,23 +309,22 @@ Overlap of two regions
 \end_layout
 
 \begin_layout Subsection
-IoU (intersection over Union), a.k.a.
- Jaccard Index
+IoU (intersection over Union)
 \end_layout
 
 \begin_layout Standard
 How to normalise it in the case of two segmentations 
-\begin_inset Formula $S=\left\{{s_{i}}\right\}_{i=1}^{p}$
+\begin_inset Formula $S=\left\{ {s_{i}}\right\} _{i=1}^{p}$
 \end_inset
 
  and 
-\begin_inset Formula $G=\left\{{g_{j}}\right\}_{j=1}^{q}$
+\begin_inset Formula $G=\left\{ {g_{j}}\right\} _{j=1}^{q}$
 \end_inset
 
  ?
 \begin_inset Formula 
 \[
-IoU(S,G)=\frac{\sum\limits_{i=1}^{p}\sum\limits _{j=1}^{q}\mathcal{O}\left(s_{i},g_{j}\right)}{\Gamma_{G}}
+IoU(S,G)=\frac{\sum\limits _{i=1}^{p}\sum\limits _{j=1}^{q}\mathcal{O}\left(s_{i},g_{j}\right)}{\Gamma_{G}}
 \]
 
 \end_inset
@@ -316,7 +356,7 @@ The above is not symmetric w.r.t.
 \begin_layout Standard
 \begin_inset Formula 
 \[
-IoU(S,G)=\frac{\sum\limits_{i=1}^{p}\sum\limits _{j=1}^{q}\mathcal{O}\left(s_{i},g_{j}\right)}{\Gamma_{S}\Gamma_{G}}
+IoU(S,G)=\frac{\sum\limits _{i=1}^{p}\sum\limits _{j=1}^{q}\mathcal{O}\left(s_{i},g_{j}\right)}{\Gamma_{S}\Gamma_{G}}
 \]
 
 \end_inset
@@ -344,7 +384,7 @@ Covering of the Test Segmentation with the Ground Truths
 \begin_layout Standard
 \begin_inset Formula 
 \[
-C\left(\left\{{G_{i}}\right\}_{i=1}^{M}\longrightarrow S\right)=\frac{1}{M}\sum\limits_{i=1}^{M}\frac{1}{N}\sum\limits_{s\in S}\left|s\right|\max_{g\in G_{i}}\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
+C\left(\left\{ {G_{i}}\right\} _{i=1}^{M}\longrightarrow S\right)=\frac{1}{M}\sum\limits _{i=1}^{M}\frac{1}{N}\sum\limits _{s\in S}\left|s\right|\max_{g\in G_{i}}\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
 \]
 
 \end_inset
@@ -357,7 +397,7 @@ where
 \begin_inset Formula $N=\left|S\right|=\left|G_{i}\right|$
 \end_inset
 
- is number of pixels in the image.
+ - number of pixels in the image.
 \end_layout
 
 \begin_layout Subsubsection
@@ -367,7 +407,7 @@ Covering of the Ground Truths with the Test Segmentation
 \begin_layout Standard
 \begin_inset Formula 
 \[
-C\left(S\longrightarrow\left\{{G_{i}}\right\}_{i=1}^{M}\right)=\frac{1}{M}\sum\limits_{i=1}^{M}\frac{1}{N}\sum\limits_{g\in G_{i}}\left|g\right|\max_{g\in G_{i}}\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
+C\left(S\longrightarrow\left\{ {G_{i}}\right\} _{i=1}^{M}\right)=\frac{1}{M}\sum\limits _{i=1}^{M}\frac{1}{N}\sum\limits _{g\in G_{i}}\left|g\right|\max_{g\in G_{i}}\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
 \]
 
 \end_inset
@@ -386,7 +426,7 @@ VPR unnormalised
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\tilde{P}=\frac{1}{M}\sum\limits_{i=1}^{M}\frac{\sum\limits_{s\in\mathbb{S}}\max\limits_{g\in\mathbb{G}_{i}}\left|s\cap g\right|}{\left|\mathbb{S}\right|}
+\tilde{P}=\frac{1}{M}\sum\limits _{i=1}^{M}\frac{\sum\limits _{s\in\mathbb{S}}\max\limits _{g\in\mathbb{G}_{i}}\left|s\cap g\right|}{\left|\mathbb{S}\right|}=\frac{\sum\limits _{i=1}^{M}\sum\limits _{s\in\mathbb{S}}\max\limits _{g\in\mathbb{G}_{i}}\left|s\cap g\right|}{M\left|\mathbb{S}\right|}
 \]
 
 \end_inset
@@ -397,7 +437,7 @@ VPR unnormalised
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\tilde{R}=\sum\limits_{i=1}^{M}\frac{\sum\limits_{g\in\mathbb{G}_{i}}\max\limits_{s\in\mathbb{S}}\left|s\cap g\right|}{\sum\limits_{i=1}^{M}\left|\mathbb{G}_{i}\right|}
+\tilde{R}=\sum\limits _{i=1}^{M}\frac{\sum\limits _{g\in\mathbb{G}_{i}}\max\limits _{s\in\mathbb{S}}\left|s\cap g\right|}{\sum\limits _{j=1}^{M}\left|\mathbb{G}_{j}\right|}=\frac{\sum\limits_{i=1}^{M}\sum\limits _{g\in\mathbb{G}_{i}}\max\limits _{s\in\mathbb{S}}\left|s\cap g\right|}{\sum\limits _{i=1}^{M}\left|\mathbb{G}_{i}\right|}
 \]
 
 \end_inset
@@ -425,7 +465,7 @@ where
 \begin_inset Formula $\{\mathbb{G}_{i}\}_{i=1}^{M}$
 \end_inset
 
- are segmentations,
+ - segmentations,
 \end_layout
 
 \begin_layout Standard
@@ -449,7 +489,7 @@ VPR normalised (lower bound)
 \begin_layout Standard
 \begin_inset Formula 
 \[
-P=\frac{\sum\limits_{i=1}^{M}\sum\limits_{s\in\mathbb{S}}\max\limits_{g\in\mathbb{G}_{i}}\left|s\cap g\right|-\boxed{\sum\limits _{i=1}^{M}\max\limits _{g\in\mathbb{G}_{i}}\left|g\right|}}{M\left|\mathbb{S}\right|-\boxed{\sum\limits _{i=1}^{M}\max\limits _{g\in\mathbb{G}_{i}}\left|g\right|}}
+P=\frac{\sum\limits _{i=1}^{M}\sum\limits _{s\in\mathbb{S}}\max\limits _{g\in\mathbb{G}_{i}}\left|s\cap g\right|-\boxed{\sum\limits _{i=1}^{M}\max\limits _{g\in\mathbb{G}_{i}}\left|g\right|}}{M\left|\mathbb{S}\right|-\boxed{\sum\limits _{i=1}^{M}\max\limits _{g\in\mathbb{G}_{i}}\left|g\right|}}
 \]
 
 \end_inset
@@ -460,7 +500,7 @@ P=\frac{\sum\limits_{i=1}^{M}\sum\limits_{s\in\mathbb{S}}\max\limits_{g\in\mathb
 \begin_layout Standard
 \begin_inset Formula 
 \[
-R=\sum\limits_{i=1}^{M}\frac{\sum\limits_{g\in\mathbb{G}_{i}}\max\limits_{s\in\mathbb{S}}\left|s\cap g\right|-\boxed{\sum\limits _{i=1}^{M}\Gamma_{\mathbb{G}_{i}}}}{\sum\limits_{i=1}^{M}\left|\mathbb{G}_{i}\right|-\boxed{\sum\limits _{i=1}^{M}\Gamma_{\mathbb{G}_{i}}}}
+R=\frac{\sum\limits_{i=1}^{M}\sum\limits _{g\in\mathbb{G}_{i}}\max\limits _{s\in\mathbb{S}}\left|s\cap g\right|-\boxed{\sum\limits _{i=1}^{M}\Gamma_{\mathbb{G}_{i}}}}{\sum\limits _{i=1}^{M}\left|\mathbb{G}_{i}\right|-\boxed{\sum\limits _{i=1}^{M}\Gamma_{\mathbb{G}_{i}}}}
 \]
 
 \end_inset
@@ -486,7 +526,7 @@ VPR normalised (new - according to model capacity of test segmentation)
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\hat{P}=\frac{\sum\limits_{i=1}^{M}\sum\limits_{s\in\mathbb{S}}\max\limits_{g\in\mathbb{G}_{i}}\left|s\cap g\right|-\boxed{M\Gamma_{\mathbb{S}}}}{M\left|\mathbb{S}\right|-\boxed{M\Gamma_{\mathbb{S}}}}
+\hat{P}=\frac{\sum\limits _{i=1}^{M}\sum\limits _{s\in\mathbb{S}}\max\limits _{g\in\mathbb{G}_{i}}\left|s\cap g\right|-\boxed{M\Gamma_{\mathbb{S}}}}{M\left|\mathbb{S}\right|-\boxed{M\Gamma_{\mathbb{S}}}}
 \]
 
 \end_inset
@@ -497,7 +537,7 @@ VPR normalised (new - according to model capacity of test segmentation)
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\hat{{R}}=\sum\limits_{i=1}^{M}\frac{\sum\limits_{g\in\mathbb{G}_{i}}\max\limits_{s\in\mathbb{S}}\left|s\cap g\right|-\boxed{M\max_{s\in\mathbb{S}}\left|s\right|}}{\sum\limits_{i=1}^{M}\left|\mathbb{G}_{i}\right|-\boxed{M\max_{s\in\mathbb{S}}\left|s\right|}}
+\hat{{R}}=\frac{\sum\limits_{i=1}^{M}\sum\limits _{g\in\mathbb{G}_{i}}\max\limits _{s\in\mathbb{S}}\left|s\cap g\right|-\boxed{M\max_{s\in\mathbb{S}}\left|s\right|}}{\sum\limits _{i=1}^{M}\left|\mathbb{G}_{i}\right|-\boxed{M\max_{s\in\mathbb{S}}\left|s\right|}}
 \]
 
 \end_inset
