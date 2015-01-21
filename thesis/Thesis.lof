@@ -1,0 +1,112 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Two different ways of balancing the size of clusters}}{7}{figure.caption.24}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Balancing of cardinality}}}{7}{figure.caption.24}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Balancing of volume}}}{7}{figure.caption.24}
+\contentsline {figure}{\numberline {2.2}{\ignorespaces 1-spectral clustering versus standard spectral clustering}}{16}{figure.caption.65}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {A simple graph in two dimensions}}}{16}{figure.caption.65}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Eigenvector of the graph Laplacian}}}{16}{figure.caption.65}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Partition obatained by thresholding the second eigenvector of the graph Laplacian}}}{16}{figure.caption.65}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Eigenvector of the graph 1-Laplacian}}}{16}{figure.caption.65}
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Clustering without constraints vs. constrained clustering}}{17}{figure.caption.71}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {A simple graph in two dimensions}}}{17}{figure.caption.71}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Must-link constraints}}}{17}{figure.caption.71}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Result: unconstrained clustering}}}{17}{figure.caption.71}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Result: constrained clustering}}}{17}{figure.caption.71}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Video segmentation pipeline}}{20}{figure.caption.83}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Video Sequence}}}{20}{figure.caption.83}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {UCM}}}{20}{figure.caption.83}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Superpixels}}}{20}{figure.caption.83}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Affinity Matrix}}}{20}{figure.caption.83}
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {Segmentation}}}{20}{figure.caption.83}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Structure and sparsity of the affinity matrices}}{22}{figure.caption.99}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {ABM}}}{22}{figure.caption.99}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {STT}}}{22}{figure.caption.99}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {LTT}}}{22}{figure.caption.99}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {STM}}}{22}{figure.caption.99}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Examples of video sequences from the BMDS and its annotated ground truth}}{23}{figure.caption.106}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Marple7}}}{23}{figure.caption.106}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Marple8}}}{23}{figure.caption.106}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Boundary precision-recall (BPR) and volume precision-recall (VPR) curves for spectral clustering (SC) and 1-spectral clustering (1SC) with different cut criteria}}{28}{figure.caption.140}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {BPR}}}{28}{figure.caption.140}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {VPR}}}{28}{figure.caption.140}
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Segmentation results for the video sequence ``Cars1`` for 2 clusters}}{30}{figure.caption.144}
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Segmentation results for the video sequence ``Marple4`` for 3 clusters}}{31}{figure.caption.181}
+\contentsline {figure}{\numberline {4.4}{\ignorespaces BPR and VPR curves for spectral clustering (SC), spectral clustering with bipartitioning (SC, bipart) and 1-spectral clustering (1SC) with different cut criteria}}{32}{figure.caption.219}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {BPR}}}{32}{figure.caption.219}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {VPR}}}{32}{figure.caption.219}
+\contentsline {figure}{\numberline {4.5}{\ignorespaces BPR and VPR curves for spectral clustering (SC), spectral clustering with 2D Laplacian eigenmap (SC, 2 dim) and 1-spectral clustering (1SC) with different cut criteria}}{32}{figure.caption.219}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {BPR}}}{32}{figure.caption.219}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {VPR}}}{32}{figure.caption.219}
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Histogram of the foreground-to-background ratio for all video sequences}}{33}{figure.caption.225}
+\contentsline {figure}{\numberline {4.7}{\ignorespaces BPR and VPR curves on video sequences with balanced sizes of foreground and background objects}}{33}{figure.caption.226}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {BPR}}}{33}{figure.caption.226}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {VPR}}}{33}{figure.caption.226}
+\contentsline {figure}{\numberline {4.8}{\ignorespaces BPR and VPR curves on video sequences with unbalanced sizes of foreground and background objects}}{34}{figure.caption.229}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {BPR}}}{34}{figure.caption.229}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {VPR}}}{34}{figure.caption.229}
+\contentsline {figure}{\numberline {4.9}{\ignorespaces Basic scheme for greedy search of the optimal partition}}{35}{figure.caption.234}
+\contentsline {figure}{\numberline {4.10}{\ignorespaces Graph cut results for the video sequence ``Cars6`` for 2 clusters}}{36}{figure.caption.248}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Greedy search for optimal value of the graph cut }}}{36}{figure.caption.248}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Cars6}}}{36}{figure.caption.248}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Ground truth}}}{36}{figure.caption.248}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Global minimum for all}}}{36}{figure.caption.248}
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {Local minimum for RCC, NCut, NCC, Cut, MinMaxCut}}}{36}{figure.caption.248}
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {Local minimum for RCut}}}{36}{figure.caption.248}
+\contentsline {figure}{\numberline {4.11}{\ignorespaces Graph cut results for the video sequence ``Marple4`` for 2 clusters}}{36}{figure.caption.255}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Greedy search for optimal value of the graph cut }}}{36}{figure.caption.255}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Marple4}}}{36}{figure.caption.255}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Ground truth}}}{36}{figure.caption.255}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Global minimum for RCC, NCC}}}{36}{figure.caption.255}
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {Global minimum for RCut, NCut, MinMaxCut, Cut}}}{36}{figure.caption.255}
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {Local minimum for RCC, NCC}}}{36}{figure.caption.255}
+\contentsline {subfigure}{\numberline {(g)}{\ignorespaces {Local minimum for RCut, NCut, MinMaxCut, Cut}}}{36}{figure.caption.255}
+\contentsline {figure}{\numberline {4.12}{\ignorespaces NCut results for the video sequence ``Marple4`` for 2 clusters with the segmentation result as a starting point}}{37}{figure.caption.264}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Greedy search for the optimal NCut with the segmenation for 2 clusters as a starting point}}}{37}{figure.caption.264}
+\contentsline {figure}{\numberline {4.13}{\ignorespaces RCut results for the video sequence ``Marple4`` for 2 clusters with the segmentation result as a starting point}}{38}{figure.caption.278}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Greedy search for the optimal RCut with the segmenation for 2 clusters as a starting point}}}{38}{figure.caption.278}
+\contentsline {figure}{\numberline {4.14}{\ignorespaces NCut results for the video sequence ``Marple4`` for 3 clusters with the segmentation result as a starting point}}{38}{figure.caption.292}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Greedy search for the optimal NCut with the segmenation for 3 clusters as a starting point}}}{38}{figure.caption.292}
+\contentsline {figure}{\numberline {4.15}{\ignorespaces RCut results for the video sequence ``Marple4`` for 3 clusters with the segmentation result as a starting point}}{39}{figure.caption.306}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Greedy search for the optimal RCut with the segmenation for 3 clusters as a starting point}}}{39}{figure.caption.306}
+\contentsline {figure}{\numberline {4.16}{\ignorespaces LTT, ABA, ABM, STA, STM, W, W-LTT histogram for 4 annotated frames for each video sequence}}{40}{figure.caption.323}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {True Positives}}}{40}{figure.caption.323}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {False Positives}}}{40}{figure.caption.323}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {False Positive Rate}}}{40}{figure.caption.323}
+\contentsline {figure}{\numberline {4.17}{\ignorespaces LTT histogram for 4 annotated frames for each video sequence}}{41}{figure.caption.327}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {True Positives}}}{41}{figure.caption.327}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {False Positives}}}{41}{figure.caption.327}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {False Positive Rate}}}{41}{figure.caption.327}
+\contentsline {figure}{\numberline {4.18}{\ignorespaces LTT, ABA, ABM, STT, STA, STM, W, W-LTT histogram for 3 adjacent annotated frames for each video sequence}}{42}{figure.caption.331}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {True Positives}}}{42}{figure.caption.331}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {False Positives}}}{42}{figure.caption.331}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {False Positive Rate}}}{42}{figure.caption.331}
+\contentsline {figure}{\numberline {4.19}{\ignorespaces LTT histogram for 3 adjacent annotated frames for each video sequence}}{42}{figure.caption.335}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {True Positives}}}{42}{figure.caption.335}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {False Positives}}}{42}{figure.caption.335}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {False Positive Rate}}}{42}{figure.caption.335}
+\contentsline {figure}{\numberline {4.20}{\ignorespaces Boundary precision-recall (BPR) and volume precision-recall (VPR) curves for spectral clustering (SC) using thresholded affinity measures as must-links}}{43}{figure.caption.340}
+\contentsline {figure}{\numberline {4.21}{\ignorespaces Boundary precision-recall (BPR) and volume precision-recall (VPR) curves for spectral clustering (SC) using true connected components of the affinity matrix as must-links}}{44}{figure.caption.348}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {BPR}}}{44}{figure.caption.348}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {VPR}}}{44}{figure.caption.348}
+\contentsline {figure}{\numberline {4.22}{\ignorespaces Relation between number of false positives and percentage of must-link decisions}}{46}{figure.caption.354}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Within frame}}}{46}{figure.caption.354}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Between 1 frames}}}{46}{figure.caption.354}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Between 2 frames}}}{46}{figure.caption.354}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Between $>$ 2 frames}}}{46}{figure.caption.354}
+\contentsline {figure}{\numberline {4.23}{\ignorespaces Relation between error rate and number or percentage of must-link decisions for different temporal depth}}{47}{figure.caption.359}
+\contentsline {figure}{\numberline {4.24}{\ignorespaces Boundary precision-recall and volume precision-recall curves for spectral clustering with choosing RF classifier according to the number of false positives - 0,1,3}}{48}{figure.caption.362}
+\contentsline {figure}{\numberline {4.25}{\ignorespaces Example of error propagation effect}}{49}{figure.caption.373}
+\contentsline {figure}{\numberline {4.26}{\ignorespaces Boundary precision-recall and volume precision-recall curves for spectral clustering using different types of connections as must-links}}{50}{figure.caption.375}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{50}{figure.caption.375}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{50}{figure.caption.375}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{50}{figure.caption.375}
+\contentsline {figure}{\numberline {4.27}{\ignorespaces Superpixelization results before and after merging with learned must-links for the video sequences ''Marple7'' and ``Cars10''}}{51}{figure.caption.382}
+\contentsline {figure}{\numberline {4.28}{\ignorespaces Example video segmentation results of the proposed algorithm with learned must-link constraints, compared to\nobreakspace {}\cite {GalassoCS12}}}{51}{figure.caption.387}
+\contentsline {subfigure}{\numberline {}{\ignorespaces {Galasso et al.\nobreakspace {}\cite {GalassoCS12}}}}{51}{figure.caption.387}
+\contentsline {subfigure}{\numberline {}{\ignorespaces {Our proposed algorithm}}}{51}{figure.caption.387}
+\contentsline {figure}{\numberline {4.29}{\ignorespaces Additional video segmentation outputs of the proposed algorithm, compared to\nobreakspace {}\cite {GalassoCS12}}}{52}{figure.caption.400}
+\contentsline {subfigure}{\numberline {}{\ignorespaces {Galasso et al.\nobreakspace {}\cite {GalassoCS12}}}}{52}{figure.caption.400}
+\contentsline {subfigure}{\numberline {}{\ignorespaces {Our proposed algorithm}}}{52}{figure.caption.400}

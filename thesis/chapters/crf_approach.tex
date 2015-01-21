@@ -1,0 +1,860 @@
+\chapter{Conditional Random Fields Approach}
+\label{Chapter3}
+
+{\bf Conditional Random Fields (CRFs)} are a class of statistical modelling method
+often applied in pattern recognition and machine learning, where they are used
+for structured prediction. Whereas an ordinary classifier predicts a label for a
+single sample without regard to neighboring samples, a CRF can take context
+into account.
+
+CRFs are a type of discriminative undirected probabilistic graphical model. It
+is used to encode known relationships between observations and construct
+consistent interpretations. CRFs are useful in Computer Vision and particularly in Image Segmentation,
+because in this task observations (samples) are pixels, which represent the real world, and
+the latter usually shows strong relations and interactions between neighboring particles. So, taking into
+account these kinds of natural relations helps to considerably improve segmentation results.
+
+\section{Overview of Conditional Random Fields}
+\label{sec:crf_definition}
+\subsection{Definition}
+Given $ \mathbf{X} $ as a random variable over data sequences to be labeled and $ \mathbf{Y} $ a random variable over corresponding label sequence
+(components of $ \mathbf{Y} $ are assumed to range over a finite label alphabet $ \mathcal{Y} $), Lafferty \etal~\cite{Lafferty2001} 
+define a CRF on observations $ \mathbf{X} $ and random variables $ \mathbf{Y} $ as follows:
+
+\begin{definition}
+Let $ G = (V, E) $ be a graph such that $ \mathbf{Y} = (\mathbf{Y}_\upsilon)_{\upsilon \in V}$, so that $ \mathbf{Y} $ is indexed by vertices of $ G $. 
+Then $ (\mathbf{X}, \mathbf{Y}) $ is a conditional random field in case, when conditioned on $ \mathbf{X} $, 
+the random variables $ \mathbf{Y}_\upsilon $ obey the Markov property with respect to the graph: 
+$ P(\mathbf{Y}_\upsilon | \mathbf{X}, \mathbf{Y}_{\omega}, \omega \neq \upsilon) = P(\mathbf{Y}_\upsilon | \mathbf{X}, \mathbf{Y}_{\omega}, \omega \sim \upsilon) $,
+where $ \omega \sim \upsilon $ means that $ \omega $ and $ \upsilon $ are neighbors in graph $ G $.
+\end{definition}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.7\textwidth] {images/simple_crf}
+  \caption[A simple pairwise Conditional Random Field]{An example of a simple pairwise connected Conditional Random Field over a 6x4 image.
+  $\mathrm{Y}_0,\dots, \mathrm{Y}_{23}$ denotes unkown labels of pixels,
+  $\mathrm{X}_0,\dots, \mathrm{X}_{23}$ denotes observations, grey color means that variable $\mathrm{X}_i$
+  is conditioned on. In this example every pixel is connected to its four closest neighbors.}
+  \label{fig:simple_crf}
+\end{figure}
+
+What this means is that a CRF is an undirected graphical model (Figure~\ref{fig:simple_crf}) whose nodes can be divided into 
+exactly two disjoint sets $ \mathbf{X} $ and $ \mathbf{Y}$, the observed and output variables, 
+respectively; the conditional distribution $ P(\mathbf{Y} | \mathbf{X}) $ is then modeled.
+
+\begin{definition}
+ A \emph{potential} $ \phi(x) $ is a non-negative function of variable $ x $. A \emph{joint potential} 
+ $ \phi(x_1,\dots, x_n) $ is a non-negative function of a set of variables $ x_1,\dots, x_n $.
+\end{definition}
+
+Then we can write down the conditional probability distribution as a Gibbs distribution:
+\begin{equation}
+ P(\mathbf{Y} | \mathbf{X}; \theta) = \frac{\exp{ -\sum_{c \in \mathcal{C}_G} \phi_c(\mathbf{Y}_c | \mathbf{X}; \theta)}} {Z(\mathbf{X}; \theta)}, \label{gibbs_distr}
+\end{equation}
+where $ \theta $ is some parameter vector of the model, $ \mathcal{C}_G $ is the set of all cliques of the graph $ G $, 
+$ \phi_c(Y | \mathbf{X}; \theta) $ is a potential which works on clique $c$, $\mathbf{Y}_c$ is a subset of $\mathbf{Y}$ of
+variables which comprise the clique $c$ and the normalizing constant 
+$Z(\mathbf{X}; \theta) = \sum_Y \exp{ -\sum_{c \in \mathcal{C}_G} \phi_c(Y | \mathbf{X}; \theta)}$
+is just a summation over all possible labelings $Y \in \mathcal{L}^N$, where $N = \abs{V}$ is the number of variables.
+
+In the Semantic Image Segmentation task we are interested in finding the labeling of pixels $ \mathbf{Y} $ which has the highest
+probability given the observation values $ \mathbf{X} $:
+\begin{equation}
+ \mathbf{Y} = \argmax_{\hat{Y} \in \mathcal{L}^N} P(\hat{Y} | \mathbf{X}; \theta) = \argmax_{\hat{Y} \in \mathcal{L}^N}\frac{\exp{ -\sum_{c \in \mathcal{C}_G} \phi_c(\hat{Y}_c | \mathbf{X}; \theta)}} {Z(\mathbf{X}; \theta)}
+\end{equation}
+One can observe that the normalization factor $ Z(\mathbf{X}, \theta) $ does not depend on $ y $, so it can be dropped out.
+Then we get a simplified formula:
+\begin{equation}
+ \mathbf{Y} = \argmax_{\hat{Y} \in \mathcal{L}^N}\exp{-\sum_{c \in \mathcal{C}_G} \phi_c(\hat{Y}_c | \mathbf{X}; \theta)} \label{eq1}
+\end{equation}
+
+The definition of cliques is quite an arbitrary thing and always depends on particular needs. The most popular definition of cliques
+is when there is a potential for each pixel $\phi(y_i | x_i; \theta)$ and there is an edge between nearby pixels in the graph $G$ and 
+an associated with this edge potential $\phi(y_i, y_j | x_y, x_j; \theta)$. Then we can rewrite the exponent in~\eqref{eq1} as:
+\begin{equation}
+ \sum_{c \in \mathcal{C}_G} \phi_c(\mathbf{Y}_c | \mathbf{X}; \theta) = \sum_{i}\phi(y_i | x_i; \theta) + \sum_{j \in \mathcal{N}(i)}\phi(y_i, y_j | x_i, x_j; \theta),
+\end{equation}
+where $\mathcal{N}(i)$ denotes neighbors of pixel $i$ in the graph $G$. The usual choice is to take left, right, top, and bottom
+neighbors. The neighborhood can be easily extended to be larger, but at the price of increasing inference complexity. We will
+show later in this work different types of this neighborhood.
+
+\subsection{Inference}
+For general graphs, the problem of exact inference in CRFs is intractable. The inference problem for a CRF is 
+basically the same as for an Markov Random Field (MRF) and the same arguments hold. In MRFs one may calculate 
+the conditional distribution of a set of nodes $ V' = {\upsilon_1,\dots, \upsilon_i} $ given values to another 
+set of nodes $ W' = {\omega_1,\dots, \omega_j} $ by summing over all possible assignments to $ u \notin V', W' $; 
+this is called \emph{exact inference}. However, exact inference is a n-P-complete problem, and thus computationally 
+intractable in the general case. Approximation techniques such as Markov chain Monte Carlo and loopy 
+belief propagation are often more feasible in practice.
+However for CRFs there exist special cases for which exact inference is feasible:
+\begin{itemize}
+ \item If the graph is a chain or a tree, message passing algorithms yield exact solutions. 
+ The algorithms used in these cases are analogous to the forward-backward and Viterbi algorithm~\cite{Forney2005} for the case of HMMs.
+ \item If the CRF only contains pair-wise potentials and the energy is submodular, 
+ combinatorial min cut/max flow algorithms yield exact solutions.
+\end{itemize}
+
+If exact inference is impossible, several algorithms can be used to obtain approximate solutions. These include:
+\begin{itemize}
+  \item Loopy belief propagation
+  \item Alpha expansion
+  \item Mean field inference
+  \item Linear programming relaxations
+\end{itemize}
+
+\section{Features}
+\label{sec:features}
+Features are a crucial part of every classifying system. They define the transformation of the real world into a form
+most suitable for current classification task. Feature engineering can be called an art, because it requires good 
+feeling and knowledge of the problem and sometimes it takes a lot of time to come up with good features.
+
+Certainly, even very good features cannot do the whole job of building a ``perfect'' classifier, but one shouldn't underestimate 
+their impact on the overall performance.
+
+\subsection{Raw Color Features}
+\label{raw_features}
+In Semantic image segmentation task we get as an input color images. So, the most simple kind of features would be just taking
+RGB values of every single pixel. However, it was mentioned in~\cite{Shotton2008, Shotton2009} that CIELAB color space
+tend to generalize better. In this work we actually need only forward transformation, because we need CIELAB values for the
+classifier and do not need to convert the image in CIELAB color space back to the usual RGB.
+
+In order to convert RGB values to the corresponding CIELAB representation, we first need to convert RGB to the standard XYZ 
+color space. This can be implemented as a simple matrix-vector multiplication:
+\begin{equation}
+ \begin{bmatrix}X \\ Y \\ Z\end{bmatrix} = A \times \begin{bmatrix}R \\ G \\ B\end{bmatrix} \nonumber
+\end{equation}
+RGB of every pixel should be first per channel normalized so that every value lies in the range $ [0, 1] $.
+There exist a large number of choices for matrix $ A $ from different standards. We used the following one:
+\begin{equation}
+ A = \begin{pmatrix}0.412453 & 0.357580 & 0.180423 \\ 0.212671 & 0.715160 & 0.072169 \\ 0.019334 & 0.119193 & 0.950227\end{pmatrix} \label{Axyz}
+\end{equation}
+After this, with the help of the following formulas XYZ values can be converted to LAB ones:
+\begin{gather}
+ L = 116f(Y/Y_w) - 16, \nonumber \\
+ a = 500[f(X/X_w) - f(Y, Y_w)], \nonumber \\
+ b = 200[f(Y/Y_w) - f(Z/Z_w)], \nonumber
+\end{gather}
+where
+\begin{equation}
+ f(t) = \begin{cases} t^\frac{1}{3} & \text{if $ t > \left(\frac{6}{29}\right)^3 $} \\
+                \frac{1}{3}\left(\frac{29}{6}\right)^2 t + \frac{4}{29} & \text{otherwise.}
+               \end{cases} \nonumber
+\end{equation}
+Here $ (X_w, Y_w, Z_w) $ are the CIEXYZ tristimulus values of the reference white point. Accordingly with the chosen matrix~\eqref{Axyz}
+we take $ (X_w, Y_w, Z_w) = (0.950456, 1.0, 1.088854)$.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.25\textwidth] {images/feature_patch}
+  \caption[Feature patch]{{\bf Feature patch} (courtesy of~\cite{Shotton2008}). 
+  This is an example of a feature patch. Bold-framed square in the center denotes the pixel being currently processed. Two red squares show two possible
+  pixel locations relative to the central one which are actually considered when computing feature response for the central pixel.}
+  \label{fig:feature_patch}
+\end{figure}
+
+The main improvement one can achieve even with raw color features is by considering information not only from a single pixel,
+but rather by applying some function to a number of pixels in the neighborhood (Figure~\ref{fig:feature_patch}). The following functions has been shown
+(\cite{Shotton2008, Kontschieder2011}) to be most useful:
+\begin{gather}
+ \varphi(x | \theta_1, \theta_2) = I_{(u, \upsilon, 0) + \theta_1} - I_{(u, \upsilon, 0) + \theta_2}, \nonumber \\
+ \varphi(x | \theta_1, \theta_2) = I_{(u, \upsilon, 0) + \theta_1} + I_{(u, \upsilon, 0) + \theta_2}, \nonumber \\
+ \varphi(x | \theta_1, \theta_2) = \abs{I_{(u, \upsilon, 0) + \theta_1} - I_{(u, \upsilon, 0) + \theta_2}}, \nonumber
+\end{gather}
+where $ x $ is a patch from the image with coordinates $ (u, \upsilon) $, $ \theta_i = (\delta u_i, \delta \upsilon_i, c_i), i = 1,2 $
+are the displacement parameters, with $ \delta u_i $ and $ \delta \upsilon_i $ being a displacement relative to the patch center and 
+$ c_i $ denoting one of the color channels. These function can capture for example long-distance gradients, homogeneous regions, \etc.
+The application of these functions can be easily extended to even higher dimensional feature representations 
+than just RGB or CIELAB color channels. In that case $ c_i \in [1,\dots, D] $, where $ D $ is the dimensionality of the feature space.
+In case of raw color features $ D = 3 $.
+
+\subsection{Texture-Layout Filters}
+\label{texton_features}
+As features \emph{textons} were introduces in~\cite{Malik1992} and later have been shown to be useful in such
+applications as material categorization~\cite{Varma2005} and general object categorization~\cite{Winn1992}.
+It is worth mentioning that the term 'texton' itself was introduced by~\cite{Julesz1981} for describing
+human perception of textures.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.9\textwidth] {images/texton_process}
+  \caption[The process of image textonization]{{\bf The process of image textonization} (courtesy of~\cite{Shotton2009}). 
+  An input image is convolved with a filter-bank. The filter-bank responses for
+  all pixels in the training images are clustered. Finally, each pixel is assigned a texton index corresponding to the cluster 
+  center nearest to its filter-bank responses.}
+  \label{fig:texton_process}
+\end{figure}
+
+The process of textonization is illustrated in Figure~\ref{fig:texton_process} and proceeds as follows. The training 
+images are convolved with 17-dimensional filter-bank at scales $ k $. We use the same filter-bank as proposed in~\cite{Winn1992},
+which consists of Gaussians at scales $ k $, $ 2k $, $ 4k $, $ x $ and $ y $ derivatives of Gaussians at scales $ 2k $ and $ 4k $, 
+and Laplacians of Gaussians at scales $ k $, $ 2k $, $ 4k $, and $ 8k $. The Gaussians are applied to all three color channels,
+while the other filters are applied only to the luminance channel of CIELAB color space. This filter-bank was determined to have 
+full rank in a singular value decomposition in~\cite{Jones1992} and therefore to contain no redundant elements. The 17-dimensional
+responses for all training pixels are then whitened (to give zero mean and unit covariance) and clustered in an unsupervised manner.
+We employ a freely available library by~\cite{vedaldi08vlfeat}, which contains an efficient implementation of k-means Lloyd's
+and Elkan's algorithms. The latter uses triangular inequality~\cite{Elkan2003} to avoid many distance calculations when 
+assigning points to clusters and is typically much faster than Lloyd's algorithm. However, it uses storage 
+proportional to the square of the number of clusters, which makes it impractical for a very large number of clusters.
+Finally, each pixel in the image is assigned to the closest cluster center producing a \emph{texton map} $ T $.
+
+Texture-Layout filters were proposed in~\cite{Shotton2009}. Each texture-layout filter is a pair $ (r, t) $ of an image
+region $ r $ and a texton $ t $. The center of region $ r $ is defined in coordinates relative to the pixel $ i $
+being classified. For efficiency, we use only rectangular regions, though any other shape is also possible.
+For simplicity, a set $ \mathcal{R} $ of candidate regions is sampled at random, such that their top-left and bottom-right corners
+lie within some fixed bounding box which covers considerable portion of an image (about a half or a quarter of an image).
+As illustrated in Figure~\ref{fig:feature_responses}, the feature response at location $ i $ is the proportion of pixels under the 
+offset region $ i + r $ that have texton index $ t $:
+\begin{equation}
+ \upsilon_{[r, t]}(i) = \frac{1}{\text{area}(r)} \sum_{j \in (i + r)} [T_j = t]
+\end{equation}
+From here on $[ . ]$ is an identity function defined as:
+\begin{equation}
+ [ condition ] = \begin{cases} 1 & \text{if \emph{condition} is satisfied} \\
+                0 & \text{otherwise.}
+               \end{cases}
+\end{equation}
+Outside the image boundary there is zero contribution to the feature response.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.7\textwidth] {images/feature_responses}
+  \caption[Calculating feature responses and capturing textural context]{{\bf Calculating feature responses and capturing 
+  textural context} (courtesy of~\cite{Shotton2009}). {\bf (a, b)} An image and its corresponding
+  texton map (colors map uniquely to texton indices). {\bf (c)} Texture-layout filters are defined relative to the point
+  $i$ being classified (yellow cross). In this first example feature, rectangular region $r_1$ is paired with texton $t_1$
+  (mapping to the blue color). {\bf (d)} A second feature where region $r_2$ is paired with texton $t_2$ (green). To
+  improve readability, (c) and (d) are shown double sized compared to (e) and (f). {\bf (e)} The response
+  $\upsilon_{[r_1, t_1]}(i)$ of the first feature is calculated at three different positions in the texton map (magnified).
+  In this example $\upsilon_{[r_1, t_1]}(i_1) \approx 0$, $\upsilon_{[r_1, t_1]}(i_2) \approx 1$, and
+  $\upsilon_{[r_1, t_1]}(i_1) \approx \frac{1}{2}$. {\bf (f)} For the second feature $(r_2, t_2)$, where $t_2$
+  corresponding to 'grass', the algorithm can learn such points as $i_4$ belonging to sheep regions tend to produce large values
+  of $\upsilon_{[r_2, t_2]}(i)$, and hence can exploit the contextual information that sheep pixels tend to be surrounded
+  by grass pixels.}
+  \label{fig:feature_responses}
+\end{figure}
+
+
+The filter responses can be efficiently computed over the whole image using integral images~\cite{Viola2001}. 
+Figure~\ref{fig:integral_images}
+illustrates this process: the texton map is separated into $ K $ channels (one for each texton) and then, for each channel,
+a separate integral image is computed. The integral images can later be used to compute the texture-layout filter response in
+$ \mathcal{O}(1) $ time: if $ \hat{T}^{(t)} $ is the integral image of $ T $ for texton channel $ t $, then the feature 
+response is computed as:
+\begin{equation}
+ \upsilon_{[r, t]}(i) = \hat{T}^{(t)}_{r_{br}} + \hat{T}^{(t)}_{r_{tl}} - \hat{T}^{(t)}_{r_{bl}} - \hat{T}^{(t)}_{r_{tr}}
+\end{equation}
+where $ r_{br} $, $ r_{tl} $, $ r_{bl} $, $ r_{tr} $ denote the bottom right, top left, bottom left, and top right corners of
+rectangle $ r $. \cite{Shotton2009} investigated into other region shapes rather than simple rectangles. In particular, they
+evaluated rectangles rotated by 45$^\circ$, and pairs of rectangles with texton responses added ($ \upsilon_{[r_1, t]}(i) + 
+\upsilon_{[r_2, t]}(i) $) or subtracted ($ \upsilon_{[r_1, t]}(i) - \upsilon_{[r_2, t]}(i) $). However, it only increased 
+computation time, but didn't produce noticeably better results. So, we also decided to stay with just rectangles.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.7\textwidth] {images/integral_images}
+  \caption[Separating the texton map into multiple channels]{{\bf Separating the texton map into multiple channels}
+  (courtesy of~\cite{Shotton2009}).
+  The texton map of an image, containing $K$ textons, is split into $K$ channels. An integral image~\cite{Viola2001} 
+  is built for each channel and used to compute texture-layout filter responses in constant time.}
+  \label{fig:integral_images}
+\end{figure}
+
+We used the same number of textons as in~\cite{Shotton2009} equal to 400. This results in very high memory requirements,
+for example storing all 400 integral images for each image from MSRC~\cite{MSRC} training data-set (this was about 45\% of all images)
+would require about 30GB of memory. Therefore we subsample the train images and use w.~l.~o.~g. only every 5-th pixel 
+in each dimension at training time, but compute feature responses for test images at full resolution. This is possible
+as the responses are normalized by the area of the rectangle.
+
+
+\subsection{Advanced Features for Road Detection}
+\label{advanced_features}
+We found out features from Christian Wojek and Bernt Schiele~\cite{Wojek2008} to deal very good with the task of semantic image segmentation of road scenes.
+
+{\bf Texture and location features }\quad The texture features are computed from the first 16 coefficients of the Walsh-Hadamard
+transform. This transformation is a discrete approximation of the cosine transform and can be computed
+efficiently~\cite{Helor2005, Alon2005} even in real-time (for example using modern graphics hardware). The features are extracted
+at multiple scales from all channels of the input image in CIELAB color space. As a preprocessing step, $ a $ and $ b $ channels
+are normalized be means of gray world assumption to cope with varying color appearance. The $ L $ channel is mean-variance
+normalized to fit a Gaussian distribution with a fixed mean to cope with global lighting variations. They also found that
+normalizing the transformation's coefficients according to~\cite{Varma2002} is beneficial. They propose to $ L_1 $-normalize each 
+filter response first and then locally normalize the responses at each image pixel. They take the mean and variance
+of the normalized responses as a feature and the grid point's coordinates within the image as a location cue.
+
+As the result of this feature transform we get a 194-dimensional vector for each pixel. This makes storing all
+feature-transformed images in memory very problematic, so we perform a sub-sampling and use only every 4-th
+pixel in each dimension from training images. But we still perform feature transform for test images at their
+full resolution. These features were used only in the setting, when no any function was applied to feature patches, so
+there is no problem of matching between train and test images' feature responses.
+
+We used the implementation kindly provided to us by the authors.
+
+\section{Unary Potentials}
+\label{sec:unaries}
+The main components of any CRF-based formulation is the \emph{unary potentials}. They are responsible for making the initial
+prediction about sample's label, before any other enhancing technique is applied. It is exactly them who incorporate
+our knowledge about the behavior of individual samples and give us a strong clue about what class the sample
+might belong to. Any other higher-level technique expects to get a reasonably good prediction about each sample,
+because otherwise, despite whatever clever the algorithm is, it will not do much useful if already the initial guess is wrong.
+Therefore, it is extremely important to devote considerable amount of designing time to build a strong classifier which
+will be able to deal with the task already well enough. Here ``strong'' is quite a tentative term, because certainly
+one would try to find a classifier which has the lowest test error for a particular task. But on the other hand, if one aims
+for real-time application the question of running time becomes also very important. As a usual matter in life, there is a
+trade-off between the overall accuracy and the running time which turn out to be reciprocals (in the meaning) of each other: 
+if ones designs an algorithm which has very good accuracy the running time is very probable to be very high, and vice versa.
+
+Running time (both at training and testing) was a crucial matter for us. So, we tried to find a classification algorithm,
+which would have both reasonably (for our particular task; certainly, there is no ``ideal'' classifier in the Universe) good
+accuracy and as small as possible both training and testing time. Having this in mind we finally came up with two options:
+{\bf Boosting} (in particular GentleBoost) and {\bf Random Forest}.
+
+\subsection{Boosting}
+\label{subsec:boosting}
+\emph{Boosting} (the original idea is due to~\cite{Freund1996}) is a general method for improving the 
+performance of any learning algorithm. In
+theory, boosting can be used to significantly reduce the error of any \emph{weak} learning algorithm
+that consistently generates classifiers which need only be a little bit better than random guessing.
+Despite the potential benefits of boosting promised by the theoretical results, the true practical
+value of boosting can only be assessed by testing the method on ``real'' learning problems.
+
+Boosting works by repeatedly running a given weak learning algorithm (although any learning algorithm
+can be used; weak learners are just faster both at training and testing, therefore opening way
+to real-time application of the whole classification algorithm) on various distributions
+over the training data, and then combining the classifiers produced by the weak learner into a
+single composite classifier. The first provably effective boosting algorithms were presented by
+R.E. Schapire~\cite{Schapire1990} and Y. Freund~\cite{Freund1995}.
+
+The general case Boosting algorithm is given as follows:
+
+\begin{algorithm}[H]
+ \label{GeneralBoostingAlg}
+ \SetAlgoLined
+ \KwData{a set of training points ${(x_i, y_i)}_{i = 1}^{N}$, a Weak Learner $f(x)$, 
+ number of iterations $M$}
+ \KwResult{final classifier $F(x) = \mathrm{sign}(\sum_{m=1}^{M}\alpha_m f_m)$}
+ initialize weights: $\gamma_i^1 = \frac{1}{N}, i = 1, \dotsc, N$\;
+ \For{$m \leftarrow 1$ \KwTo $M$}
+ {
+  1. Train a classifier $f_m$ using a base method (Weak Learner) and the weighted training data ${(x_i, y_i, \gamma_i^m)}_{i=1}^N$\;
+  2. Recompute the weights $\gamma^{m+1}$, where the weights of wrongly classified training points are usually increased
+  and the weights of correctly classified points are decreased\;
+  3. Compute coefficient $\alpha_m$ for the current Weak Learner $f_m$, which is either $1$ or depends on the 
+  error of the classifier\;
+ }
+ \caption{General Boosting algorithm}
+\end{algorithm}
+The intuition about Boosting is that it tries to aggregate classifiers which in general perform not good into a stronger 
+classifier by paying more attention to the points which are wrongly classified at each iteration of the algorithm. That's why
+the algorithm~\ref{GeneralBoostingAlg} increases weights for incorrectly classified points at step 2 to make the new Weak Learner
+to try to perform well exactly on this points, as the other points, which have low weights, were already correctly classified 
+at previous iterations.
+
+From the statistical point of view iterative updates of Boosting can be seen as minimization of a convex loss function 
+over a convex set of functions or descent in function space:
+\begin{equation}
+ F(x) \mapsto F(x) + \alpha_m f_m(x),
+\end{equation}
+where 
+\begin{enumerate}
+ \item $f_m$ is a descent direction based on the current $F$,
+ \item $\alpha_m$ is the step-size in the descent step
+\end{enumerate}
+Particularly, the loss being optimized by the Boosting algorithm is essentially the empirical exponential loss of the
+final classifier $F$:
+\begin{equation}
+ L(F) = \frac{1}{N}\sum_{i=1}^N exp{(-y_i*F(x_i))}
+\end{equation}
+
+There is a large variety of particular implementations of the Boosting algorithm~\ref{GeneralBoostingAlg}. One of the most popular
+implementations are AdaBoost~\cite{Freund1996} (which stands for Adaptive Boosting) and GentleBoost. The latter one has a 
+real-valued output (whereas in AdaBoost all WeakLearners must be binary-valued functions), which can be seen as the 
+confidence of the classifier about certain classes. And besides, with further per pixel normalization its output can be 
+converted into a probability distribution, which in turn can be used in some other enhancing algorithms, which are 
+described later in this work.
+
+The GentleBoost algorithm looks like this:
+
+\begin{algorithm}[H]
+  \label{GentleBoostAlg}
+ \SetAlgoLined
+ \KwData{a set of training points ${(x_i, y_i)}_{i = 1}^{N}$, a \emph{real-valued} Weak Learner 
+ $f(x) \colon \mathcal{X} \mapsto \mathbb{R}$, number of iterations $M$}
+ \KwResult{final classifier $F(x) = \mathrm{sign}(\sum_{m=1}^{M}f_m(x))$}
+ initialize weights: $\gamma_i^1 = \frac{1}{N}, i = 1, \dotsc, N$\;
+ \For{$m \leftarrow 1$ \KwTo $M$}
+ {
+  1. Fit the Weak Learner $f_m(x)$ into the weighted training data ${(x_i, y_i, \gamma_i^m)}_{i=1}^N$
+  (Weak Learner uses weighted squared loss $L(f_m) = \sum_{i=1}^{N}\gamma_i {(y_i - f_m(x_i))}^2$\;
+  2. Update the weights $\gamma^{m+1}$ as\\
+  $\gamma_i^{m+1} = \gamma_i^m \exp{(-y_i f_m(x_i))}$\;
+  3. Re-normalize $\gamma$ so that $\sum_{i=1}^{N}\gamma_i^{m+1} = 1$\;
+ }
+ \caption{GentleBoost algorithm}
+\end{algorithm}
+
+Then the binary classification can be performed just as $\mathrm{sign}(F(x))$. In case of $K$-class classification one
+builds $K$ different boosting classifiers (built using one-vs-all strategy). Then, at test time, every sample is put into each
+of the $K$ boosting classifiers resulting in a vector $c \in \mathbb{R}^K$ of confidences of each classifier in the sample
+belonging to a class $i, i = 1,\dotsc, K$. After this the final prediction can be done as:
+\begin{equation}
+ k = \argmax_{i \in [1,\dotsc, K]} c_i
+\end{equation}
+At the same time vector $c$ can be converted to a probability distribution, where high confidence means high probability of
+certain classes.
+
+An interesting observation can be done for the GentleBoost algorithm:
+\begin{proposition}
+  \label{GentleBoostProp}
+ If the Weak Learner $f_m$ is real-valued, $f_m(x) \colon \mathcal{X} \mapsto \mathbb{R}$, then the update step
+ $F_{m+1}(x) = F_m(x) + f_m(x)$ of the GentleBoost algorithm is an approximate Newton step in order to minimize
+ the empirical exponential loss.
+ \begin{proof}
+  We can expand the risk up to the second term using the Taylor series of $\exp{(x)}$,
+  \begin{align}
+   R(F + f) &= \mathbb{E}\left[ L(F + f) \right] = \mathbb{E}\left[ \exp{(-y(F(x) + f(x))} \right] =\nonumber \\ 
+   &= \mathbb{E}\left[ \exp{(-y F(x))}(1 - y f(x) + \frac{1}{2}{f(x)}^2) \right]. \label{riskExp}
+  \end{align}
+  At each iteration we are trying to find such $f$ which minimizes the above risk $ f = \argmin_{\hat{f} \in \mathcal{F}} R(F + \hat{f})$,
+  and observing that the first term in parenthesis in~\eqref{riskExp} does not depend on $f$ we can modify it without 
+  changing the minimizer,
+  \begin{align}
+   &\mathbb{E}\left[ \exp{(-y F(x))}(1 - y f(x) + \frac{1}{2}{f(x)}^2) \right] =\nonumber \\
+   &= \mathbb{E}\left[ \exp{(-y F(x))}(\frac{1}{2} - y f(x) + \frac{1}{2}{f(x)}^2) \right] =\nonumber \\ 
+   &= \mathbb{E}\left[ \exp{(-y F(x))}(y - {f(x)}^2) \right]. \label{finalRisk}
+  \end{align}
+  We also used the fact that $y \in \{ -1, 1\}$, so $y^2 = 1$ always holds. One can notice, that the expression 
+  under expectation in~\eqref{finalRisk} is a weighted squared loss with $\gamma_i = \exp{(-y_i F(x_i))}$ $\Rightarrow$ each
+  Weak Learner minimizes a second order approximation of the exponential loss.
+ \end{proof}
+\end{proposition}
+This proposition~\ref{GentleBoostProp} shows, that it's not just a luck that Boosting happens to work good in practice, but rather
+it has mathematical guarantees to converge and decrease the overall error of the boosted classifier, provided that the updates
+of weights $\gamma$ (and coefficients $\alpha$ for some implementations) are done in a proper way.
+
+\subsection{Random Forests}
+\label{subsec:random_forests}
+Random Forests have gained a lot of attention recently, particularly in the
+filed of Semantic Image Segmentation. The main reasons are that Random Forests show
+very good performance in terms of accuracy (at the level or even better than
+Boosting) and being very fast both to train and test. Random Forests were
+introduced by L. Breiman~\cite{Breiman2001} and further developed by P. Geurts
+\etal~\cite{Geurts2006}.
+\begin{definition}
+ A \emph{Random Tree} is a function $ f(x, \theta_m) \colon \mathcal{X}
+\to \mathcal{Y} $ or shortly $ f_m(x) $, where $ \mathcal{X} = \mathbb{R}^d
+$ and $ \mathcal{Y} = \lbrace 1, 2,\dotsc, n \rbrace$ and $ \theta_m $
+represents a set of parameters learned while training.
+\end{definition}
+In the above definition $ \theta_m $ denotes any
+stochastic parameters (like splitting functions, splitting values, \etc.) which
+define behavior of nodes of the tree while traversing each sample down the tree.
+Then we can say:
+
+\begin{definition}
+ A \emph{Random Forest} is a collection of $ M $ Random Trees $ \mathcal{F} = \lbrace
+f_1, f_2,\dotsc, f_M \rbrace $.
+\end{definition}
+
+On the other hand, Random Tree is a binary Decision tree with \emph{decision} and \emph{leaf}
+nodes. Every decision node has an associated test of the form $ g(x) > \theta $
+which decides on the left/right propagation of a sample. $ g(x) $ can be any
+real- or vector-valued function which output should be meaningful in terms of
+comparison with parameter $ \theta $. Leaf (or terminating) nodes hold
+probability distribution (or labeling). Detailed algorithms for building Random Forests can be found in Appendix~\ref{AppendixA}.
+
+{\bf Training} \quad The algorithm starts at the root node having all the train
+instances (or a fraction of them in order to reduce correlation between
+different trees) $ S $ and then tries to separate the given set into two $ L $
+(left) and $ R $ (right) sub-sets (that is if $ L \subseteq S $ then $ R = S \setminus L $) so that to decrease the overall impurity:
+\begin{equation}
+ L(S) = \frac{\lvert R \rvert}{\lvert S \rvert} E(R) + \frac{\lvert L
+\rvert}{\lvert S \rvert} E(L) \label{deacrese_impurity}
+\end{equation}
+$E(S)$ can be any measure of uncertainty. The usual choices are the Shannon
+Entropy $ E(S) = -\sum_{i=1}^{n} p_i \log p_i $ or Gini index $ E(S) =
+\sum_{i=1}^{n} p_i(1 - p_i) $, where $ n $ is the number of classes and $ p_i $
+is the probability of $ i $-th class in the given set $ S $. Finding the best
+split is basically a combinatorial $ n^p $-hard problem, because one needs to
+try every possible splitting function with every possible parameter. This is
+unreasonable in practice, so the general approach is to uniformly randomly
+sample a splitting function, its parameters (if any) and a splitting value (that
+is why Decision Trees built in such way are called Random). This is done $ K $
+times and then the splitting setting $ (g_i(x), \theta_i) $ which results in the
+highest impurity decrease is chosen and assigned to the decision node. P. Geurts
+\etal~\cite{Geurts2006} showed that taking $ K = \lceil\sqrt{d}\rceil $, where $ d $ 
+is the dimensionality of the feature
+space, gives a suboptimal solution. This procedure goes on in a recursive manner
+until some stopping criterion is satisfied: maximum depth $ D $ is reached, the
+number of samples in the node is less than some integer value $ n $, the
+impurity of the node $ E(S) $ falls below some threshold, \etc. Then a leaf node
+is grown and assigned a probability distribution (or labeling) of classes from
+the samples that reached the leaf node.
+
+As the training samples may be unbalanced, that is
+the number of instances of each class is not the same, it is reasonable to compute weights
+$ w_c = {\sum_{i=1}^{N}[y_i = c]}^{-1} $, where $ N $ is the number of samples,
+for each class $ c \in \mathcal{Y} $ and multiply the 
+distribution in all nodes with these weights, followed by $L_1$-normalization to ensure that
+the result of this operation is a probability distribution. 
+This is quite a natural assumption, because some classes (like grass, sky, road, \etc.) may occupy
+a lot of space on an image, while others (like pedestrian, a pet, poles, \etc.) may be not that prominent,
+but still very important to be classified correctly. And for a classifier interested only in total error
+the most profitable strategy would be to predict rather a more frequent class than a rearer one. We think, 
+that all classes should be treated equally.
+This procedure usually slightly increases the total error, but significantly decreases per 
+class average error, which is a good trade-off in general. 
+
+Due to the way Random Trees are grown, one can put new samples into the tree
+even at test time, thus enabling to adapt the whole classifier to changing
+circumstances without the need to retrain unlike all other classifiers. This
+procedure is called on-line learning (A. Saffari \etal~\cite{Saffari2009}).
+
+{\bf Predicting} \quad Given a Random Forest and a number of
+samples the algorithm traverses each of the samples through each of the Random
+Trees until
+terminating in a leaf node and retrieving the corresponding probability
+distribution associated with that leaf node. Then all the probability
+distributions from all the trees of the ensemble are averaged per sample:
+\begin{equation}
+ p(y|x) = \frac{1}{T}\sum_{m=1}^{M}p_M(y|x)
+\end{equation}
+Finally, the class which has the highest probability is chosen for each sample:
+\begin{equation}
+ C(x) = \argmax_{c \in \mathcal{Y}} p(c|x)
+\end{equation}
+One can notice here that each sample can be tested in each tree absolutely
+independently which gives a way for efficient parallelization.
+
+Breiman~\cite{Breiman2001} gives the following definition concerning Random Forests:
+\begin{definition} 
+ The \emph{margin function} for a random forest is defined as
+ \begin{equation}
+  mr(x, y) = p(y | x) - \max_{\substack{k \in \mathcal{Y} \\ k \neq y}}p(k | x) \label{margin_func}
+ \end{equation}
+ and the strength of the set of classifiers $ \mathcal{F} = \lbrace f_1, f_2,\dotsc, f_M \rbrace $ is 
+ \begin{equation}
+  s = E_{(\mathcal{X}, \mathcal{Y})}mr(x, y). \label{strength}
+ \end{equation}
+\end{definition}
+The margin function~\eqref{margin_func} is basically the difference of true label probability and the highest probability of
+a class other than the true one. So, it defines the confidence of the whole classifier, and, obviously, for a correct
+classification $ mr(x, y) > 0 $ should hold. Using margin function~\eqref{margin_func} the generalization error can be defined as:
+
+\begin{equation}
+ GE = E_{(\mathcal{X}, \mathcal{Y})}(mr(x, y) < 0),
+\end{equation}
+
+where the expectation is measured over the entire distribution of $ (x, y) $.
+
+Using the definition of the strength~\eqref{strength} Breiman~\cite{Breiman2001} defines an upper bound on the 
+generalization error as:
+
+\begin{equation}
+ GE \leq \bar{\rho}\frac{1 - s^2}{s^2},
+\end{equation}
+where $\bar{\rho}$ is the mean correlation between pairs of trees in the Random Forest (measured on how similar their
+predictions are). This is useful for analysis of the overall performance of the Random Forest as well as individual 
+Random Trees. Ideally, in order to get as low as possible generalization error the individual trees should be highly 
+independent and have good accuracy (strength). That is why each tree usually gets only a small portion of the whole training 
+set in order to decrease correlation among trees.
+
+Besides being accurate and fast, Random Forests also possess a number of
+properties we find very useful for our problem:
+\begin{itemize}
+ \item They can handle noisy training data (wrong labels) very well. Being
+tolerant to label
+errors without significant loss in accuracy is a nice property on its own, but
+it is a crucial one for us.
+ \item They are very fast both for training and testing. It was shown by T.
+Sharp~\cite{Sharp2008} that both training and testing can be easily parallelized on GPU
+resulting in very little running times which open way to real time application
+of Random Forests as a classifier.
+ \item As shown by A. Saffari \etal~\cite{Saffari2009} it is possible to perform
+on-line learning during right during testing.
+\end{itemize}
+
+It is worth mentioning, that due to the way the splitting algorithm works with the train samples there is one significant
+drawback of Random Forests. As at the splitting node the algorithm might access potentially any sample from the train set
+and there is no way to somehow predict which samples might be used, the whole train set should always be stored in operating
+memory of the computer. And when parallelizing the building algorithm, for example by letting each of the trees to be built
+independently in a separate thread/process, one must assure that any thread gets access to the whole data it needs. For example,
+when separating the work between several computers without shared memory, a copy of the whole train set should be kept in the
+memory of each of the computers, thus creating additional traffic on the net and introducing some latency. When it comes
+down to parallelization of the algorithm on a GPU, one should always remember about this memory constraint, because modern
+graphic card have quite limited amount of available memory. It is actually an ongoing research on how to benefit from
+parallelization of the Random Forest building algorithm without dealing with the memory constraining problems.
+
+But the main disadvantage of Random Forests is that as every tree is essentially a binary tree,
+then the upper bound on the number of elements (nodes) of the Random Forest is $\mathcal{O}(M 2^{D+1})$. Which is
+quite a large number on its own, but also grows exponentially in the maximum depth $D$. For the sake of optimization
+we use array representation of each binary tree and this means that we have to allocate array of length $2^{D+1} - 1$ elements
+before even starting to build the tree. Depending on the platform the implementation of Random Forest aims at, one should carefully
+choose the maximum depth $D$ both in order to build a good classifier, but also not to run out of memory.
+
+
+\subsection{Structured Class-Label Prediction}
+\label{scl_description}
+In all ordinary approaches in Semantic Image Segmentation the pixel's label is taken as the label of the sample, thus making
+each sample absolutely independent in terms of label space $\mathcal{Y}$. But the natural observation says that usually
+label space $\mathcal{Y}$ shows some topological structure, which can be used as a good clue when segmenting an unseen image.
+Although this topological structures are present already in any training set as a part of ground truth images, they are still
+not considered as an important part of learning process by most of the classification approaches. As a result, most of such
+approaches result in very noisy labeling, \eg see Figure~\ref{fig:noisy_example}. An approach overcoming this shortage was proposed
+by P. Kontschieder \etal~\cite{Kontschieder2011}. They propose an algorithm, which uses \emph{label patches} around each training
+pixel instead of just its single label. An example can be seen in Figure~\ref{fig:label_patch_example}.
+
+Their \emph{Structured label space} $\mathcal{P}$ consists of $ d \times d $ label patches, \ie 
+$ \mathcal{P} = \mathcal{Y}^{d \times d}$. With $p_{(i,j)}$ the denote the $(i, j)$-entry of a label patch $p \in \mathcal{P}$.
+Additionally, they index the entries of every patch in a way that position $(0, 0)$ denotes the center of the patch and $(i, j)$
+are given relative to the central position. Using the new labels every training sample has now form of $(x, p)$ with 
+$x \in \mathcal{X}$ and $p \in \mathcal{P}$. Basically, this approach redefines the way any learning algorithm works
+with the labels. For example, they use an ordinary Random Forest with patches of simple color-based features~\ref{raw_features}.
+But in general with certain adaptations any other algorithm can be changed in order to work with the new structured
+label space $\mathcal{P}$. As we are also using Random Forest in this work, we adopted their approach.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.5\textwidth] {images/label_patch_example}
+  \caption[An example of a patch label]{{\bf An example of a patch label} (courtesy of~\cite{Kontschieder2011}). 
+  Whereas ordinary approaches would consider only label of a pixel $(u, \upsilon)$, they propose to use the local neighborhood
+  $\mathbf{p}$ and therefore learn valid labelling transitions among adjacent object categories. Here: person, building,
+  bicycle.}
+  \label{fig:label_patch_example}
+\end{figure}
+
+{\bf Training} \quad As it was mentioned in the previous paragraph in case of Random Forests incorporation of the new
+approach is very easy. As the features are dealt with in the same way as before, all splitting procedures and growing of trees
+are done in the same manner as before. The only difference at this step is that one label patch $\pi$ is stored in 
+each leaf node instead of distribution of classes. For example, consider a number of label patches $\mathcal{P}_t \subseteq \mathcal{P}$
+that reached a leaf node $t$ during the procedure of growing a tree. Then one patch which represents the mode of distribution
+of patches in $\mathcal{P}_t$ is selected as the final labeling.
+In order to keep the cost of this step low they propose to use the pixel independence assumption when computing the joint
+probability of a patch $p$ as
+\begin{equation}
+ P(p | \mathcal{P}_t) = \prod_{i, j} P^{(i, j)}(p_{(i, j)} | \mathcal{P}_t), \label{marginal_probability}
+\end{equation}
+where $P^{(i, j)}(p_{(i, j)} | \mathcal{P}_t)$ represents the marginal class distribution of pixel position $(i, j)$ over 
+all label patches $\mathcal{P}_t$. The label patch $\pi$ is finally selected for the leaf node $t$ as the one in $\mathcal{P}_t$
+which maximizes the the joint probability as
+\begin{equation}
+ \pi = \argmax_{p \in \mathcal{P}_t} P(p | \mathcal{P}_t).
+\end{equation}
+
+An example of such patch selection is given in Figure~\ref{fig:patch_selection_example}. In order for the splitting algorithm of
+Random Forest to work correctly, in each splitting node equation~\eqref{deacrese_impurity} should be evaluated and as this 
+function awaits some probability distribution over one pixel instead of over patches a random patch position $(i, j)$ is chosen 
+and marginal probability $P^{(i, j)}(\cdot | \mathcal{P}_t)$ is used.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.4\textwidth] {images/simple_fusion}
+  \caption[Fusion of structured predictions]{{\bf Fusion of structured predictions} (courtesy of~\cite{Kontschieder2011}). 
+  Each pixel collects class hypothesis from the structures labels predicted for itself and neighboring pixels, which
+  have to be fused into a single class prediction. For clarity reason, only 5 out of 9 label patches are drawn.}
+  \label{fig:simple_fusion}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.8\textwidth] {images/patch_selection_example}
+  \caption[Label patch selection based on joint probability]{{\bf Label patch selection based on joint probability}
+  (courtesy of~\cite{Kontschieder2011}). 
+  Example of label patches reaching a leaf during training. A label patch $\mathbf{\pi}$ is selected based on the joint probability
+  distribution of labels in the leaf.}
+  \label{fig:patch_selection_example}
+\end{figure}
+
+{\bf Predicting} \quad At test time every sample is routed through each tree of the forest $\mathcal{F} = \{f_1,\dotsc, f_M\}$
+and a bunch of label patches $\mathcal{P}_{\mathcal{F}}$ is gathered. Then again the patch which maximizes the joint probability
+is chosen
+\begin{equation}
+ p = \argmax_{\hat{p} \in \mathcal{P}_{\mathcal{F}}} P(\hat{p} | \mathcal{P}_{\mathcal{F}}),
+\end{equation}
+where $P(\hat{p} | \mathcal{P}_{\mathcal{F}})$ is defined as~\eqref{marginal_probability}. As opposed to the standard semantic
+segmentation algorithms which assign one label to every test sample, structured class-label classifier produces a label patch 
+which  also covers some neighboring pixels. Particularly, if a label patch $p$ has width $d \times d$ dimensions, then every pixel
+(except for the boundary ones of course) is covered by exactly $d^2$ label patches. So, here the question of fusion of those 
+patches arise. One can think of many ways of doing this but we adopt the simplest, but still good performing, strategy as proposed
+by the authors, when the most voted class per pixel is selected as the pixel label. An example of this fusion approach can be seen
+in Figure~\ref{fig:simple_fusion}.
+
+We found this paper to be particularly interesting in our task, because this new approach of dealing with labels was easy to
+incorporate into existing framework of our Random Forest implementation and we are interested in scenarios of road scenes
+segmentation, which always show well-structured patterns especially for road, lane markings, cars, \etc., so being able
+to learn this is very helpful in our task.
+
+\section{Pairwise Potentials}
+\begin{figure}[t]
+ \centering
+ \begin{subfigure}[c]{0.24\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/results/msrc_rf/1_9_s}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.24\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/results/msrc_rf/1_9_s_GT}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.24\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/results/msrc_rf/1_9_s_cl}
+ \end{subfigure}
+ \\
+ \begin{subfigure}[c]{0.24\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/results/msrc_rf/2_14_s}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.24\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/results/msrc_rf/2_14_s_GT}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.24\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/results/msrc_rf/2_14_s_cl}
+ \end{subfigure}
+ \\
+ \begin{subfigure}[c]{0.24\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/results/msrc_rf/10_31_s}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.24\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/results/msrc_rf/10_31_s_GT}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.24\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/results/msrc_rf/10_31_s_cl}
+ \end{subfigure}
+ \caption[Example of noisy labelings]{{\bf Example of noisy labelings}.
+ Columns denote from left to right: original image, ground truth image, output of a classifier (Random Forest in this case).}
+ \label{fig:noisy_example}
+\end{figure}
+
+Figure~\ref{fig:noisy_example} shows that even a good classifier but which works on individual pixels produces a labeling which
+is subject a lot of noise. But the real world is in general piecewise smooth, so the intuition is that the resulting labeling
+of an image should be also piecewise homogeneous in its labels. As unary potentials cannot cope with this problem on their own
+an extension to the framework is necessary by adding pairwise potentials between different pixels in order to let them influence
+their peers and create a more natural looking segmentation. The most conventional approach is to connect each pixel only to a
+limited number of pixels in its neighborhood~\cite{Shotton2009, Verbeek2007}. The main reason for this is the restriction
+of the inference time which remain linear in the number of variables complexity as long as there is some fixed (relatively
+small) neighborhood of each pixel. This setting still allows (up to some fixed constant) linear inference time, but if one
+tries to connect each pixel to every other pixel in the image, the inference complexity becomes quadratic and therefore 
+totally impractical, because it takes hours or even days~\cite{Krahenbuhl2011} using traditional approaches like
+Markov Chain Monte Carlo sampling or graph cut based inference algorithms.
+
+\subsection{Fully connected CRFs}
+\label{fc_crf_method}
+Basic CRF models are composed of unary potentials on individual pixels or image patches and pairwise potentials on neighboring
+pixels or patches~\cite{Shotton2009, Fulkerson2009, Gould2008, Verbeek2007}. The resulting \emph{adjacency} CRF structure 
+is limited in its ability to model long-ranged connections within the image and generally results in excessive 
+smoothing of object boundaries. Instead, Philipp Kr\"ahenb\"uhl and Vladlen Koltun~\cite{Krahenbuhl2011} propose
+to use a \emph{fully connected} CRF that establishes pairwise potentials on all pairs 
+of pixels in the image. An example of a fully connected CRF can be seen in Figure~\ref{fig:fully_connected_crf} and looks
+much more complicated in comparison with a usual approcah like~\ref{fig:simple_crf}.
+
+The main restriction here is inference time because even a low resolution image will have tens of thousands of nodes and billions of
+edges and the inference algorithm has complexity $\mathcal{O}(n^2)$ in the number of vertices. In their paper they propose
+a highly efficient inference algorithm for fully connected CRF models in which the pairwise edge potentials are defined by
+a linear combination of Gaussian kernels in an arbitrary feature space. The algorithm is based on a mean-field approximation
+to the CRF distribution. This approximation is iteratively optimized through a sequence of message passing steps, each of which 
+updates a single variable by aggregating information from all other variables. Their main observation in this context was that
+a mean field update of all variables in a fully connected CRF can be performed using Gaussian filtering in feature space. This
+allowed to reduce the computational complexity of message passing from quadratic to linear in the number of variables by
+employing efficient approximate high-dimensional filtering~\cite{Adams2010}. The resulting approximate inference algorithm is
+sublinear in the number of edges in the graph.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.7\textwidth] {images/fully_connected_crf}
+  \caption[Fully connected Conditional Random Field]{This is an example of a fully connected Conditional Random Field over a 4x3 image.
+  $\mathrm{Y}_0,\dots, \mathrm{Y}_{11}$ denotes unkown labels of pixels,
+  $\mathrm{X}_0,\dots, \mathrm{X}_{11}$ denotes observations, grey color means that variable $\mathrm{X}_i$
+  is conditioned on. Here every pixel is connected to every other pixel in the image. The number of edges grows qaudratically
+  in the number of pixels.}
+  \label{fig:fully_connected_crf}
+\end{figure}
+
+As it was mentioned in~\ref{sec:crf_definition} probability of a certain labeling $\mathbf{Y} \in \mathcal{L}^N$ can be expressed as:
+\begin{equation}
+  P(\mathbf{Y} | \mathbf{X}; \theta) = \frac{\exp{ -\sum_{c \in \mathcal{C}_G} \phi_c(\mathbf{Y}_c | \mathbf{X}; \theta)}} {Z(\mathbf{X}; \theta)},
+\end{equation}
+where the term $E(\mathbf{Y} | \mathbf{X}; \theta) = \sum_{c \in \mathcal{C}_G} \phi_c(\mathbf{Y}_c | \mathbf{X}; \theta)$
+is usually called the Gibbs energy of the labeling $\mathbf{Y}$. The maximum a posteriori (MAP) labeling of the random
+field is $\mathbf{Y} = \argmax_{\hat{Y} \in \mathcal{L}^N} P(\hat{Y} | \mathbf{X}; \theta)$.
+
+Then in the fully connected pairwise CRF model, where $G$ is a complete graph on $\mathbf{Y}$ and $\mathcal{C}_G$ is the
+set of all unary and pairwise cliques, the Gibbs energy can be written as
+\begin{equation}
+ E(\mathbf{Y} | \mathbf{X}; \theta) = \sum_{i} \psi_u(y_i | x_i; \theta) + \sum_{j \neq i} \psi_p(y_i, y_j | x_i, x_j; \theta),
+\end{equation}
+where $i$ and $j$ range from $1$ to the number of pixels in the image $N$. The unary potential $\psi_u(y_i | x_i; \theta)$ is
+computed independently for each pixel by a classifier that produces a probability distribution over the label assignment $y_i$
+given pixel observation $x_i$.
+
+The pairwise potentials in their model have the form
+\begin{equation}
+ \psi_p(y_i, y_j | x_i, x_j; \theta) = \mu(y_i, y_j) k(\mathbf{f}_i, \mathbf{f}_j) = \mu(y_i, y_j) \sum_{m=1}^{K} \omega^{(m)} k^{(m)}(\mathbf{f}_i, \mathbf{f}_j), \label{sum_of_gaussians}
+\end{equation}
+where each $k^{(m)}$ is a Gaussian kernel 
+$k^{(m)}(\mathbf{f}_i, \mathbf{f}_j)) = \exp{\left(-\frac{1}{2}\left(\mathbf{f}_i - \mathbf{f}_i\right)^T \Lambda^{(m)}\left(\mathbf{f}_i - \mathbf{f}_i\right)\right)}$,
+the vectors $\mathbf{f}_i$ and $\mathbf{f}_j$ are feature vectors of pixels $i$ and $j$ correspondingly in an arbitrary 
+feature space which are the result of some feature transform applied to observations $x_i$ and $x_j$, 
+$\omega^{(m)}$ are linear combination weights, and $\mu$ is a label compatibility function. Each kernel
+$k^{(m)}$ is characterized by a symmetric, positive-definite matrix $\Lambda^{(m)}$, which defines its shape. A simple label
+compatibility function $\mu$ is given by Potts model, $\mu(y_i, y_j) = [y_i \neq y_j]$.
+
+For multi-class image segmentation and labeling they use contrast-sensitive two-kernel potentials, defined in terms of color
+vectors $I_i$ and $I_j$ and positions $p_i$ and $p_j$:
+\begin{equation}
+ k(\mathbf{f}_i, \mathbf{f}_j) = \omega^{(1)}\exp{\left( -\frac{\abs{p_i - p_j}^2}{2\theta_{\alpha}^2} -\frac{\abs{I_i - I_j}^2}{2\theta_{\beta}^2}\right)} + \omega^{(1)}\exp{\left( -\frac{\abs{p_i - p_j}^2}{2\theta_{\gamma}^2}\right)},
+\end{equation}
+where $\mathbf{f} = \{I_R, I_G, I_B, p_x, p_y\}$ which contains RGB color information of a pixel at location $(x, y)$.
+The first term in this equation (\emph{appearance kernel}) is inspired by the observation that nearby pixels with similar colors
+are likely to have the same labels. The degrees of nearness and similarity are controlled by parameters $\theta_{\alpha}$ and
+$\theta_{\beta}$. The second term (\emph{smoothness kernel}) removes small isolated regions~\cite{Shotton2009}.
+
+In general, the proposed  framework of this form~\eqref{sum_of_gaussians} is a very powerful and highly customizable tool for
+expressing almost any possible combination of pixels' interactions, despite being constrained only to Gaussian-based potentials.
+
+Instead of computing the exact distribution $P(\mathbf{Y} | \mathbf{X}; \theta)$, the mean field approximation computes a
+distribution $Q(\mathbf{Y})$ that minimizes the KL-divergence $\mathbf{D}(Q || P)$ among all distributions $Q$ that can be
+expressed as a product of individual marginals $Q(\mathbf{Y}) = \prod_i Q_i(y_i)$. Minimizing the KL-divergence, while
+constraining $Q(\mathbf{Y})$ and $Q_i(y_i)$ to be valid distributions, yields the following iterative update equation:
+\begin{equation}
+ Q_i(y_i = l) = \frac{1}{Z_i} \exp{\left( -\psi_u(y_i) - \sum_{l' \in \mathcal{L}}\mu(l, l')\sum_{m=1}^K\omega^{(m)}\sum_{j \neq i}k^{(m)}(\mathbf{f}_i, \mathbf{f}_j)Q_j(l') \right)}.
+\end{equation}
+
+This update equation leads to the following iterative algorithm:
+
+\begin{algorithm}
+ \SetAlgoLined
+ initialize $Q$\;
+ \While{not converged}
+ {
+  $\tilde{Q}_i^{(m)}(l) \leftarrow \sum_{j \neq i}k^{(m)}(\mathbf{f}_i, \mathbf{f}_j)Q_j(l)$ for all $m$;\tcp{message passing step}
+  $\hat{Q}_i(y_i) \leftarrow \sum_{l \in \mathcal{L}}\mu^{(m)}(y_i, l)\sum_{m=1}^K\omega^{(m)}\tilde{Q}_i^{(m)}(l)$;\tcp{compatibility transform}
+  $Q(y_i) \leftarrow \exp{\left( -\psi_u(y_i) - \hat{Q}_i(y_i) \right)}$;\tcp{local update}
+  normalize $Q_i(y_i)$\;
+ }
+ \caption{Mean field approximation algorithm in fully connected CRFs}
+\end{algorithm}
+
+A closer look at the message passing step helps to realize that this process can be rewritten in the form of convolution
+with a Gaussian kernel $G_{\Lambda^{(m)}}$ as follows
+\begin{align}
+ \tilde{Q}_i^{(m)}(l) = &\sum_{j \neq i}k^{(m)}(\mathbf{f}_i, \mathbf{f}_j)Q_j(l) = \sum_{j \in V}k^{(m)}(\mathbf{f}_i, \mathbf{f}_j)Q_j(l) - Q_i(l) = \nonumber \\
+ &\left[G_{\Lambda^{(m)}} \ast Q(l)\right](\mathbf{f}_i) - Q_i(l).
+\end{align}
+They subtract $Q_i(l)$ from the convolved function $\bar{Q}_i^{(m)}(l) = \left[G_{\Lambda^{(m)}} \ast Q(l)\right](\mathbf{f}_i)$ because convolution sums over all elements,
+while message passing does not sum over $Q_i$.
+
+It is well known that convolution can be performed efficiently in Fourier domain by just multiplication of complex values
+of the transformed signal with the corresponding values of the transformed convolution kernel, and the discrete 
+Fourier transform (DFT) can be efficiently performed in time $\mathcal{O}(n\log{n})$, \eg using a freely available implementation
+FFTW~\cite{fftw}. But the authors went even farther and made use of a paper by A. Adams \etal~\cite{Adams2010} who presented
+an algorithm which allows to perform high-dimensional Gaussian convolution in linear in the number of elements time
+$\mathcal{O}(d^2 N)$, thus allowing to perform message passing step of the inference algorithm in linear time and making
+the complexity of the whole inference algorithm linear in the number of variables. This is the main reason why the proposed
+inference algorithm is so highly efficient. And also the reason why all potentials in their framework can be only Gaussians.
+
+In this work we used the implementation provided by the authors which can be found at
+\url{http://graphics.stanford.edu/projects/densecrf/}.

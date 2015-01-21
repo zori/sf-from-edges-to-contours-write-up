@@ -1,0 +1,353 @@
+\chapter{A New More Challenging Road Scenes Dataset}
+\label{Chapter4}
+
+In order to study the problem of adaptation we needed to find a dataset, which would exhibit considerable amount of appearance variation still
+representing the same scenario. Image segmentation is a very old and very well studied field of Computer Vision, but we were not able to find
+a dataset which would suit the above mentioned conditions. Conventional datasets are either just a collection of different images depicting
+different objects which have very little in common and such images cannot by put into one scenario, or the images in a dataset do not 
+exhibit sufficient variations of visual conditions. Eventually, we decided to collect our own dataset of road scenes' images, which would
+feature the visual conditions we were looking for and represent one coherent scenario. We decided to take images of roads in different conditions,
+because this can allow direct application of our research in real-life.
+
+\section{Existing Datasets}
+There exist a large number of various datasets compiled on purpose for testing different segmentation approaches representing
+different conditions. The most popular datasets for testing general purpose segmentation algorithms are the MSRC~\cite{MSRC} and
+VOC~\cite{VOC} datasets. In our work we made use of the MSRC dataset, as it was also used as the test set in all the original papers
+of the methods we implemented, to check the quality of our implementations.
+
+We think that the most suitable setting for investigating into adaptive techniques is road scenes datasets. First of all, such datasets 
+represent the field of application of our research which benefits most of all from the ability to adapt to changing visual conditions, which can
+help make, for example, driving safer. Besides, such datasets exhibit the inherent process of evolution of visual conditions through time
+which is the ideal setting for any adaptive algorithm, as the adaptation cannot be done instantly.
+
+\subsection{The Microsoft Research Cambridge (MSRC) dataset}
+The MSRC~\cite{MSRC} dataset is a publicly available collection of photographs taken at different parts of the world and
+capturing a large number of objects classes. It contains 591 images and 23 classes, but all researchers leave out horse
+and mountain classes, as there are
+too few samples of them for training, so it is difficult for any classifier to faithfully learn them. But even the resulting 21
+classes represents a wide variety of objects of different nature: building, grass, tree, cow, sheep, sky, airplane, water,
+face, car, bicycle, flower, sign, bird, book, chair, road, cat, dog, body, boat. The main disadvantage of this dataset
+is the fact that the provided ground truth images show very rough labeling of the objects. Besides, not all pixels are labeled
+and one has to account for background (``void'') class both while training and testing. For certain methods 
+(like~\cite{Kontschieder2011}) this may require particular handling of such ``void'' pixels. When testing, the pixels, marked
+as background in the ground truth images, are not considered when computing error rates.
+
+We use this dataset to show that our implementations of the methods described in Chapter~\ref{Chapter3} work exactly (up to the used features and certain
+parameters of the classifiers) as stated in the original articles. We use the standard for this dataset splitting into train and
+test images from~\cite{Krahenbuhl2011} which can be found here
+\url{http://graphics.stanford.edu/projects/densecrf/textonboost/split.zip}, with the only difference that we combine Train and
+Validation set together.
+
+\begin{figure}[t]
+ \centering
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/1_9_s}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/1_9_s_GT}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/8_23_s}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/8_23_s_GT}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/3_26_s}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/3_26_s_GT}
+ \end{subfigure}
+ \\
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/17_22_s}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/17_22_s_GT}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/20_12_s}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/20_12_s_GT}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/20_2_s}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/20_2_s_GT}
+ \end{subfigure}
+ \\
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/19_2_s}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/19_2_s_GT}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/18_22_s}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/18_22_s_GT}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/18_25_s}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/18_25_s_GT}
+ \end{subfigure}
+ \\
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/14_9_s}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/14_9_s_GT}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/10_16_s}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/10_16_s_GT}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/7_24_s}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.16\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/MSRC/7_24_s_GT}
+ \end{subfigure}
+ \caption{Some example images with the corresponding ground truth images from the MSRC~\cite{MSRC} dataset}\label{fig:MSRC_examples}
+\end{figure}
+
+\subsection{Road scenes dataset}
+As our main interest lies in the field of image segmentation of road scenes we used the following dataset from~\cite{Wojek2008}
+to evaluate implemented classification algorithms and features. This dataset was taken by the authors using an auto-mounted
+camera and driving along some German highways and roads, capturing real-time road scenarios. The dataset is available at
+\url{http://www.d2.mpi-inf.mpg.de/tudds}. This dataset contains 88 training labeled images and 88 testing labeled images.
+It also has a number of possible object class to color mappings, but we considered only the mapping which contains 3 classes:
+road, sky and all other category classes were merged into one class called background. We believe that this is a reasonable
+assumption, because we are mainly interested in correct detection of the ``road'' (blue) and all other classes in this case 
+may be
+considered as just ``background'' (green), and we also add ``sky'' (red) class as it occupies a lot of space in the provided 
+images and helps not to turn our task into a binary problem.
+
+We decided to take this dataset as an initial point in our research, because it was captured in real-life situations and we are
+particularly interested in real-life road scenarios. Besides, already this dataset exhibits some visually difficult situations
+like changes in object appearances due to motion blur effect, deep shadows which appear and disappear suddenly, changes in
+lightning conditions like over- or under-saturated regions.
+
+There also exists a dataset from~\cite{Alvarez2010}, but it has very limited labeling, which consists of just
+two classes (``road'' and ``background''), which we found to be not corresponding to our aims. And besides that dataset does not
+show any really difficult visual conditions.
+
+\begin{figure}[t]
+  \centering
+  \begin{subfigure}[c]{0.24\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/EasySet/00000}
+  \end{subfigure}
+  \begin{subfigure}[c]{0.24\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/EasySet/00000_GT}
+  \end{subfigure}
+  \begin{subfigure}[c]{0.24\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/EasySet/00046}
+  \end{subfigure}
+  \begin{subfigure}[c]{0.24\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/EasySet/00046_GT}
+  \end{subfigure}
+  \\
+  \begin{subfigure}[c]{0.24\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/EasySet/00053}
+  \end{subfigure}
+  \begin{subfigure}[c]{0.24\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/EasySet/00053_GT}
+  \end{subfigure}
+  \begin{subfigure}[c]{0.24\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/EasySet/00063}
+  \end{subfigure}
+  \begin{subfigure}[c]{0.24\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/EasySet/00063_GT}
+  \end{subfigure}
+  \\
+  \begin{subfigure}[c]{0.24\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/EasySet/00076}
+  \end{subfigure}
+  \begin{subfigure}[c]{0.24\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/EasySet/00076_GT}
+  \end{subfigure}
+  \begin{subfigure}[c]{0.24\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/EasySet/00085}
+  \end{subfigure}
+  \begin{subfigure}[c]{0.24\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/EasySet/00085_GT}
+  \end{subfigure}
+  \caption{Some example images with the corresponding ground truth images from the~\cite{Wojek2008} dataset}\label{fig:Wojek_examples}
+\end{figure}
+
+\section{The New Dataset}
+
+As we mentioned before, MSRC~\cite{MSRC} dataset is just a collection of pictures of a variety of object classes and it does not
+suit our aim at all. We use it only for evaluation of the implemented methods, as all of them were evaluated on the
+original papers on this dataset. The dataset from~\cite{Wojek2008} represents real-world road scenarios and exhibits visual
+conditions we are looking for, but still it was too little for us. As this dataset has only pictures of asphalted 
+relatively clean highways going through forests or fields and we would like to look into even more challenging conditions.
+
+For this purpose we searched over the Internet, and particularly considered Flickr\textsuperscript{\textregistered}
+(\url{http://www.flickr.com/}), looking for images depicting roads mostly in conditions which we called ``autumn'' and
+``winter'', as ordinary datasets try to avoid such situations. We used the search engine of Flickr\textsuperscript{\textregistered}
+and used such tags as ``dirty roads'', ``autumn roads'', ``roads with mud'', ``winter roads''.
+The result of our searching is 220 images about half of which
+represent roads in autumn conditions and another half roads in winter conditions. Figures~\ref{fig:autumn_examples} 
+and~\ref{fig:winter_examples} show a bunch of examples from each of the ``seasons''. 
+We performed hand labeling of the gathered images using the GNU Image Manipulation Program and a tablet into three classes: 
+road (blue), sky (red), and background (green).
+Unlike in the MSRC~\cite{MSRC} dataset, we treat background as a meaningful class and both learn and
+predict it.
+
+We believe that the introduced dataset introduces new challenges into the segmentation community, the ones which previously
+were omitted. Fore example, our autumn images may have leaves on the road (which are on their own of yellow or red color,
+which is different from the green color seen in the training set), different road cover (like asphalt of different colors
+or simply no any asphalt at all, just ground), sometimes there dirt or snow (or even no any road visible, but rather just
+path in the snow). If autumn images have at least something in common with the train set (and in all our experiments we use
+train set from~\cite{Wojek2008}), then winter images have totally different visual appearance, which must create problems
+for most ordinary off-line methods.
+
+For notational convenience, from here on we use the word \emph{old} when we refer to the training and testing datasets from~\cite{Wojek2008},
+and \emph{new} when we mean the introduced more challenging dataset. And in all the following experiments (apart from the ones on the 
+MSRC~\cite{MSRC} dataset) we always use the \emph{old} training set for training.
+
+
+
+\begin{figure}[t]
+ \centering
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00000}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00000_GT}
+ \end{subfigure}
+ \\
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00002}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00002_GT}
+ \end{subfigure}
+ \\
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00003}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00003_GT}
+ \end{subfigure}
+ \\
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00014}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00014_GT}
+ \end{subfigure}
+ \\
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00065}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00065_GT}
+ \end{subfigure}
+ \caption{Some example images with the corresponding ground truth images from ``autumn'' part of the
+ proposed dataset.}\label{fig:autumn_examples}
+\end{figure}
+
+\begin{figure}[t]
+ \centering
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00128}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00128_GT}
+ \end{subfigure}
+ \\
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00129}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00129_GT}
+ \end{subfigure}
+ \\
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00169}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00169_GT}
+ \end{subfigure}
+ \\
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00188}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00188_GT}
+ \end{subfigure}
+ \\
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00210}
+ \end{subfigure}
+ \begin{subfigure}[c]{0.4\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images/NewSet/00210_GT}
+ \end{subfigure}
+ \caption{Some example images with the corresponding ground truth images from ``winter'' part of the
+ proposed dataset.}\label{fig:winter_examples}
+\end{figure}

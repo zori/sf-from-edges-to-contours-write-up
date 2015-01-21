@@ -1,0 +1,91 @@
+\chapter{Detailed Random Forest Algorithm}
+\label{AppendixA}
+%\lhead{Appendix~\ref{AppendixA}. \emph{Detailed Random Forest Algorithm}}
+Here is the full algorithm for building Random Forests. {\bf TrainRandomForest} (Algorithm~\ref{alg:TrainRandomForest}) function gets the whole 
+bunch of training samples ${(x_i, y_i)}_{i = 1}^{N}$
+and builds $M$ trees each of depth $D$. The main problem here is that the whole sample should be allocated in the memory at once which may require sometimes
+considerable amount of memory. But on the other hand each tree can be build independently in a separate thread allowing for easy parallelization.
+
+{\bf BuildTree} (Algorithm~\ref{alg:BuildTree}) is a function which builds each Random tree independently in a recursive manner. This algorithm can be
+altered easily to better reflect the specific needs of the particular application of the Random Forest. This is a general algorithm.
+
+{\bf GetDistribution} (Algorithm~\ref{alg:GetDistribution}) is a function which takes a particular sample and traverses it through a tree until terminating
+in a leaf node, then it returns the distribution stored in the leaf node. Again, this is a general algorithm which can be altered to store anything apart
+from distribution, \eg label patches or just a single label.
+
+\begin{algorithm}
+ \SetAlgoLined
+ \KwData{a set of training points ${(x_i, y_i)}_{i = 1}^{N}$, maximum depth $D$, 
+ number of trees $M$, number of random tests per node $K$, }
+ \KwResult{final classifier $\mathcal{F} = \lbrace f_1, f_2,\dotsc, f_M \rbrace$}
+ \For{$m \leftarrow 1$ \KwTo $M$}
+ {
+  1. compute per class weights $w$ \\
+  2. Subsample the set of training points to $S = {(x_i, y_i)}_{i = 1}^{N'}$, so that $N' < N$ \\
+  3. $f_m \leftarrow \text{{\bf BuildTree}}(S, D, K, w)$
+ }
+ \caption{{\bf TrainRandomForest} function}
+ \label{alg:TrainRandomForest}
+\end{algorithm}
+
+\begin{algorithm}
+ \SetAlgoLined
+ \KwData{test sample $x$}
+ \KwResult{distribution $p(c | x), c \in \mathcal{Y}$}
+ \While{$node.is\_leaf \neq true$}
+ {
+  perform feature test $g(x)$\;
+  \lIf{$g(x) < \theta$}
+  {
+    proceed to the left subtree\;
+  }
+  \lElse
+  {
+    proceed to the right subtree\;
+  }
+ }
+ \caption{{\bf GetDistribution} function}
+ \label{alg:GetDistribution}
+\end{algorithm}
+
+\begin{algorithm}
+ \SetAlgoLined
+ \KwData{a set of training points $S = {(x_i, y_i)}_{i = 1}^{N'}$, current depth level $level$, number of random tests per node $K$,
+ per class weights $w$}
+ \KwResult{random tree $f(x)$}
+ $distribution \leftarrow$ ComputeDistribution$(S, w)$\;
+ $node\_impurity \leftarrow E(S, w)$\;
+ \If{node\_impurity $<$ threshold or $\abs{S} <$ minN or level = 0}
+ {
+  $node.distribution \leftarrow distribution$\;
+  terminate\;
+ }
+ $level \leftarrow level - 1$\;
+ $score' \leftarrow +\inf$\;
+ \For{$k \leftarrow 1$ \KwTo $K$}
+ {
+  generate random parameters for the split\;
+  choose random feature $d$\;
+  get responses as $S' \leftarrow \{x_d | (x, y) \in S\}$\;
+  find $a = \min S'$ and $b = \max S'$ values\;
+  randomly uniformly sample $c$ from $[a, b]$\;
+  separate $S$ into $L = \{(x, y) | x_d \leq c, (x, y) \in S\}$ and $R = \{(x, y) | x_d > c, (x, y) \in S\}$\;
+  compute score as $score \leftarrow \frac{\abs{R}}{\abs{S}}E(R, w) + \frac{\abs{L}}{\abs{S}}E(L, w)$\;
+  \If{$score < score'$}
+  {
+    $score' \leftarrow score$\;
+    save the splitting parameters into node\;
+    remember best split as $L' \leftarrow L$ and $R' \leftarrow R$\;
+  }
+ }
+ \If{$\abs{L'} > 0$}
+ {
+  \bf{BuildTree}$(L', level, K, w)$\;
+ }
+ \If{$\abs{R'} > 0$}
+ {
+  \bf{BuildTree}$(R', level, K, w)$\;
+ }
+ \caption{{\bf BuildTree} function}
+ \label{alg:BuildTree}
+\end{algorithm}

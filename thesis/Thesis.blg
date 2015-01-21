@@ -1,0 +1,54 @@
+This is BibTeX, Version 0.99d (TeX Live 2012/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: Thesis.aux
+The style file: abbrv.bst
+Database file #1: references.bib.bib
+I was expecting a `,' or a `}'---line 433 of file references.bib.bib
+ :    
+ :    year = 2001
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--empty journal in Basu08
+Warning--empty year in meila01
+You've used 81 entries,
+            2118 wiz_defined-function locations,
+            874 strings with 15013 characters,
+and the built_in function-call counts, 23246 in all, are:
+= -- 1964
+> -- 1307
+< -- 0
++ -- 522
+- -- 430
+* -- 1285
+:= -- 3964
+add.period$ -- 246
+call.type$ -- 81
+change.case$ -- 460
+chr.to.int$ -- 0
+cite$ -- 83
+duplicate$ -- 1062
+empty$ -- 2134
+format.name$ -- 430
+if$ -- 4892
+int.to.chr$ -- 0
+int.to.str$ -- 81
+missing$ -- 75
+newline$ -- 411
+num.names$ -- 162
+pop$ -- 747
+preamble$ -- 1
+purify$ -- 377
+quote$ -- 0
+skip$ -- 584
+stack$ -- 0
+substring$ -- 416
+swap$ -- 144
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 322
+warning$ -- 2
+while$ -- 162
+width$ -- 83
+write$ -- 819
+(There was 1 error message)

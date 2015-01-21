@@ -1,0 +1,44 @@
+\chapter{Conclusions and Future Work}
+\label{Chapter6}
+
+{\bf Summary:} \quad Image segmentation is a very old field of Computer Vision and has been studied for many years already. But despite of all the 
+achieved progress, there are still some particular fields which require further researching. One such fields can be Image segmentation in changing
+visual conditions. We introduced a new road scenes dataset in this work, which shows that in situations when the testing sets exhibits high
+extent of visual appearance variation, which considerably differs from the conditions contained in the training set, standard approaches, which
+rely on the assumption of the constant class distribution over sets, show considerable degrade in accuracy or simply fail. For example, the evaluation
+of the current state-of-the-art method for general purpose scene segmentation by Kr\"ahenb\"uhl \etal~\cite{Krahenbuhl2011} on the proposed dataset and 
+the old dataset from~\cite{Wojek2008} shows at least ten times worse accuracy on the proposed set. And the method based on Random Forest with Texton 
+features from~\cite{Shotton2009} fails on the proposed dataset showing totally unacceptable results. But using advanced features for road detection allows 
+even a simple Random Forest classifier to show good accuracy on the new testing set.
+
+We showed in this work that on-line learning can be used as a powerful tool for performing adaptation to changing visual conditions giving 
+the possibility for tracking the correspondingly changing underlying class distribution. Even the naive approach, when new samples are added
+just based on their confidence scores, already shows improvement of more than 1\% in comparison with the off-line classifier, the one which didn't
+use test set for refining its predicting abilities. We experimented with the Prior-constrained method from~\cite{Alvarez2012}, which considerably
+decreases error for one class (``road''), but at the same time increases error for other (like ``background''). As a result the total error improve 
+is not better than for the naive on-line approach.
+
+To get better results for on-line learning based approaches and get better adaptation to changing conditions, we proposed Bayesian Model Update
+under Structured Scene Prior for tracking the evolving class distribution. This method allowed to get a considerable improvement of 3\% for the 
+total error in comparison with the off-line classifier, and more than 10\% improvement for the error rates of ``road'' and ``sky''.
+
+{\bf Future work:} \quad Based on our experiments several directions for the future work can be outlined.
+First direction is further improvement of the new dataset. Current dataset exhibits considerable amount of visual variations,
+but its main disadvantage is that the images it contains are not captured by a car-mounted camera, and therefore show no temporal consistency between 
+frames. Though such conditions suit the purposes of evaluation and comparisons of different methods (same as conventional MSRC or VOC datasets),
+but it will be interesting to have a dataset captured in real-life conditions and which will have temporal coherency between adjacent frames. This
+will also allow to ensure following application of adaptive algorithms into real-world and industry, because we think that it is exactly automobile
+industry that will benefit most of all from application of such systems.
+
+Additional research is necessary for improving Bayesian Model Update approach. First of all, batched learning should be substituted by a real on-line 
+learning
+with should considerably improve the overall running time of the system. This will also allow to increase the number of particles, which represent
+the distribution over models being tracked  in our proposed Bayesian Model Update approach, which in turn can ensure that the tracking algorithm 
+will not miss the target distribution due to lack of particles' representation. Another important concern is the problem of numerics, because computing
+likelihoods at the weights update stage of the Bayesian Model Update algorithm requires multiplication of a lot of probabilities which may result in
+underflow errors.
+
+We used only a pure Random Forest as a particle in our proposed Bayesian Model Update approach, but this is a general framework which allows to 
+incorporate any other classifier. It can be Boosting, Support Vector Machine, or anything else. If the number of particles is set to a sufficiently
+large number, all this classifiers can be made work together in a unified framework, which will ensure accurate tracking of the evolving 
+target distribution.

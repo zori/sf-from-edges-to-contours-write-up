@@ -1,0 +1,202 @@
+\chapter{On-line Learning}
+\label{chapter_online}
+
+The most obvious way of performing adaptation to changing conditions and, as a result, to the underlying class 
+probability distribution is to use the result of the recently segmented images to improve the classifier in a smart way, in order not
+to break what is working correctly currently. One possible way, which we study in details in this work, is \emph{on-line learning}.
+
+On-line learning is a method of incorporating arriving information at the time of testing. This method is designed to help any classification algorithm
+to perform adaptation to new conditions on-the-fly. It is based on the fact that we put new samples, which have just been classified by the algorithm,
+together with the predicted label straight into the classifier and re-train it. Obviously, the main challenge here is how to choose the new samples 
+which we can trust and reject the false positives,
+because, unlike in off-line learning, algorithms which try to learn at testing time do not have access to ground truth labels. Correspondingly, if too
+many incorrectly labeled samples are added into the classifier, then it might happen in some time that the algorithm will start working incorrectly in terms
+the initially specified aim, \eg it may start performing incorrect classification or outputting just noise due to getting confused by the lately added
+samples. This affect is usually called \emph{model drift}.
+
+As on-line methods look attractive for real-life applications, where conditions might change from those present in the training data, there has been made
+several researches in this direction. One of the earliest is~\cite{Osa2001}, who experimented with boosting, but the best results were obtained
+in~\cite{Saffari2009}, who showed that on-line learning can be easily performed with Random Forests. They also show that on-line Random Forests converge
+to off-line ones with time, so we in our experiments perform not on-line but rather \emph{batched learning}, as this is just a lower bound on 
+accuracy one can achieve with pure on-line learning. And on-line learning can be seen as just a technique of speeding up the re-training process.
+We rather concentrate on the problem of adding faithful samples.
+
+By batched learning we mean, that we take a number of consequent images (in all experiments we took 10 images), perform segmentation with the current
+classifier and then process these images trying to find faithful samples and add them to the training set of the classifier together with the predicted
+labels for these samples. We want to stress that we do not use the ground truth images in any possible way other than for computing test error rates.
+
+We also combine off-line learning together with on-line learning by first training a classifier on the old training set (off-line part) and then refine it
+by adding new samples at the testing time (on-line part). Correspondingly, we call the old training set, which is used for training in off-line manner,
+as \emph{off-line set}, and the new testing set, which is used for on-line learning, as \emph{on-line set}.
+
+\section{Naive Approach}
+\label{sec:naive_theory}
+
+As the name of this method suggests, the idea behind this method is extremely simple: perform segmentation of a new batch of images, then select a 
+number of pixels of each class and add them into the classifier, which is later re-trained on the old and new new samples. 
+
+At testing time we get an output probability distribution $P(x_{(i, j)})$ from our classifier for each pixel $(i, j)$ and
+the predicted class-label for it
+
+\begin{equation}
+ c^* = \argmax_{c \in \mathcal{Y}} P(x_{(i, j)} = c).
+\end{equation}
+
+Then, as in such setting there is now way of checking whether the given 
+segmentation is correct or not, we take features of only those pixels, for which the following holds
+\begin{equation}
+ P(x_{(i, j)} = c^*) > \lambda,
+\end{equation}
+where $\lambda$ is some threshold parameter. We found $\lambda = 0.8$ to perform best in our experiments.
+High probability $P(x_{(i, j)} = c^*)$ should indicate high confidence of the classifier in the predicted label.
+As there are no any ways of somehow checking the correctness of the predicted label, we can only rely on the confidence of the classifier.
+
+The new samples may be unbalanced, \ie have different number of representatives of each class, so we sort the samples of each class $c \in \mathcal{Y}$
+in decreasing order of corresponding probabilities $P(x_{(i, j)} = c)$, then find the minimum number of samples $N_{min}$ among all classes and take
+only $0.8 N_{min}$ new samples of each class $c \in \mathcal{Y}$. This helps to keep balance between classes and does not allow one class to prevail on
+the others. We employ this strategy in all subsequent approaches.
+
+This approach depends very much on the quality of the off-line classifier trained on the off-line data, because if it does not perform reasonably good
+segmentation initially, there no way to correct it in the future. Basically, this is rather an empirical approach as it does not have any mathematical
+guarantees to eventually converge regardless of the initialization.
+
+\section{Adding Constraint in the Form Prior Labeling}
+\label{sec:alvarez_theory}
+
+It was mentioned in the Section~\ref{sec:naive_theory}, taking new samples with the predicted labels which have high confidence is not a reliable
+and optimal way of performing on-line learning. As we also use off-line trained classifier, then a natural extension to the naive approach
+would be to somehow employ the information contained in the off-line data.
+We adopt method from J.~Alvarez~\etal~\cite{Alvarez2012} who proposed to compute the class-histogram on the off-line data, then normalize it 
+per-pixel and use it as a prior distribution to weigh the output probability distribution of the classifier at testing time.
+
+\begin{figure}[t]
+ \centering
+ \includegraphics[width=0.8\textwidth]{images/prior}
+ \caption[Prior labeling computed on the old set]{
+ {\bf Prior labeling computed on the old set}.}
+ \label{fig:prior_labeling}
+\end{figure}
+
+We believe that adding the constraint in form of the prior labeling is reasonable, because the classifier is designed to be used for classification
+tasks which must have something in common with the off-line data. For example, Figure~\ref{fig:prior_labeling} shows the prior labeling computed
+for the old training data. Although our classifier will work with on-line data, which differ very much in appearance from the off-line data, it is still
+reasonable to assume that in any circumstances the ``road'' tends (in other words is more likely to be found here than anywhere else in the image) 
+to be in front of the camera, around the middle of the lower part of the image, ``sky'' tends to be above the ``road'', and ``background'' is likely to
+surround the ``road''.
+
+Computing per-pixel histogram by considering only labelings from the off-line dataset may leave certain bins empty due to not fully representative 
+off-line data.
+So, we initialize all bins with the default value equal $1$ in order to account for very low-probable situations but which still may occur in real-life.
+Otherwise, the corresponding prior probabilities will be $0$ and this is extremely bad, because this won't be changed in the future, as probabilities 
+are multiplied, and multiplication of arbitrarily large number with $0$ will always result again in $0$.
+
+The images in the off-line dataset have dimensions 752x480. So, we compute histogram (initialized to all $1$'s) for each pixel and after per-pixel 
+$L_1$-normalization we get a prior $P_{pr}^{(i, j)}$ for each pixel $(i, j), i = 1,\dots, 752, j = 1,\dots,480$. Images in the on-line dataset 
+all have various dimensions, so we perform nearest-neighbor sampling from the prior distribution $P_{pr}^{(i, j)}$. Then at testing time
+output probability distribution $P(x_{(i, j)})$ from our classifier for an image with dimensions $W \times H$ is element-wised multiplied 
+with the corresponding prior:
+
+\begin{equation}
+ \tilde{P}(x_{(i, j)}) \propto P(x_{(i, j)})P_{pr}^{(\lfloor {i\frac{480}{H}} \rfloor, \lfloor {j\frac{752}{W}} \rfloor)}, \text{for all pixels $(i, j)$}.
+\end{equation}
+
+We also have the initial predicted class-label
+\begin{equation}
+ c^* = \argmax_{c \in \mathcal{Y}} P(x_{(i, j)} = c).
+\end{equation}
+Then we can check, that if 
+\begin{equation}
+ \tilde{P}(x_{(i, j)} = c^*) > \lambda,
+\end{equation}
+where $\lambda$ is some predefined threshold parameter, then we take the corresponding pixel's features together with the predicted label $c^*$ as a 
+new sample.
+
+\section{Bayesian Model Update for Scene Segmentation under Structured Scene Prior}
+\label{sec:bayesian_theory}
+
+We propose a new model to incorporate unlabeled data for scene labeling. Our approach is motivated by Bayesian tracking formulations 
+like Condensation~\cite{Isard1998} and particle filters, as they are widely used in vision and robotics~\cite{Dellaert1999}. 
+In contrast to previous work, we track an evolving model over time and use a scene segmentation prior in order to avoid drift. 
+
+Bayesian tracking models consist of two steps: first, the propagation of a state distribution over states $x_{t-1}$ given 
+the observations $Z_{t-1}$ to the next time step, and, second, update by an observation at the new time step $z_t$. 
+In robotics application there is frequently a control input $c_{t-1}$ added. The propagation is performed in a Bayesian manner 
+by integrating out the unobserved states $x_{t-1}$:
+
+\begin{equation}
+p(x_t | Z_{t-1}) = \int p(x_t | x_{t_1}, c_{t-1}) p(x_{t-1} | Z_{t-1})\,\mathrm{d}x_{t-1},
+\end{equation}
+where $p(x_t | x_{t_1}, c_{t-1})$ is a state transition model. In robotics applications it is common to condition it on a potential control input $c_{t-1}$.
+
+The second step takes a measurement $p(z_t|x_t)$ into account and arrives at a new distribution over states $x_t$ via application of the Bayes' rule:
+
+\begin{equation}
+p(x_t | Z_t) = \frac{p(z_t|x_t) p(x_k | Z_{t-1})}{p(z_t|Z_{t-1})}.
+\end{equation}
+
+\begin{figure}[t]
+ \centering
+ \includegraphics[width=0.8\textwidth]{images/bayesian_network}
+ \caption[Proposed Bayesian Network]{
+ {\bf Proposed Bayesian Network}.
+ Gray color denotes observed variables which are images $u_t$ to be labeled. Aqua color denotes hidden variables, which are unknown labelings $l_t$
+ and current set of model hypotheses $h_t$. Parameter $S$ is the scene labeling prior}
+ \label{fig:bayesian_network}
+\end{figure}
+
+In our application we are interested in tracking an evolving target distribution over models. Our aim is to add unlabeled data at each 
+time step, but avoid model drift as it occurs in ordinary ``self-training'' scenarios. Rather than sticking to a single model hypothesis, 
+we seek to model a distribution over model hypothesis. Therefore, we aim at updating a distribution over model hypothesis given labels $p(h_t|L_t)$. 
+At each time step we are given a set of unlabeled images $u_t$ that we use to update our model hypothesis $h_t$. The unobserved variables, that we are 
+interested in, are the unknown scene labelings $l_t$ and current distribution of model hypotheses $h_t$. There is also the unlabeled data $u_t$ at time step 
+$t$ that we'd like to use in order to update our model. Figure~\ref{fig:bayesian_network} depicts the Bayesian network for our approach.
+
+We describe the incorporation of the unlabeled examples in a Bayesian framework by integrating over all model hypothesis:
+
+\begin{equation}
+p(h_t | L_{t-1}) = \int p(h_t | h_{t-1}, u_{t}) p(h_{t-1} | L_{t-1})\,\mathrm{d}h_{t-1}.
+\end{equation}
+
+In the measurement step, we apply the Bayes rule in order to get the updated distribution over model hypothesis:
+
+\begin{equation}
+p(h_t | L_t) = \frac{p(l_t|h_{t-1}, S) p(h_{t} | L_{t-1})}{p(l_t|L_{t-1})}, \label{eq:up_bayes}
+\end{equation}
+with
+\begin{equation}
+ p(l_t | h_{t-1},S) = p(l_t|h_{t-1}) p(l_t|S), 
+\end{equation}
+where $p(l_t | h_{t-1})$ is the probability of a certain scene labeling prediction given a model hypothesis $h_{t-1}$ and $p(l_t|S)$
+is a scene labeling prior.
+
+Consequently, scene labeling will also be performed by marginalization over the model distribution:
+
+\begin{equation}
+p(l|L_t) = \int p(l|h_t) p(h_t|L_t)\,\mathrm{d}h_t,
+\end{equation}
+where $l$ is the labeling of a test image, for which we want to do the prediction.
+
+{\bf Inference} \quad We solve the above inference problem by a Particle Filter approach. At each time step the model distribution
+$p(h_t|L_{t})$ is represented by a set of particles $s_t^{(n)}$ (random forests in our case) with weights $\pi_{t}^{(n)}$. Next 
+the models are propagated to the next time step via $p(h_t | h_{t-1}, u_{t})$. In traditional tracking application this transition 
+is modeled with a deterministic part and a stochastic component. We propose a similar scheme that applies to the propagation of models. 
+For the number $n$ of desired particles, repeat:
+\begin{enumerate}
+\item perform sampling (pick a particle $s_{t-1}^{i}$ from $s_{t-1}^{(n)}$) from $p(h_{t-1}|L_{t-1})$ according to the weights $\pi_{t-1}^{(n)}$;
+\item sub-sample set of unlabeled images $u_t$ to $\hat{u}_t$;
+\item predict labels $\hat{l}_t = \argmax_l p(l | h_{t-1})$ for subset $\hat{u}_t$;
+\item take or reject certain samples 
+\item Retrain model using $\hat{l}_t$ and $L_{t-1}$.
+\end{enumerate}
+
+Traditional tracking approaches would now follow up with a measurement in order to update the weights $\pi_{t}^{(n)}$. Similarily, 
+we update the weight $\pi_{t}^{i}$ of each sample $s_{t-1}^{i}$ (model hypothesis) according to Equation~\eqref{eq:up_bayes} on the next batch of images.
+$p(h_t | L_{t-1})$ is 
+the distribution represented by our particles after the propagation step from above and $p(l_t|h_{t-1}, S)$ is the product of the likelihood 
+of the labeling times the likelihood of the labeling given the scene labeling prior. We don't compute the denominator - but rather directly 
+normalize the weights of the particles $\pi_{t}^{(n)}$ to sum up to 1.
+
+It is important to note, that update of weights happens at the next timestep.
+We have to do this in order to get a faithful estimation of performance of each of
+the retrained particles on the same data, which was not in turn used in the retraining
+of any of the particles.

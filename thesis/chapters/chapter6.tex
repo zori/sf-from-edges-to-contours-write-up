@@ -1,0 +1,99 @@
+\chapter{Conclusions and Future Work}
+\label{Chapter6}
+\section{Conclusions} 
+% comparison 1SC and SC, main limitations
+% nonopimality of bal graph cut criteria for VS
+% convergence of algorithms to local optimal solution
+% nonoptimal final affinity weight
+% superpexilization
+% imporvement of the method
+% cosc which is better
+\subsubsection*{Low-Level Features for Video Segmentation}
+%{\bf Low-level features for video segmentation:}
+Video segmentation is a challenging problem as it involves a large amount of data, changes of appearance and motion over time and is limited by the lack of study of low-level features.
+In this thesis we conducted an experimental study of low-level features presented in the work~\cite{GalassoCS12}. 
+
+We observed a good overall performance of the affinities, however, some drawbacks were found, which have a negative influence on the quality of video segmentation results.
+%some recommendations were suggested to improve segmentation results. 
+The long-term-temporal affinity is less reliable for superpixels in the neighbouring frames and with a fewer intersecting point trajectories.
+The performance could be increased if the affinity is considered for superpixels in the non-adjacent frames and constrained by the number of common point trajectories.
+Moreover, some features have been overlooked and outweighed by the others in the final affinity score. It is worth mentioning that in this study we were limited by the lack of the dense ground truth
+and hence could not examine fully variation and quality of features over time.
+\subsubsection*{Spectral Relaxations for Video Segmentation}
+%
+%{\bf Spectral relaxations for video segmentation:} 
+Many successful video segmentation algorithms are based on spectral relaxation techniques. 
+But despite of all the achieved progress, adaptation of spectral clustering to video processing requires further researching.
+We provided an extensive empirical comparison of the 1-norm and 2-norm spectral relaxation techniques with different balanced graph cut objective functions, examining their impact on video segmentation performance.
+
+It has been shown that 1-spectral clustering falls behind in the performance in comparison with the standard spectral clustering approach due to its main limitations - recursive splitting scheme for multipartitioning and incapability
+of calculating higher-order eigenvectors. Unexpectedly, the ratio cuts for 1-spectral clustering yielded better overall performance than the normalized cuts, despite its traditional state-of-the-art results in image and video 
+segmentation. Furthermore, the ground truth segmentation does not always correspond with the optimal theoretical graph cut and that could be another reason for the 2-norm relaxation outperforming the 1-norm spectral method.
+Nevertheless, 1-spectral clustering shows great potential and given the feasibility of computation of higher-order eigenvectors one could assume a high improvement in the performance.
+Exploring the quality of the solutions obtained by the spectral relaxations, we revealed that the optimal in the sense of balanced graph cuts solution is not always reached 
+and sometimes a better partition with a smaller multicut value can be found by a trivial greedy search. 
+%
+%{\bf Must-link constraints for video segmentation:} 
+\subsubsection*{Must-Link Constraints for Video Segmentation}
+To achieve a better performance and reduce computational complexity and memory consumption we proposed to employ constrained spectral clustering into video segmentation, 
+where must-link constraints are integrated via sparsification preserving all balanced graph cuts in the reduced graph. We presented a novel methodology to discriminatively learn must-link constraints from low-level video features.
+The combination of all types of temporal connections, within- and between-frame, for must-links provides the best overall performance for both 1-norm and 2-norm spectral relaxations and improves the results by a large margin.
+
+The main advantage of the model is the limited label leakage as it allows more global reasoning on the appearance and motion of visual objects. 
+The proposed approach also shows potential for the extraction of superpixels for video segmentation.  
+The method outperforms other existing video segmentation algorithms and shows the state-of-the-art results
+on the Berkeley motion segmentation dataset.
+\section{Future Work and Open Problems} 
+Based on our experiments several directions for the future work can be outlined.
+% train on all annotated frames from the sequence (new dataset?)
+% learning from raw features, additional features
+% other learning algorithms - nonlinear SVM
+% learning affinities, graph connections
+% optimal spatio-temporal balancing term
+% higher-order eigenvectors for multiway 1-SC
+% approximaion guarantees for tight relaxation
+\subsubsection*{Low-Level Features for Video Segmentation}
+%
+%{\bf Low-level features for video segmentation:} 
+It was observed in the experiments that some features were outweighed by the other in the final affinity score. 
+A possible direction for improvement would be to learn the weights of the affinity matrix and the graph structure either from raw or low-level features of the video.
+However, the main difficulty of this approach is the lack of directly defined objective function that could well represent an impact of learned affinities on the quality of the produced clustering results 
+and benchmark metrics for video segmentation.
+
+Another direction for future work would be to consider for video segmentation both local and global appearance and motion models.
+%{\bf Spectral relaxations for video segmentation:}
+\subsubsection*{Spectral Relaxations for Video Segmentation}
+Additional research is necessary for improving spectral clustering techniques. In the performance of video segmentation algorithms temporal consistency of segments is an important part.
+At present all known balanced graph cut criteria take into account only size of clusters and discard balancing over time. %only spatial and discard temporal information. 
+Having spatio-temporal balancing term in the objective function of spectral clustering might boost video segmentation performance.
+Another important concern is the lack of approximation guarantees for tight relaxation. 1-spectral clustering provides no guarantee of convergence to the globally optimal solution and 2-norm relaxation is known to be loose.
+Moreover, applying multiway partitioning scheme is not feasible for 1-norm relaxation and computation of higher-order eigenvectors is still an open problem.
+\subsubsection*{Must-Link Constraints for Video Segmentation}
+%
+%{\bf Must-link constraints for video segmentation:} 
+One of the possible directions is further improvement of the training and validation dataset. In this work we were limited in training by six and in validation by four video sequences of the Berkeley motion segmentation dataset, 
+each containing six frames with annotated ground truth out of thirty. 
+We could have achieved much better results if we trained the Random Forest classifier on more video sequences with denser ground truth, ideally where each frame of the sequence is annotated.
+
+Another way of improving segmentation performance is to learn must-link constraints from raw video features, such as median brightness, color, texture, motion or spatio-temporal location of superpixels, instead of 
+the affinity measures.   
+In our proposed video segmentation approach we used only a pure Random Forest as a learning method, but this is a general framework which allows to incorporate any other classifier, 
+like Boosting or Non-linear Kernel Support Vector Machines. Potentially all these classifiers can be made work together in a unified framework and we can combine the predictions of several learning algorithms
+to ensure accurate tracking of the evolving target distribution.
+% One of the possible directions is further improvement of the training and validation dataset. In this work we were limited in training by six and in validation by four video sequences of the Berkeley motion segmentation dataset, 
+% each containing six frames with annotated ground truth out of thirty. 
+% We could have achieved much better results if we trained the Random Forest classifier on more video sequences with denser ground truth, ideally where each frame of the sequence is annotated.
+
+% Another way of improving segmentation performance is to learn must-link constraints from raw video features, such as median brightness, color, texture, motion or spatio-temporal location of superpixels, instead of 
+% the affinity measures.   
+% In our proposed video segmentation approach we used only a pure Random Forest as a learning method, but this is a general framework which allows to incorporate any other classifier, 
+% like Boosting or Non-linear Kernel Support Vector Machines. Potentially all these classifiers can be made work together in a unified framework and we can combine the predictions of several learning algorithms
+% to ensure accurate tracking of the evolving target distribution.
+% It was observed in the experiments that some affinities were outweighed by the other in the final score. Therefore another possible directions for further work would be to learn the weights of the affinity matrix 
+% and the graph structure either from raw or low-level features of the video. 
+% 
+% Additional research is necessary for improving spectral clustering techniques. In the performance of video segmentation algorithms temporal consistency of segments is an important part.
+% At present all known balanced graph cut criteria take into account only spatial and discard temporal information. Having spatio-temporal balancing term in the objective function of spectral clustering
+% might boost video segmentation performance.
+% Another important concern is the lack of approximation guarantees for tight relaxation. 1-spectral clustering provides no guarantee of convergence to the globally optimal solution and 2-norm relaxation is known to be loose.
+% Moreover, applying multiway partitioning scheme is not feasible for 1-norm relaxation and computation of higher-order eigenvectors is still an open problem.

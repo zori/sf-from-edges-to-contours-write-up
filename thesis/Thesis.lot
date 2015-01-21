@@ -1,0 +1,5 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {4.1}{\ignorespaces {\bf Comparison of spectral clustering (SC) and 1-spectral clustering (1SC) optimizing different cut criteria.} The table shows aggregate measures (ODS, OSS, AP) for boundary precision-recall (BPR), volume precision-recall (VPR) and includes region statistics (SC, PRI, VI).\relax }}{29}{table.caption.143}
