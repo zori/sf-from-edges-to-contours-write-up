@@ -1,8 +1,13 @@
 *.aux
 *.log
+*.out
 *.pdf
+"" how to do the catch-it-all?
+" *~
+*.bib~
+*.cls~
 *.lyx~
-*.tex~
 *.sty~
-*~
-" *.backup
+*.tex~
+*.backup
+*.kate-swp

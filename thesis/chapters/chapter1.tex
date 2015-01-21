@@ -1,183 +1,40 @@
 \chapter{Introduction}
 \label{Chapter1}
 \section{Motivation}
-%Video segmentation is the task of grouping pixels into spatio-temporal regions coherent
-%in both appearance and motion,
-%Video segmentation has been defined as the problem of partitioning a video sequence into coherent regions with regard to motion and appearance properties~\cite{Levinshtein10}.
-%
-Video segmentation is the task of partitioning a video sequence by grouping pixels coherent in both appearance and motion into spatio-temporal volumes, representing meaningful parts of the sequence - objects,
-and tracking them across frames.
-
-Being a fundamental problem, video segmentation has become one of the core areas in computer vision with a wide range of applications such as activity recognition, 3D reconstruction, content-based retrieval, etc. 
-However, despite the recent progress currently the field is limited by the lack of study of low-level features suitable for video processing.
-Large amount of data and variation of object appearance over time due to changes in the camera viewpoint, scene illumination or non-rigid deformation
-make video segmentation a challenging task.
-%Video segmentation is a challenging task, as it involves a large amount of data and object appearance may significantly change over the time due to changes in the camera viewpoint, scene illumination or non-rigid deformation.
-
-%Being a fundamental problem,
-Segmentation has been studied carefully for a long time and a number of successful algorithms have been proposed to deal with it. Many of the proposed approaches are based on
-spectral clustering. Spectral methods convince by their efficiency and well-understood theoretical basis. The globalization effect and the balancing property
-of spectral clustering techniques play an important role in hierarchical image segmentation. Still, application of spectral methods to video segmentation is far less researched.  
-
-The theoretical background of spectral methods includes the motivation of spectral clustering as a relaxation of balanced graph cut criteria.
-The problem of segmentation based on pair-wise affinities can be formulated as a graph partitioning problem. 
-%The optimal partitioning of a graph is the one that minimizes this cut value. 
-As directly minimizing the cut value of the graph favours unbalanced segmentations, several balanced graph cut objectives have been suggested in the literature.
-One of the most popular is the normalized cut criterion~\cite{Shi00}, which tries to avoid unbalanced partitions by appropriately scaling the cut. 
-The balanced graph cut objectives have been well studied and have shown the state-of-the-art performance in image segmentation~\cite{Arbelaez11}.
-In this thesis we aim to explore the behaviour of different balanced graph cut criteria in their particular application to video segmentation.
-
-Since the balanced graph cuts yield an NP-hard minimization problem, a spectral relaxation method is used to compute an approximate solution.
-The common approach is to consider a 2-norm relaxation of the balanced graph cuts, which has proved to be successful in many segmentation algorithms~\cite{Brox10,Arbelaez11,GalassoCS12,Galasso14}. 
-However, it is often quite loose and may lead to a solution far from the optimal one of the original problem~\cite{guattery1998}.
-Recently, a tight 1-norm relaxation technique has been developed~\cite{Buhler09}, which in many cases outperforms the standard spectral clustering and yields much better graph cuts. 
-To the best of our knowledge, the 1-norm relaxation has not been used for video processing before. Therefore, it is of research interest to study the relevance of this approach for video in comparison
-with the standard spectral clustering technique. 
-
-It was shown that inclusion of additional information in the form of pair-wise constraints into spectral clustering might result in a better image~\cite{MajiVM11} and video~\cite{Galasso14} segmentation performance.
-In contrast to images, the limits of computational requirements of spectral clustering are easily reached with video data. For this reason, commonly in video segmentation 
-the graph is constructed on pre-computed superpixels and then the spectral method is applied. 
-Both the reduction of computational complexity and integration of prior knowledge as constraints have been addressed by the work of~\cite{RangapuramH12}, 
-which suggests to significantly reduce graph by sparsification while preserving the balanced graph cuts. 
-In this work we propose to employ constrained spectral clustering in video segmentation by learning must-link constraints from low-level features of video.
-
-In order to experiment, we based our work on the video segmentation method by~\cite{GalassoCS12}, which computes a motion-aware hierarchical image segmentation and extracts superpixels 
-from the lowest hierarchical level. The algorithm provides well-adhered to boundaries superpixelization and lends the computation of powerful superpixel affinities.
-%We thoroughly analyzed the proposed model, its within-frame and between-frame affinities and suggested a way of improving video segmentation performance.
-% by employing constrained spectral clustering, where must-link constraints are learned from the affinity measures. 
-% In this thesis we aim to explore the behaviour of different balanced graph cut criteria and their particular application to video segmentation. To the best of our knowledge, the 1-norm relaxation have not been used for video processing
-% before. Therefore, it is of research interest to study the relevance of this approach for video. 
-The quality of the video segmentation output is influenced by several factors: employed low-level features, structure of similarity graph and choice of spectral relaxation technique with
-balanced graph cut objective. In this thesis we aim to explore and analyze all these aspects and based on the findings suggest a way of improving video segmentation performance.
-
-The contributions of this work are:
-\begin{itemize}
-\item analysis of proposed in~\cite{GalassoCS12} low-level features;
-\item evaluation of balanced graph cut criteria and different relaxation techniques in the application to video segmentation;
-\item employment of must-link constraints in the video segmentation with the reduction of runtime and memory consumption;
-\item experimental study of features suitable for learning must-link constraints to improve video segmentation performance;
-\item proposed methodology to discriminatively learn must-link constraints from low-level features. 
-%\item a new video segmentation model, based on constrained spectral clustering with learned must-links, which allows to reduce computational complexity and improve the performance of the baseline method~\cite{GalassoCS12}.
-\end{itemize}
 
 \section{Related Work}
-
-Inspired by the recent progress in spectral clustering and its state-of-the art performance in computer vision fields, in this work we proposed to study and apply these methods for the problem of video segmentation. 
-In order to analyze different spectral relaxation techniques, the appropriate video segmentation model, which provides strong representation for spectral clustering framework, is required.
-To further improve video segmentation performance and reduce computational complexity constrained spectral clustering can be applied.
-\subsubsection*{Video Segmentation Algorithms}
-%{\bf Video Segmentation Approaches.} 
-A broad family of approaches to video segmentation is based on integrating appearance features~\cite{Brendel09,Grundmann10,Vazquez_Reina10,XuXiong12}, such as brightness, color or texture, 
-motion~\cite{Shi00,Brox10,Galasso11} or a combination of multiple cues~\cite{Dementhon02,Kannan05,Kumar08,Paris08,Lezama11,Ochs11,GalassoCS12,Ochs14}. 
-Many video segmentation methods developed under different motivations exist. 
-
-Spatio-temporal segmentation of video sequences based on coherent local properties has been addressed by mean-shift~\cite{Dementhon02,WangTXC04,Paris08} and graph-based approaches~\cite{Grundmann10}. 
-Hierarchical graph-based video segmentation algorithm proposed by~\cite{Grundmann10} extends the work~\cite{Felzenszwalb04} 
-to video by performing several multi-scale, optical flow guided passes. However, both mean-shift and graph-based techniques are restricted by the local level analysis
-and only focus on generating an oversegmentation of a video.
-
-There has been significant work on layered representation methods~\cite{TorrSA01,XiaoS05,Kannan05,Kumar08}, which learn parametric motion and appearance models of video, but are limited by their computational load. 
-In this line of research the work of~\cite{Kumar08} demonstrates detection and tracking of articulated models of walking people and animals, but restricts itself to consistent appearance and a locally affine parametric
-motion model of object parts.
-
-A line of works on video segmentation, based on nonparametric Bayesian methods such as Dirichlet process mixture have also shown some potential~\cite{OrbanzBB07,LeeKHC12}. 
-They cluster data through splitting and merging, where the decision is made by approximate posterior distributions over partitions with Dirichlet process priors. However, this approach is
-often regarded as inapplicable to data-intensive problems due to its computational cost.
-
-Recently grouping long-term point trajectories in video sequences based on optical flow has received significant attention. Impressive results were shown in the work of~\cite{Brox10}, 
-which obtains a sparse video segmentation by analyzing motion differences between pairs of tracks and applying spectral clustering to the resulting affinity matrix.
-Moreover,~\cite{Ochs11,Ochs14} extend the sparse segmentation in a single frame to a dense segmentation with the help of long-term motion cues.
-These methods are interested only in moving objects, while static objects are combined to a single cluster and the main bottleneck of this approach is the computational cost of optical flow.
-
-Another approach~\cite{Brendel09,Vazquez_Reina10,Galasso11,GalassoCS12} is to track superpixels instead of point trajectories, as they reduce the
-computational cost of segmentation and tend to preserve boundaries resulting in the minimum increase in model error. For example, the work of~\cite{Brendel09} attempts to segment objects in video by tracking and 
-splitting/merging image regions. 
-
-This thesis is based on the work~\cite{GalassoCS12} as it extracts superpixels, that adhere well to the boundaries, and therefore provides a significant reduction of computational complexity and 
-powerful within-frame representation. This allows us to employ spectral clustering methods.%, which are the basis of many state-of-the-art video segmentation algorithms~\cite{Brox10,Sundaram11,GalassoCS12,Di12,Fragkiadaki12}. 
-\subsubsection*{Relaxations of Balanced Graph Cuts}
-%{\bf Relaxation of Balanced Graph Cuts.} 
-The problem of finding the optimal balanced partitioning of a graph is an important problem in computer vision. In particular, in image~\cite{Shi00,Arbelaez11} and video 
-segmentation~\cite{Brox10,Sundaram11,GalassoCS12,Di12,FragkiadakiZS12} spectral clustering is one of the most popular graph-based clustering algorithms. 
-Spectral methods are able to include long-range affinities and quite robust due to its globalization effect~\cite{Fowlkes04}.
-
-Spectral clustering is originally based on a relaxation of the NP-hard combinatorial balanced graph cut problem~\cite{Luxb07}. 
-The spectral relaxation results in the linear eigenproblem for the graph Laplacian~\cite{HagenK91,Shi00,Luxb07}. 
-Different definitions of the Laplacian operator correspond to an approximation of different balanced graph cut criteria. 
-
-Various well-known spectral clustering algorithms exist, which could be divided into two main groups. 
-The recursive bipartitioning algorithms~\cite{Shi00,VempalaV00} first split the data into two parts based on a single eigenvector and then are recursively used to generate more partitions.
-The multiway algorithms~\cite{meila01,ng01,yu03,Moore13} use more information in multiple eigenvectors to directly split the points into clusters. For some of the algorithms heuristic methods for finding the desired number of 
-clusters have been suggested~\cite{VempalaV00,Shi00,yu03}. We refer the interested reader to~\cite{verma03,Luxb07} for a wider introduction to spectral clustering. 
-
-However, the spectral relaxation is known to be quite loose and often yields the solution which is far from the optimal one~\cite{guattery1998}. Recently in the line of work~\cite{Buhler09,SzlamB10,Hein10,HeinS11} a tight 
-relaxation into continuous problem for almost any graph cut criteria has been proposed based on the non-linear graph p-Laplacian. This generalized non-linear eigenproblem leads to the similar runtime performance while providing 
-much better graph partitions. The main limitations of this approach are that it does not guarantee convergence to the global optimum and the computation of higher-order eigenvectors of the graph p-Laplacian is not feasible at present.
-
-In this thesis we employ both relaxation techniques as to the best of our knowledge, the tight relaxation has not been used for video processing. Therefore, it is of research interest to demonstrate the relevance of these methods 
-for video segmentation.
-\subsubsection*{Constrained Spectral Clustering}
-%{\bf Constrained Spectral Clustering.} 
-How to incorporate prior information into the framework of spectral clustering is an area of active research~\cite{Kamvar03,ji06,XuLS09,WangD10,RangapuramH12}. 
-
-It was proposed to include constraints into the clustering solution in several works of image segmentation~\cite{YuS01,ErikssonOK07,MajiVM11}.
-And recently in~\cite{Galasso14} it was explored that the constrained clustering could be beneficial for video segmentation performance, as it not only uses some additional knowledge and therefore constrains the solution, 
-but also significantly reduces the graph and the complexity of the algorithm. 
-
-The work of~\cite{Wagstaff01} is the first to consider constrained clustering by 
-employing the side knowledge in the form of pair-wise must-link and cannot-link constraints. A must-link constraint states that that two objects must be in the same cluster, whereas a cannot-link constraint indicates that two objects 
-can not be in the same cluster. As integrating these constraints is relatively easy and allows to improve the performance, constrained clustering has been well studied, see~\cite{Basu08} for the further reading.
-
-Constrained spectral clustering seems to be a promising direction, since unlike other existing algorithms, satisfying many constraints at once is tractable here. 
-There are two main approaches on how to integrate constraints into spectral clustering. 
-The first approach is based on the idea of modifying directly the graph Laplacian according to the given constraints and then solving the resulting unconstrained problem.
-The work of~\cite{Kamvar03} proposes the method that modifies the affinity matrix to one for each pair of must-link constraints and to zero for a cannot-link constraint. 
-In~\cite{ji06} the graph Laplacian is modified by combining the constraint matrix 
-as a regularizer.~\cite{LuC08} proposes a method to propagate the constraints in the affinity matrix using a Gaussian process. 
-The work of~\cite{WangDL09} combines k-means clustering on attribute information and spectral clustering on relational
-information.
-
-The second group of methods restricts the feasible solution space by using pair-wise constraints. The technique introduced by~\cite{BieSM04} alters the eigenspace on which the cluster indicator is projected, 
-based on the given constraints.
-The work was later extended in~\cite{ColemanSW08} by including inconsistent constraints.~\cite{XuLS09} enforces constraints by spectral embedding regularization. In~\cite{WangD10} a constrained optimization problem is presented where
-real valued constraints are integrated by a degree of belief concept.
-
-In contrast to all other methods the work of~\cite{RangapuramH12} guarantees to satisfy all pair-wise constraints.  
-The affinity matrix is redefined by integrating must-link constraints via sparsification and since this construction
-preserves all balanced graph cuts any unconstrained spectral relaxation technique can now be used. This framework can be extended to handle degree-of-belief and even inconsistent constraints by optimizing a trade-of between the cut 
-value and number of violated constraints. They also provide an efficient implementation which scales to large datasets. This approach suggests a substantial reduction of the graph that preserves the cut value.
-While the convergence to the global optimum is not guaranteed, the method improves the partition which satisfies all the must-link constraints.
-In our work we employ this technique for video segmentation in order to integrate the must-link constraints, learned from low-level features. 
+\subsubsection*{Edge Detection}
+\subsubsection*{Segmentation}
 \section{Outline}
-The rest of this work is structured as follows:
-\begin{itemize}
-\item Chapter~\ref{SpectRelax} starts the thesis with a brief introduction to balanced graph cuts and spectral relaxation techniques.
-Section~\ref{sec:ch2_clgrpart} shows that clustering can be seen as a graph partitioning problem. The minimum cut approach often yields useless results where clusters are highly unbalanced, hence
-the balanced graph cut criteria are described in Section~\ref{sec:ch2_balgrcut}.  To solve the NP-hard balanced graph cut problem
-the relaxation methods are applied. Section~\ref{sec:ch2_spectclus} presents the standard spectral clustering approach, which is known to be loose.
-The tight relaxation, called 1-spectral clustering, is described in Section~\ref{sec:ch2_1spectclus}. 
-Section~\ref{ch2:disc} concludes the chapter and discusses the relevance of proposed methods to video segmentation.
-\item Chapter~\ref{chapter3} gives an overview of the video segmentation framework and provides the analysis of low-level features.
-Section~\ref{sec:ch3_framework} introduces the proposed video segmentation model, which employs a two-step approach:
-a graph is constructed on pre-computed superpixels and then a spectral clustering technique is applied. 
-%In graph-based algorithms, in order to produce high-quality segmentation results powerful superpixel similarity measures must be defined.
-Section~\ref{sec:ch3_affinities} gives a description of the graph affinities used in this work.
-To evaluate video segmentation performance and analyze the features of the proposed model we chose the Berkeley motion segmentation dataset, which is presented in Section~\ref{sec:ch3_dataset}.  
-The examination of the quality of the low-level video features is reported in Section~\ref{sec:ch3_aff} and the results are discussed in Section~\ref{ch3:disc}.
-\item Chapter~\ref{Chapter4} provides an experimental comparison of spectral relaxations and analyzes the effects of different balanced graph cuts applied to video segmentation. 
-We start with a brief recap of the main theoretical aspects of 1-norm and 2-norm relaxations in Section~\ref{ch4:recap}.
-Section~\ref{ch4:bench} presents the evaluation benchmark for video segmentation.
-Section~\ref{sec:ch4_1sc_vs_sc} shows the comparison of the performance of spectral clustering and 1-spectral clustering with different balanced graph cut objectives in the task of video segmentation. 
-In order to explore further the balanced cut criteria and the quality of the solutions obtained from the relaxation techniques, we tried to find a better partition by a trivial greedy search optimizing different balanced graph cut functions and see if the ground truth corresponds
-with the minimum cut criterion. The results of the experiments are reported in Section~\ref{sec:ch4_GTexp}.
-Section~\ref{ch4:disc} gives the discussion of the obtained results.
-\item In Chapter~\ref{Chapter5} a methodology for discriminative learning of must-link constraints and their incorporation in the video segmentation framework are proposed.
-Section~\ref{sec:ch5_cosc} shows a way of integrating prior information in the form of must-link constraints into spectral clustering while preserving all the
-balanced graph cuts.
-Section~\ref{sec:llf} presents evaluation of the low-level features as must-link constraints and the connections in the graph based on the ground truth.
-In Section~\ref{sec:ch4_ML} we propose to learn must-links with Random Forest from the affinities.
-We show that even a naive learning approach on the restricted feature space improves video segmentation performance for both relaxations: spectral clustering and 1 spectral clustering. 
-The proposed model is compared to state-of-the-art methods.
-Section~\ref{ch5:disc} discusses the achieved results.
-\item Chapter~\ref{Chapter6} concludes the thesis summarizing all the results of our work and proposing directions for possible improvements.
-\end{itemize}
+% The rest of this work is structured as follows:
+% \begin{itemize}
+% \item Chapter~\ref{SpectRelax} starts the thesis with a brief introduction to balanced graph cuts and spectral relaxation techniques.
+% Section~\ref{sec:ch2_clgrpart} shows that clustering can be seen as a graph partitioning problem. The minimum cut approach often yields useless results where clusters are highly unbalanced, hence
+% the balanced graph cut criteria are described in Section~\ref{sec:ch2_balgrcut}.  To solve the NP-hard balanced graph cut problem
+% the relaxation methods are applied. Section~\ref{sec:ch2_spectclus} presents the standard spectral clustering approach, which is known to be loose.
+% The tight relaxation, called 1-spectral clustering, is described in Section~\ref{sec:ch2_1spectclus}. 
+% Section~\ref{ch2:disc} concludes the chapter and discusses the relevance of proposed methods to video segmentation.
+% \item Chapter~\ref{chapter3} gives an overview of the video segmentation framework and provides the analysis of low-level features.
+% Section~\ref{sec:ch3_framework} introduces the proposed video segmentation model, which employs a two-step approach:
+% a graph is constructed on pre-computed superpixels and then a spectral clustering technique is applied. 
+% %In graph-based algorithms, in order to produce high-quality segmentation results powerful superpixel similarity measures must be defined.
+% Section~\ref{sec:ch3_affinities} gives a description of the graph affinities used in this work.
+% To evaluate video segmentation performance and analyze the features of the proposed model we chose the Berkeley motion segmentation dataset, which is presented in Section~\ref{sec:ch3_dataset}.  
+% The examination of the quality of the low-level video features is reported in Section~\ref{sec:ch3_aff} and the results are discussed in Section~\ref{ch3:disc}.
+% \item Chapter~\ref{Chapter4} provides an experimental comparison of spectral relaxations and analyzes the effects of different balanced graph cuts applied to video segmentation. 
+% We start with a brief recap of the main theoretical aspects of 1-norm and 2-norm relaxations in Section~\ref{ch4:recap}.
+% Section~\ref{ch4:bench} presents the evaluation benchmark for video segmentation.
+% Section~\ref{sec:ch4_1sc_vs_sc} shows the comparison of the performance of spectral clustering and 1-spectral clustering with different balanced graph cut objectives in the task of video segmentation. 
+% In order to explore further the balanced cut criteria and the quality of the solutions obtained from the relaxation techniques, we tried to find a better partition by a trivial greedy search optimizing different balanced graph cut functions and see if the ground truth corresponds
+% with the minimum cut criterion. The results of the experiments are reported in Section~\ref{sec:ch4_GTexp}.
+% Section~\ref{ch4:disc} gives the discussion of the obtained results.
+% \item In Chapter~\ref{Chapter5} a methodology for discriminative learning of must-link constraints and their incorporation in the video segmentation framework are proposed.
+% Section~\ref{sec:ch5_cosc} shows a way of integrating prior information in the form of must-link constraints into spectral clustering while preserving all the
+% balanced graph cuts.
+% Section~\ref{sec:llf} presents evaluation of the low-level features as must-link constraints and the connections in the graph based on the ground truth.
+% In Section~\ref{sec:ch4_ML} we propose to learn must-links with Random Forest from the affinities.
+% We show that even a naive learning approach on the restricted feature space improves video segmentation performance for both relaxations: spectral clustering and 1 spectral clustering. 
+% The proposed model is compared to state-of-the-art methods.
+% Section~\ref{ch5:disc} discusses the achieved results.
+% \item Chapter~\ref{Chapter6} concludes the thesis summarizing all the results of our work and proposing directions for possible improvements.
+% \end{itemize}

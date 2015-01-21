@@ -10,45 +10,45 @@ I was expecting a `,' or a `}'---line 433 of file references.bib.bib
 I'm skipping whatever remains of this entry
 Warning--empty journal in Basu08
 Warning--empty year in meila01
-You've used 81 entries,
+You've used 54 entries,
             2118 wiz_defined-function locations,
-            874 strings with 15013 characters,
-and the built_in function-call counts, 23246 in all, are:
-= -- 1964
-> -- 1307
+            747 strings with 10905 characters,
+and the built_in function-call counts, 15581 in all, are:
+= -- 1304
+> -- 863
 < -- 0
-+ -- 522
-- -- 430
-* -- 1285
-:= -- 3964
-add.period$ -- 246
-call.type$ -- 81
-change.case$ -- 460
++ -- 342
+- -- 282
+* -- 860
+:= -- 2639
+add.period$ -- 162
+call.type$ -- 54
+change.case$ -- 305
 chr.to.int$ -- 0
-cite$ -- 83
-duplicate$ -- 1062
-empty$ -- 2134
-format.name$ -- 430
-if$ -- 4892
+cite$ -- 56
+duplicate$ -- 736
+empty$ -- 1465
+format.name$ -- 282
+if$ -- 3294
 int.to.chr$ -- 0
-int.to.str$ -- 81
-missing$ -- 75
-newline$ -- 411
-num.names$ -- 162
-pop$ -- 747
+int.to.str$ -- 54
+missing$ -- 52
+newline$ -- 273
+num.names$ -- 108
+pop$ -- 505
 preamble$ -- 1
-purify$ -- 377
+purify$ -- 249
 quote$ -- 0
-skip$ -- 584
+skip$ -- 394
 stack$ -- 0
-substring$ -- 416
-swap$ -- 144
+substring$ -- 276
+swap$ -- 101
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 322
+type$ -- 216
 warning$ -- 2
-while$ -- 162
-width$ -- 83
-write$ -- 819
+while$ -- 108
+width$ -- 56
+write$ -- 542
 (There was 1 error message)

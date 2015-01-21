@@ -1,16 +1,5 @@
 \begin{thebibliography}{10}
 
-\bibitem{Amghibech03}
-S.~Amghibech.
-\newblock Eigenvalues of the discrete {p-Laplacian} for graphs.
-\newblock {\em Ars Comb.}, 2003.
-
-\bibitem{Arbelaez09}
-P.~Arbelaez, M.~Maire, C.~Fowlkes, and J.~Malik.
-\newblock {From contours to regions: An empirical evaluation}.
-\newblock In {\em Conference on Computer Vision and Pattern Recognition
-  (CVPR)}, 2009.
-
 \bibitem{Arbelaez11}
 P.~Arbelaez, M.~Maire, C.~Fowlkes, and J.~Malik.
 \newblock Contour detection and hierarchical image segmentation.
@@ -29,21 +18,10 @@ T.~D. Bie, J.~A.~K. Suykens, and B.~D. Moor.
 \newblock In {\em Structural, Syntactic, and Statistical Pattern Recognition
   (SSPR/SPR)}, 2004.
 
-\bibitem{Breiman01}
-L.~Breiman.
-\newblock Random forests.
-\newblock {\em Machine Learning}, 2001.
-
 \bibitem{Brendel09}
 W.~Brendel and S.~Todorovic.
 \newblock Video object segmentation by tracking regions.
 \newblock In {\em International Conference on Computer Vision (ICCV)}, 2009.
-
-\bibitem{BrostowFC09}
-G.~J. Brostow, J.~Fauqueur, and R.~Cipolla.
-\newblock Semantic object classes in video: A high-definition ground truth
-  database.
-\newblock In {\em Pattern Recognition Letters}, 2009.
 
 \bibitem{Brox10}
 T.~Brox and J.~Malik.
@@ -55,47 +33,10 @@ T.~B\"{u}hler and M.~Hein.
 \newblock Spectral clustering based on the graph {p-Laplacian}.
 \newblock In {\em International Conference on Machine Learning (ICML)}, 2009.
 
-\bibitem{HeinBuh09}
-T.~B\"{u}hler and M.~Hein.
-\newblock Spectral clustering based on the graph {p-Laplacian}.
-\newblock
-  \url{http://videolectures.net/site/normal_dl/tag=47959/icml09_buhler_scb_01.pdf},
-  2009.
-\newblock Clustering Geometry Session of the 26th International Conference on
-  Machine Learning (ICML).
-
-\bibitem{c70}
-J.~Cheeger.
-\newblock A lower bound for the smallest eigenvalue of the {Laplacian}.
-\newblock {\em Problems Anal.}, 1970.
-
-\bibitem{Breiman04}
-C.~Chen, A.~Liaw, and L.~Breiman.
-\newblock Using random forest to learn imbalanced data.
-\newblock Technical report, Department of Statistics, UC Berkeley, 2004.
-
-\bibitem{Chung:1997}
-F.~Chung.
-\newblock {\em Spectral Graph Theory}.
-\newblock American Mathematical Society, 1997.
-
 \bibitem{ColemanSW08}
 T.~Coleman, J.~Saunderson, and A.~Wirth.
 \newblock Spectral clustering with inconsistent advice.
 \newblock In {\em International Conference on Machine Learning (ICML)}, 2008.
-
-\bibitem{Corso}
-J.~Corso, E.~Sharon, S.~Dube, S.~El-Saden, U.~Sinha, and A.~Yuille.
-\newblock Efficient multilevel brain tumor segmentation with integrated
-  bayesian model classification.
-\newblock {\em Trans. Med. Imaging}, 2008.
-
-\bibitem{Criminisi12}
-A.~Criminisi, J.~Shotton, and E.~Konukoglu.
-\newblock Decision forests: A unified framework for classification, regression,
-  density estimation, manifold learning and semi-supervised learning.
-\newblock In {\em Foundations and Trends in Computer Graphics and Vision},
-  2012.
 
 \bibitem{Dementhon02}
 D.~Dementhon.
@@ -108,23 +49,6 @@ D.~Dementhon.
 X.~Di, H.~Chang, and X.~Chen.
 \newblock Multi-layer spectral clustering for video segmentation.
 \newblock In {\em Asian Conference on Computer Vision (ACCV)}, 2012.
-
-\bibitem{DingHZGS01}
-C.~Ding, X.~He, H.~Zha, M.~Gu, and H.~Simon.
-\newblock A min-max cut algorithm for graph partitioning and data clustering.
-\newblock In {\em International Conference on Data Mining (ICDM)}, 2001.
-
-\bibitem{DollarICCV13edges}
-P.~Doll\'ar and C.~L. Zitnick.
-\newblock Structured forests for fast edge detection.
-\newblock In {\em International Conference on Computer Vision (ICCV)}, 2013.
-
-\bibitem{Drummond03}
-C.~Drummond and R.~C. Holte.
-\newblock C4.5, class imbalance, and cost sensitivity: Why under-sampling beats
-  over-sampling.
-\newblock In {\em Proceedings of the ICML-2003 Workshop: Learning with
-  Imbalanced Data Sets II}, 2003.
 
 \bibitem{ErikssonOK07}
 A.~P. Eriksson, C.~Olsson, and F.~Kahl.
@@ -166,12 +90,6 @@ F.~Galasso, M.~Keuper, T.~Brox, and B.~Schiele.
 \newblock In {\em Conference on Computer Vision and Pattern Recognition
   (CVPR)}, 2014.
 
-\bibitem{Galasso13}
-F.~Galasso, N.~S. Nagaraja, T.~Z. Cardenas, T.~Brox, and B.~Schiele.
-\newblock A unified video segmentation benchmark: Annotation, metrics and
-  analysis.
-\newblock In {\em International Conference on Computer Vision (ICCV)}, 2013.
-
 \bibitem{Grundmann10}
 M.~Grundmann, V.~Kwatra, M.~Han, and I.~Essa.
 \newblock Efficient hierarchical graph-based video segmentation.
@@ -189,26 +107,12 @@ L.~Hagen and A.~Kahng.
 \newblock In {\em International Conference on Computer-Aided Design (ICCAD)},
   1991.
 
-\bibitem{HeinNotes}
-M.~Hein.
-\newblock Lecture notes on machine learning.
-\newblock
-  \url{http://www.ml.uni-saarland.de/Lectures/ML1213/Material/OldMLNotes.pdf},
-  2012.
-
 \bibitem{Hein10}
 M.~Hein and T.~B\"{u}hler.
 \newblock An inverse power method for nonlinear eigenproblems with applications
   in 1-spectral clustering and sparse pca.
 \newblock In {\em Advances in Neural Information Processing Systems (NIPS)},
   2010.
-
-\bibitem{Hein13}
-M.~Hein, T.~B\"{u}hler, L.~Jost, S.~Rangapuram, and S.~Setzer.
-\newblock Tight relaxations of constrained fractional set programs into
-  nonlinear eigenproblems.
-\newblock \url{http://www.lsta.upmc.fr/Hein.pdf}, 2013.
-\newblock Workshop on Unsupervised Learning and High-dimensional Statistics.
 
 \bibitem{HeinS11}
 M.~Hein and S.~Setzer.
@@ -241,12 +145,6 @@ R.~Kannan, S.~Vempala, and A.~Vetta.
 \newblock In {\em Annual Symposium on Foundations of Computer Science (FOCS)},
   2000.
 
-\bibitem{KontschiederBBP11}
-P.~Kontschieder, S.~R. Bul\'o, H.~Bischof, and M.~Pelillo.
-\newblock Structured class-labels in random forests for semantic image
-  labelling.
-\newblock In {\em International Conference on Computer Vision (ICCV)}, 2011.
-
 \bibitem{Kumar08}
 M.~P. Kumar, P.~Torr, and A.~Zisserman.
 \newblock Learning layered motion segmentations of video.
@@ -264,13 +162,6 @@ J.~Lezama, K.~Alahari, J.~Sivic, and I.~Laptev.
 \newblock In {\em Conference on Computer Vision and Pattern Recognition
   (CVPR)}, 2011.
 
-\bibitem{LimZD13}
-J.~J. Lim, C.~L. Zitnick, and P.~Doll\'ar.
-\newblock Sketch tokens: A learned mid-level representation for contour and
-  object detection.
-\newblock In {\em Conference on Computer Vision and Pattern Recognition
-  (CVPR)}, 2013.
-
 \bibitem{LuC08}
 Z.~Lu and M.~A. Carreira-Perpiñán.
 \newblock Constrained spectral clustering through affinity propagation.
@@ -282,17 +173,6 @@ S.~Maji, N.~K. Vishnoi, and J.~Malik.
 \newblock Biased normalized cuts.
 \newblock In {\em Conference on Computer Vision and Pattern Recognition
   (CVPR)}, 2011.
-
-\bibitem{Martin01}
-D.~R. Martin, C.~Fowlkes, D.~Tal, and J.~Malik.
-\newblock A database of human segmented natural images and its application to
-  evaluating segmentation algorithms and measuring ecological statistics.
-\newblock In {\em International Conference on Computer Vision (ICCV)}, 2001.
-
-\bibitem{Meila05}
-M.~Meila.
-\newblock Comparing clusterings: an axiomatic view.
-\newblock In {\em International Conference on Machine Learning (ICML)}, 2005.
 
 \bibitem{meila01}
 M.~Meila and J.~Shi.
@@ -319,12 +199,6 @@ P.~Ochs and T.~Brox.
   turning point trajectories into dense regions.
 \newblock In {\em International Conference on Computer Vision (ICCV)}, 2011.
 
-\bibitem{Ochs12}
-P.~Ochs and T.~Brox.
-\newblock Higher order motion models and spectral clustering.
-\newblock In {\em Conference on Computer Vision and Pattern Recognition
-  (CVPR)}, 2012.
-
 \bibitem{Ochs14}
 P.~Ochs, J.~Malik, and T.~Brox.
 \newblock Segmentation of moving objects by long term video analysis.
@@ -343,25 +217,11 @@ S.~Paris.
   streams.
 \newblock In {\em European Conference on Computer Vision (ECCV)}, 2008.
 
-\bibitem{rand1971}
-W.~M. Rand.
-\newblock {Objective criteria for the evaluation of clustering methods}.
-\newblock In {\em Journal of the American Statistical Association}, 1971.
-
 \bibitem{RangapuramH12}
 S.~Rangapuram and M.~Hein.
 \newblock Constrained 1-spectral clustering.
 \newblock In {\em Conference on Artificial Intelligence and Statistics
   (AISTATS)}, 2012.
-
-\bibitem{Setzer12}
-S.~Setzer, M.~Hein, T.~B\"{u}hler, L.~Jost, and S.~Rangapuram.
-\newblock Nonlinear eigenproblems for high-dimensional data analysis.
-\newblock
-  \url{http://www.damtp.cam.ac.uk/user/cbs31/Imaging_Workshop_Cambridge_September_2012/Slides_files/simon_setzer.pdf},
-  2012.
-\newblock Young Researchers' Workshop on Statistics, Learning and Variational
-  Methods in Imaging.
 
 \bibitem{Shi00}
 J.~Shi and J.~Malik.
@@ -387,18 +247,6 @@ P.~H.~S. Torr, R.~Szeliski, and P.~Anandan.
 \newblock In {\em Transaction on Pattern Analysis and Machine Intelligence
   (PAMI)}, 2001.
 
-\bibitem{TronV07}
-R.~Tron and R.~Vidal.
-\newblock A benchmark for the comparison of 3-d motion segmentation algorithms.
-\newblock In {\em Conference on Computer Vision and Pattern Recognition
-  (CVPR)}, 2007.
-
-\bibitem{UnnikrishnanPH07}
-R.~Unnikrishnan, C.~Pantofaru, and M.~Hebert.
-\newblock Toward objective evaluation of image segmentation algorithms.
-\newblock In {\em Transaction on Pattern Analysis and Machine Intelligence
-  (PAMI)}, 2007.
-
 \bibitem{Vazquez_Reina10}
 A.~Vazquez-Reina, S.~Avidan, H.~Pfister, and E.~Miller.
 \newblock Multiple hypothesis video segmentation from superpixel flows.
@@ -413,11 +261,6 @@ D.~Verma and M.~Meila.
 U.~von Luxburg.
 \newblock A tutorial on spectral clustering.
 \newblock {\em Stat. Comput.}, 2007.
-
-\bibitem{Wagner93}
-D.~Wagner and F.~Wagner.
-\newblock Between min cut and graph bisection.
-\newblock In {\em Mathematical Foundations of Computer Science (MFCS)}, 1993.
 
 \bibitem{Wagstaff01}
 K.~Wagstaff, C.~Cardie, S.~Rogers, and S.~Schr{\"o}dl.
@@ -448,12 +291,6 @@ J.~Xiao and M.~Shah.
   cuts.
 \newblock In {\em Transaction on Pattern Analysis and Machine Intelligence
   (PAMI)}, 2005.
-
-\bibitem{XuCorso12}
-C.~Xu and J.~J. Corso.
-\newblock Evaluation of super-voxel methods for early video processing.
-\newblock In {\em Conference on Computer Vision and Pattern Recognition
-  (CVPR)}, 2012.
 
 \bibitem{XuXiong12}
 C.~Xu, C.~Xiong, and J.~J. Corso.

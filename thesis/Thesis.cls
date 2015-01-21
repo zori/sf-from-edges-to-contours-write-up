@@ -231,7 +231,7 @@
       
       \bigskip
       {\large Masterarbeit im Fach Informatik \par}
-      {\large Master's Thesis in Visual Computing \par}
+      {\large Master's Thesis in Computer Science \par}
       {\large von / by \par}
 
       {\LARGE \authornames \par}
@@ -241,29 +241,24 @@
       \bigskip
       {\large angefertigt unter der Leitung von / supervised by \par}
       {\LARGE Dr. Fabio Galasso \par}
+      {\LARGE Dr. Rodrigo Benenson \par}
  
       \bigskip
       \bigskip
       \bigskip 
       {\large betreut von / advised by \par}
-      {\LARGE Prof. Dr. Bernt Schiele \par}
-      {\LARGE Prof. Dr. Matthias Hein \par}
+      {\LARGE Dr. Fabio Galasso \par}
       
       \bigskip
       \bigskip
       \bigskip 
       {\large begutachtet von / reviewers \par}
-      {\LARGE Prof. Dr. Matthias Hein \par}
-      {\LARGE Dr. Fabio Galasso \par}
+      {\LARGE Dr. Rodrigo Benenson \par}
+      % {\LARGE Dr. Fabio Galasso \par}
+      {\LARGE Prof. Dr. Bernt Schiele \par}
       
-      %\vfill
       %{\large A thesis submitted in partial fulfillment for the \par}
       %{\large degree of Master of Science \par}
-      %\bigskip
-      %\bigskip
-      %{\large in the \par}
-      %{\large \facname \par}
-      %{\large \deptname \par}
       \bigskip
       \bigskip
       \bigskip
