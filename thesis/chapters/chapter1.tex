@@ -1,12 +1,18 @@
 \chapter{Introduction}
 \label{Chapter1}
 \section{Motivation}
-
+\section{Terminology}
+\subsection{Edge Detection - Edge, Edge Map, Probability of Boundary}
+\subsection{Image Segmentation - Contour, Segmentation, Region Boundary, Hierarchical Segmentation}
 \section{Related Work}
-\subsubsection*{Edge Detection}
-\subsubsection*{Segmentation}
+% \subsubsection*{Edge Detection}
+\subsection{From Edges to Contours}
+\subsubsection{Edge Detection}
+\subsubsection{Image Segmentation}
+\subsection{State-of-the-Art Review}
 \section{Outline}
-% The rest of this work is structured as follows:
+The rest of this work is structured as follows:
+
 % \begin{itemize}
 % \item Chapter~\ref{SpectRelax} starts the thesis with a brief introduction to balanced graph cuts and spectral relaxation techniques.
 % Section~\ref{sec:ch2_clgrpart} shows that clustering can be seen as a graph partitioning problem. The minimum cut approach often yields useless results where clusters are highly unbalanced, hence
@@ -38,3 +44,45 @@
 % Section~\ref{ch5:disc} discusses the achieved results.
 % \item Chapter~\ref{Chapter6} concludes the thesis summarizing all the results of our work and proposing directions for possible improvements.
 % \end{itemize}
+
+\chapter{From Edges to Contours - Current State-of-the-Art}
+\label{Chapter2}
+\section{gPb-owt-ucm Algorithm Pipeline}
+\subsection{Quantised Oriented Probability of Boundary}
+\subsection{Weighted Watershed}
+\section{Flaws of Quantisation}
+
+\chapter{Structured Random Decision Forests}
+\label{Chapter3}
+\section{Algorithm Outline}
+\section{Training - Growing a Decision Forest}
+\section{Inference}
+\subsection{Sliding Window}
+\subsection{Averaging of Overlapping Decisions}
+
+\chapter{Leveraging Structured Forest for Segmentation}
+\label{Chapter4}
+\section{Edge Detection - gPb vs. Structured Edge}
+\section{Weighting the Watershed Locations}
+\subsection{Comparing a Structured Forest Patch to a Watershed Patch}
+\subsubsection{Patch Transformations}
+\subsection{Scoring Functions for Patch Similarity}
+\subsubsection{Cast as a Benchmark Problem}
+\subsubsection{Boundary and Region Metrics}
+
+\chapter{Experimental Study of Watershed Weighting Strategies}
+\label{Chapter5}
+\section{Evaluation}
+\subsection{Dataset}
+\subsection{Metrics}
+\section{Exploration of the Space of Weighting Strategies}
+\section{Oracle - Experiments with Ground Truth}
+\subsection{Oracle Description}
+\subsection{Ranking of Oracles}
+\subsubsection{Confirms Correct Weighting Strategies}
+\subsubsection{Failure Cases}
+
+\chapter{Conclusions and Open Problems}
+\label{Chapter6}
+\section{Conclusions}
+\section{Open Problems}
