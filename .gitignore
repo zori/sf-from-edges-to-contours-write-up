@@ -1,13 +1,21 @@
+*.bbl
+*.blg
+*.toc
+
 *.aux
 *.log
 *.out
 *.pdf
-"" how to do the catch-it-all?
-" *~
-*.bib~
-*.cls~
-*.lyx~
-*.sty~
-*.tex~
+
+" catch-it-all for temporary files:
+*~
+" *.bib~
+" *.cls~
+" *.lyx~
+" *.sty~
+" *.tex~
+
 *.backup
 *.kate-swp
+" Kile's project file
+*.kilepr
