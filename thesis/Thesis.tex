@@ -1,4 +1,5 @@
-\documentclass[8pt, a4paper, twoside]{Thesis}
+\documentclass[a4paper, twoside]{Thesis}
+% \documentclass[8pt, a4paper, twoside]{Thesis} % this generated warning about unused option [8pt]
 \usepackage{dcolumn}
 % \DeclareMathVersion{nxbold}
 % \SetSymbolFont{operators}{nxbold}{OT1}{cmr} {b}{n}
@@ -16,6 +17,7 @@
 \usepackage{setspace}
 \usepackage{dsfont}
 \usepackage[section]{placeins}
+\usepackage[export]{adjustbox}
 \usepackage{xcolor}
 \definecolor{dark-blue}{rgb}{0.2,0.2,0.6}
 % \usepackage{algorithm}
@@ -37,7 +39,6 @@
 \newcommand{\argmin}{\operatornamewithlimits{argmin}}
 \newcommand{\abs}[1]{\left\lvert#1\right\rvert}
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
-\newcommand{\listofalgorithmes}{\tocfile{\listalgorithmcfname}{loa}}
 \newcommand{\sign}{\operatorname{sign}}
 
 % Zori's workaround: from packages/algorithm2e.sty
@@ -181,20 +182,20 @@ Zornitsa Kostadinova
 \input{chapters/chapter1.tex}
 \clearpage
 
-% \input{chapters/chapter2.tex}
-% \clearpage
-% 
-% \input{chapters/chapter3.tex}
-% \clearpage
-% 
-% \input{chapters/chapter4.tex}
-% \clearpage
-% 
-% \input{chapters/chapter5.tex}
-% \clearpage
-% 
-% \input{chapters/chapter6.tex}
-% \clearpage
+\input{chapters/chapter2.tex}
+\clearpage
+
+\input{chapters/chapter3.tex}
+\clearpage
+
+\input{chapters/chapter4.tex}
+\clearpage
+
+\input{chapters/chapter5.tex}
+\clearpage
+
+\input{chapters/chapter6.tex}
+\clearpage
 
 % *************** Bibliography ***************
 \bibliographystyle{abbrv}
