@@ -1,15 +1,59 @@
 \chapter{Introduction}
 \label{Chapter1}
 \section{Motivation}
+
+Our current approach discards edge saliency information (the Structured edge~\cite{DollarICCV13edges} output - probability of boundary values) and instead relies only on the structured information contained in the trained Structured forest.
+
 \section{Terminology}
 \subsection{Edge Detection - Edge, Edge Map, Probability of Boundary}
+%- application in tasks such as object detection/recognition, structure from motion, segmentation and tracking
+%- general consensus in the community that edge detection is somewhat ill defined in that it is not quiteclear what defines a correct output \cite{martin2004learning}
+
+Image edge detection deals with the problem of finding pixels which belong to object boundaries within a digital image. The pixels belonging to object boundaries in an image are often locations where a sharp change of image brightness occurs. Those locations of image intensity discontinuities, typically grouped together, are called image edges.
+
+We will call an edge map a binary image depicting edges locations. The pixels belonging to an edge are set to 1. The rest of the pixels are not part of an edge. They have a value of 0. Therefore, for a given pixel location $(x,y)$, the corresponding edge map value is $em_{x,y} \in \{0,1\}$
+
+To allow to express a level of (un)certainty as to the presence of an edge in an image, we employ a probabilistic means. We define a real-valued image called a Probability of boundary (Pb) (see Figure~\ref{fig:edge_detection}\subref{fig:subfigure2}). The notion of probability of a location being an edge point was first introduced in \cite{martin2004learning}. It has ever since been used as an output to many edge detection algorithms \cite{Maire2008using}.
+
+\begin{figure}[ht!]
+ \centering
+ \subfigure[Input image]{%
+ \includegraphics[width=0.3\textwidth]{images/examples/hawaii/arbelaez2011-035.png}
+\label{fig:subfigure1}}
+ \subfigure[Edge map]{%
+ \includegraphics[width=0.3\textwidth]{images/examples/hawaii/edge_map_arbelaez2011-039.png}
+\label{fig:subfigure2}}
+\subfigure[Probability of boundary]{%
+ \includegraphics[width=0.3\textwidth]{images/examples/hawaii/Pb_arbelaez2011-039.png}
+\label{fig:subfigure3}}
+% \quad
+% \qquad
+ \caption[Caption that doesn't show?]{{\bf Edge detection} (courtesy of~\cite{Arbelaez11}). Note that for ease of view %illustration
+ , the negative of the probability is shown, \ie the darker the pixel, the higher the probability of an edge.}
+\label{fig:edge_detection}
+\end{figure}
+
 \subsection{Image Segmentation - Contour, Segmentation, Region Boundary, Hierarchical Segmentation}
 \section{Related Work}
 % \subsubsection*{Edge Detection}
 \subsection{From Edges to Contours}
 \subsubsection{Edge Detection}
+Early edge detection approaches solely rely on local cues. Low-level detectors define edges as sharp discontinuities in image brightness. First results were achieved using digital image processing techniques. The Roberts cross~\cite{roberts1963machine}, Sobel filter~\cite{sobel19683x3}, and Prewitt operator~\cite{prewitt1970object} all are discrete differentiation operators. % can say 'differential operator'
+They view an images as a 2-dimensional signal which they convolve with pre-defined filters with local support. In the same line of work is the Marr-Hildreth algorithm~\cite{marr1980theory}, which finds zero-crossings of the Laplacian of the image intensity. Later still, the Canny detector~\cite{canny1986computational} shows better-quality edges. It searches for peak gradient magnitude in the image intensity. It adds some improvements, like non-maximum suppression (also known as ``edge thinning''), which improves edge localisation. A practically relevant extensions of it is the Canny-Deriche detector~\cite{deriche1987using}, which addresses the filter implementation.
+
+More higher-level detectors incorporate colour and texture~\cite{rubner1996coalescing,will2000learning} information, as well as multiple scales and orientations.
+
+Globalisation-based methods.
+
+Recent approaches are interested in high quality edge detection. They therefore rely on learning to incorporate context and object knowledge. They address more challenging scenarios which arise in natural images. As Martin \etal argue in \cite{martin2004learning}, those methods solve the so-called ``boundary detection'' problem. A boundary delineates the pixels that belong to one object, material, or surface from those that belong to another. One possible approach to boundary detection would be to use edges as low-level cues to judge for the presence of object boundaries (a bottom-up approach). Another solution is to go top-down and use higher-level object knowledge to infer the object boundaries.
+
+In such more challenging situations a \textit{general} edge detector would not be adequate, since the desired output is application-specific.
+
+
 \subsubsection{Image Segmentation}
 \subsection{State-of-the-Art Review}
+\section{Goal}
+% a more principled approach to boundary-guided image segmentation. % analysis?
 \section{Outline}
 The rest of this work is structured as follows:
 
@@ -44,45 +88,3 @@ The rest of this work is structured as follows:
 % Section~\ref{ch5:disc} discusses the achieved results.
 % \item Chapter~\ref{Chapter6} concludes the thesis summarizing all the results of our work and proposing directions for possible improvements.
 % \end{itemize}
-
-\chapter{From Edges to Contours - Current State-of-the-Art}
-\label{Chapter2}
-\section{gPb-owt-ucm Algorithm Pipeline}
-\subsection{Quantised Oriented Probability of Boundary}
-\subsection{Weighted Watershed}
-\section{Flaws of Quantisation}
-
-\chapter{Structured Random Decision Forests}
-\label{Chapter3}
-\section{Algorithm Outline}
-\section{Training - Growing a Decision Forest}
-\section{Inference}
-\subsection{Sliding Window}
-\subsection{Averaging of Overlapping Decisions}
-
-\chapter{Leveraging Structured Forest for Segmentation}
-\label{Chapter4}
-\section{Edge Detection - gPb vs. Structured Edge}
-\section{Weighting the Watershed Locations}
-\subsection{Comparing a Structured Forest Patch to a Watershed Patch}
-\subsubsection{Patch Transformations}
-\subsection{Scoring Functions for Patch Similarity}
-\subsubsection{Cast as a Benchmark Problem}
-\subsubsection{Boundary and Region Metrics}
-
-\chapter{Experimental Study of Watershed Weighting Strategies}
-\label{Chapter5}
-\section{Evaluation}
-\subsection{Dataset}
-\subsection{Metrics}
-\section{Exploration of the Space of Weighting Strategies}
-\section{Oracle - Experiments with Ground Truth}
-\subsection{Oracle Description}
-\subsection{Ranking of Oracles}
-\subsubsection{Confirms Correct Weighting Strategies}
-\subsubsection{Failure Cases}
-
-\chapter{Conclusions and Open Problems}
-\label{Chapter6}
-\section{Conclusions}
-\section{Open Problems}
