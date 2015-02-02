@@ -4,11 +4,12 @@
 
 Our current approach discards edge saliency information (the Structured edge~\cite{DollarICCV13edges} output - probability of boundary values) and instead relies only on the structured information contained in the trained Structured forest.
 
-\section{Terminology}
-\subsection{Edge Detection - Edge, Edge Map, Probability of Boundary}
+\section{Problem definition}
+\subsection{Edge detection}
 %- application in tasks such as object detection/recognition, structure from motion, segmentation and tracking
 %- general consensus in the community that edge detection is somewhat ill defined in that it is not quiteclear what defines a correct output \cite{martin2004learning}
 
+\subsubsection*{Edge, edge map, probability of boundary}
 Image edge detection deals with the problem of finding pixels which belong to object boundaries within a digital image. The pixels belonging to object boundaries in an image are often locations where a sharp change of image brightness occurs. Those locations of image intensity discontinuities, typically grouped together, are called image edges.
 
 We will call an edge map a binary image depicting edges locations. The pixels belonging to an edge are set to 1. The rest of the pixels are not part of an edge. They have a value of 0. Therefore, for a given pixel location $(x,y)$, the corresponding edge map value is $em_{x,y} \in \{0,1\}$
@@ -28,16 +29,19 @@ To allow to express a level of (un)certainty as to the presence of an edge in an
 \label{fig:subfigure3}}
 % \quad
 % \qquad
- \caption[Caption that doesn't show?]{{\bf Edge detection} (courtesy of~\cite{Arbelaez11}). Note that for ease of view %illustration
- , the negative of the probability is shown, \ie the darker the pixel, the higher the probability of an edge.}
+ \caption[Caption that doesn't show?]{{\bf Edge detection} (courtesy of~\cite{Arbelaez11}). Note that for ease of view,%illustration
+ the negative of the probability is shown, \ie the darker the pixel, the higher the probability of an edge.}
 \label{fig:edge_detection}
 \end{figure}
 
-\subsection{Image Segmentation - Contour, Segmentation, Region Boundary, Hierarchical Segmentation}
-\section{Related Work}
+\subsection{Image segmentation}
+
+\subsubsection*{Contour, segmentation, region boundary, hierarchical segmentation}
+
+\section{Related work}
 % \subsubsection*{Edge Detection}
-\subsection{From Edges to Contours}
-\subsubsection{Edge Detection}
+\subsection{From edges to contours}
+\subsubsection{Edge detection}
 Early edge detection approaches solely rely on local cues. Low-level detectors define edges as sharp discontinuities in image brightness. First results were achieved using digital image processing techniques. The Roberts cross~\cite{roberts1963machine}, Sobel filter~\cite{sobel19683x3}, and Prewitt operator~\cite{prewitt1970object} all are discrete differentiation operators. % can say 'differential operator'
 They view an images as a 2-dimensional signal which they convolve with pre-defined filters with local support. In the same line of work is the Marr-Hildreth algorithm~\cite{marr1980theory}, which finds zero-crossings of the Laplacian of the image intensity. Later still, the Canny detector~\cite{canny1986computational} shows better-quality edges. It searches for peak gradient magnitude in the image intensity. It adds some improvements, like non-maximum suppression (also known as ``edge thinning''), which improves edge localisation. A practically relevant extensions of it is the Canny-Deriche detector~\cite{deriche1987using}, which addresses the filter implementation.
 
@@ -50,8 +54,8 @@ Recent approaches are interested in high quality edge detection. They therefore 
 In such more challenging situations a \textit{general} edge detector would not be adequate, since the desired output is application-specific.
 
 
-\subsubsection{Image Segmentation}
-\subsection{State-of-the-Art Review}
+\subsubsection{Image segmentation}
+\subsection{State-of-the-art review}
 \section{Goal}
 % a more principled approach to boundary-guided image segmentation. % analysis?
 \section{Outline}

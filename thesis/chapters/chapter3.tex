@@ -1,8 +1,13 @@
-\chapter{Structured Random Decision Forests}
+\chapter{Structured random decision forests}
 \label{Chapter3}
-\section{Algorithm Outline}
+\section{Capturing context}
+A different approach is taken by Hallman and Fowlkes in their Oriented edge forests (OEF) paper~\cite{Hallman2014}. They use a decision forest classifier to learn to distinguish between straight-line edges of different position and orientation within an image patch. Local sharpening of the edges helps them achieve state-of-the-art performance on the now standard benchmark for the task of boundary detection - BPR on BSDS500.
+
+The output of their algorithm is an oriented probability of boundary $E(x,y,\theta)$. Therefore, it would be a natural fit for the OWT-UCM pipeline described in~\cite{Arbelaez11}. The resulting procedure algorithm, which they title ``OEF-owt-ucm'' allows to use the edge detection results to obtain a hierarchical image segmentation. They report, however, misalignments due to quantisation mismatch of the orientation angles between their algorithm and gPb-OWT-UCM of~\cite{Arbelaez11}.
+
+\section{Algorithm outline}
 %- the decision for a single point is made based on an image patch centered at it. A large enough patch contains low-level features and also some mid-level and context information
-\section{Training - Growing a Decision Forest}
+\section{Training - growing a decision forest}
 \section{Inference}
-\subsection{Sliding Window}
-\subsection{Averaging of Overlapping Decisions}
+\subsection{Sliding window}
+\subsection{Averaging of overlapping decisions}
