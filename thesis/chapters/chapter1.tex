@@ -12,25 +12,27 @@ Our current approach discards edge saliency information (the Structured edge~\ci
 \subsubsection*{Edge, edge map, probability of boundary}
 Image edge detection deals with the problem of finding pixels which belong to object boundaries within a digital image. The pixels belonging to object boundaries in an image are often locations where a sharp change of image brightness occurs. Those locations of image intensity discontinuities, typically grouped together, are called image edges.
 
-We will call an edge map a binary image depicting edges locations. The pixels belonging to an edge are set to 1. The rest of the pixels are not part of an edge. They have a value of 0. Therefore, for a given pixel location $(x,y)$, the corresponding edge map value is $em_{x,y} \in \{0,1\}$
+We will call an edge map a binary image depicting edges locations. The pixels belonging to an edge are set to 1. The rest of the pixels are not part of an edge. They have a value of 0. Therefore, for a given pixel location $(x,y)$, the corresponding edge map value is $em_{x,y} \in \{0,1\}$ (see Figure~\ref{fig:edge_detection}\subref{fig:edge_detection-sub2}).
 
-To allow to express a level of (un)certainty as to the presence of an edge in an image, we employ a probabilistic means. We define a real-valued image called a Probability of boundary (Pb) (see Figure~\ref{fig:edge_detection}\subref{fig:subfigure2}). The notion of probability of a location being an edge point was first introduced in \cite{martin2004learning}. It has ever since been used as an output to many edge detection algorithms \cite{Maire2008using}.
+To allow to express a level of (un)certainty as to the presence of an edge in an image, we employ a probabilistic means. We define a real-valued image called a Probability of boundary (Pb) (see Figure~\ref{fig:edge_detection}\subref{fig:edge_detection-sub3}). The notion of probability of a location being an edge point was first introduced in~\cite{martin2004learning}. It has ever since been used as an output to many edge detection algorithms \cite{Maire2008using}.
 
 \begin{figure}[ht!]
- \centering
+\centering
  \subfigure[Input image]{%
- \includegraphics[width=0.3\textwidth]{images/examples/hawaii/arbelaez2011-035.png}
-\label{fig:subfigure1}}
+  \includegraphics[width=0.3\textwidth]{images/examples/hawaii/arbelaez2011-035.png}
+ }
  \subfigure[Edge map]{%
- \includegraphics[width=0.3\textwidth]{images/examples/hawaii/edge_map_arbelaez2011-039.png}
-\label{fig:subfigure2}}
-\subfigure[Probability of boundary]{%
- \includegraphics[width=0.3\textwidth]{images/examples/hawaii/Pb_arbelaez2011-039.png}
-\label{fig:subfigure3}}
+  \includegraphics[width=0.3\textwidth]{images/examples/hawaii/edge_map_arbelaez2011-039.png}
+  \label{fig:edge_detection-sub2}
+ }
+ \subfigure[Probability of boundary]{%
+  \includegraphics[width=0.3\textwidth]{images/examples/hawaii/Pb_arbelaez2011-039.png}
+  \label{fig:edge_detection-sub3}
+ }
 % \quad
 % \qquad
- \caption[Caption that doesn't show?]{{\bf Edge detection} (courtesy of~\cite{Arbelaez11}). Note that for ease of view,%illustration
- the negative of the probability is shown, \ie the darker the pixel, the higher the probability of an edge.}
+\caption[Caption that doesn't show?]{{\bf Edge detection} (courtesy of~\cite{Arbelaez11}). Note that for ease of view,%illustration
+the negative of the probability is shown, \ie the darker the pixel, the higher the probability of an edge.}
 \label{fig:edge_detection}
 \end{figure}
 
