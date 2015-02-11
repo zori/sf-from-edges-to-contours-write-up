@@ -19,3 +19,5 @@
 *.kate-swp
 " Kile's project file
 *.kilepr
+
+everything_else/
