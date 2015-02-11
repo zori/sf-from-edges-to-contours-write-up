@@ -6,9 +6,11 @@ The majority of our experiments focuses on weighting the watershed locations. Th
 
 \textbf{Benchmark:} We report results on the benchmark of~\cite{Galasso13} which can evaluate segmentation hierarchies against given ground-truth segmentations. It demonstrates the tradeoff between an oversegmentation and a more accurate object-centric segmentation.
 
-\textbf{Watershed weighting strategy:} The Structured voting requires a choice of a watershed weighting strategy. The purpose of the weighting is associating a score with each of the watershed locations pixels. That score must faithfully reflect the strength of the underlying boundary. So we want to evaluate how good is the boundary evidence presented by the most likely segmentation determined by the structured forest. The first aspect of it is making the structured forest patch and the watershed locations patch comparable. The watershed patch is an oversegmentation, and in this sense, contains much more information, not exclusively about the location of the boundary that we would like to evaluate. So we strive to simplify the watershed patch, keeping only important information about it - the shape of the boundary under consideration, or the constitution of the segmentation in the patch. Such a simplification in the context of our algorithm we call ``watershed patch transformation''. The second particular to a watershed weighting strategy is the choice of scoring function. We view the task as a segmentation benchmark problem, where one of the patches is the ground truth segmentation, and the other - the segmentation under test. We analyse and apply a selection of boundary- and region- based metrics.
+\textbf{Watershed weighting strategy:} The Structured voting requires a choice of a watershed weighting strategy. The purpose of the weighting is associating a score with each of the watershed locations pixels. That score must faithfully reflect the strength of the underlying boundary. So we want to evaluate how good is the boundary evidence presented by the most likely segmentation determined by the structured forest. 
+The first aspect of it is making the structured forest patch and the watershed locations patch comparable. The watershed patch is an oversegmentation, and in this sense, contains much more information, not exclusively about the location of the boundary that we would like to evaluate. So we strive to simplify the watershed patch, keeping only important information about it - the shape of the boundary under consideration, or the constitution of the segmentation in the patch. Such a simplification in the context of our algorithm we call ``watershed patch transformation''. 
+The second particular to a watershed weighting strategy is the choice of scoring function. We view the task as a segmentation benchmark problem, where one of the patches is the ground truth segmentation, and the other - the segmentation under test. We analyse and apply a selection of boundary- and region- based metrics.
 
-In the rest of the chapter we briefly describe the dataset and evaluation metrics used to help understand the experiments. Afterwards, we give a detailed account of ours most important experiments and the conclusions we draw based on them.
+In the rest of the chapter we briefly describe the dataset and evaluation metrics used to help understand the experiments. Afterwards, we give a detailed account of our most important experiments and the conclusions we draw based on them.
 
 % \textbf{Oracle} To evaluate the correctness of our weighting strategies, we've implemented an oracle for our pipeline. The question we wanted to answer is ``how well could we perform segmentation in the presence of perfect information?'' Our Structured voting lends itself easily to such an experiment using the ground truth segmentation. When scoring a given pixel on the watershed regions boundary, we use a ground truth segmentation patch, rather than the most likely segmentation learnt by the structured forest. The second patch, as in the regular experiments, comes from the watershed locations image, taken for the same pixel location.
 
@@ -89,10 +91,10 @@ normalisation when evaluating segmentations.
 
 \item{\bf First Structured voting - superpixels and Rand Index:} We leave the watershed patch to be an oversegmentation, which in fact it is. The output of the watershed transform that we use has explicit the boundaries between segments, which would hinder a region-based metric. Therefore, we transform a watershed patch to have implicit segment boundaries - the locations of transition between differently labelled segments. The patches from the decision forest already constitute segmentation labelling with implicit segment boundaries. That, of course, is due to the fact that the structured forest patches are taken unmodified from the ground truth segmentations of the training subset of BSDS500, which has a ``labelling with implicit segment boundaries'' format. We conduct the comparison between watershed and a tree leaf patch using as a scoring function:
 
- \begin{itemize}
-  \item{\bf Rand Index (RI):} a count of the number of pairs of locations that belong to the same segment in both patches. For a $16\times16$ segmentation patch, that means $32 640$ pairs of locations.
-  \item{\bf Rand Index Monte Carlo (RIMC):} ours randomised subsample version of RI, which takes only a fraction $\rho$ of the pairs of locations into consideration. We experience no reduction in performance \wrt RI for a fraction as small as $\rho\approx\frac{1}{128}$, \ie, 256 out of the $32 640$ possible pairs of locations in a $16 \times 16$ patch. This scoring function is inspired from the way features are subsampled to introduce randomness when training a decision tree in~\cite{DollarICCV13edges,Dollar2013toolbox}.
- \end{itemize}
+\begin{itemize}
+ \item{\bf Rand Index (RI):} a count of the number of pairs of locations that belong to the same segment in both patches. For a $16\times16$ segmentation patch, that means $32 640$ pairs of locations.
+ \item{\bf Rand Index Monte Carlo (RIMC):} ours randomised subsample version of RI, which takes only a fraction $\rho$ of the pairs of locations into consideration. We experience no reduction in performance \wrt RI for a fraction as small as $\rho\approx\frac{1}{128}$, \ie, 256 out of the $32 640$ possible pairs of locations in a $16 \times 16$ patch. This scoring function is inspired from the way features are subsampled to introduce randomness when training a decision tree in~\cite{DollarICCV13edges,Dollar2013toolbox}.
+\end{itemize}
 
  The above experiments (both having a result of $F=0.55$ on BPR) led us to two conclusions. First, we need to have a closer look into the properties of our \textbf{scoring functions}. Section~\ref{boundary-and-region-metrics-maths} of the previous chapter gives mathematical formulae and a detailed explanation on the metrics we considered for this task. Second, a \textbf{simplification of the watershed patch} is desirable, due to the discrepancy %mismatch between 
  in makeup %constitution
@@ -153,6 +155,19 @@ Conic sections - parabola, hyperbola and ellipse that fit the data. Too complex 
   \end{itemize}
 Discussion: It would be useful to see the effect of a ``mixed'' scope of voting - cast vote on the whole region boundary, but use subdivided region boundary - the watershed arc in order to do the patch transformation.
 \end{enumerate}
+
+\begin{figure}[ht!]
+\centering
+ \subfigure[BPR]{%
+  \includegraphics[width=0.7\textwidth]{images/plots/scope_of_voting_oracle_disagreement__line_centre_VPR_ws_BPR.png}
+ }
+ \subfigure[VPR]{%
+  \includegraphics[width=0.7\textwidth]{images/plots/scope_of_voting_oracle_disagreement__line_centre_VPR_ws_VPR.png}
+  %\label{fig:subfigure1}
+ }
+\caption{Voting scope experiments. The three segmentation methods and their oracles are variants of our best performing weighting strategy - central line fitting, cobined with VPR normalised on the side of the watershed~(\hyperref[VPR-maths]{VPR description in Chapter 4}).} % \ref{RIMC-maths}
+\label{fig:voting-scope-line-centre-VPR-ws}
+\end{figure}
 
 Important conclusions of the experiments:
 \begin{enumerate}
