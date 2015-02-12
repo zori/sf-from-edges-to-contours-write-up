@@ -24,7 +24,7 @@ Random forest (RF) is a recently introduced~\cite{Breiman01} learning approach w
 
 A random decision forest is a collection %an ensemble %a combination 
 of tree predictors - classifiers or regressors~\cite{breiman1984classification}. Here ``tree'' is used in the computer science sense to denote an abstract data structure (ADS) - a graph without cycles. 
-The predictive power of the forest depends on the strength of the individual trees and their de-correlation. Therefore every tree is constructed based on a vector, sampled independently and randomly from the space of possible vectors. The randomness could be \wrt the training examples that are made available to each tree and / or the set of features that are being considered at each node of a decision tree.
+The predictive power of the forest depends on the strength of the individual trees and their de-correlation. Therefore every tree is constructed based on a vector, sampled independently and randomly from the space of possible vectors. The randomness could be \wrt the training examples that are made available to each tree and\slash or the set of features that are being considered at each node of a decision tree.
 
 Criminisi \etal~\cite{Criminisi12} provide a survey of decision tree methods.
 
@@ -134,9 +134,12 @@ The individual decisions are local segmentation masks. As discussed in \textsect
 and then averaging the edge maps from multiple overlapping patches. %decisions. 
 This is referred to in the paper~\cite{DollarICCV13edges} as ``custom ensemble model''.
 
-% \section{Capturing context}
 \section{Discussion}
-\textbf{Alternative way of capturing context:} A different approach is taken by Hallman and Fowlkes in their \textbf{Oriented edge forests (OEF)} paper~\cite{Hallman2014} which was published towards the end of the current research work. They use a decision forest classifier to learn to distinguish between straight-line edges of different position and orientation within an image patch. Although they use a set of pre-defined edge classes, local sharpening of the edges helps them capture fine variations in edge shape. They achieve state-of-the-art performance on the now standard benchmark for the task of boundary detection - BPR on BSDS500~\cite{Arbelaez11}.
+At the time it was published, SE algorithm showed state-of-the-art performance on the now standard benchmark for the task of boundary detection - BPR on BSDS500~\cite{Arbelaez11}. The algorithm is tested on other datasets and the models learnt are capable of successfully finding edges in images from datasets that they were not specifically trained for. This is reassuring - it means that the detector is able to generalise - its knowledge is universal, instead of overly adapted to %fit for 
+the contents of a specific dataset.
+
+\subsection*{Alternative way of capturing context}
+A different approach is taken by Hallman and Fowlkes in their \textbf{Oriented edge forests (OEF)} paper~\cite{Hallman2014} which was published towards the end of the current research work. They use a decision forest classifier to learn to distinguish between straight-line edges of different position and orientation within an image patch. Although they use a set of pre-defined edge classes, local sharpening of the edges helps them capture fine variations in edge shape. They currently (Feb 2015) achieve best results on the BSDS500 benchmark.
 
 \textbf{OEF for image segmentation:} The output of their algorithm is an oriented probability of boundary $E(x,y,\theta)$. Therefore, it would be a natural fit for the OWT-UCM pipeline described in~\cite{Arbelaez11}. The resulting procedure, which they title ``OEF-OWT-UCM'' allows to use the edge detection results to obtain a hierarchical image segmentation. They report, however, misalignments due to quantisation mismatch of the orientation angles between their algorithm and gPb-OWT-UCM of~\cite{Arbelaez11}.
 
@@ -144,8 +147,8 @@ This is referred to in the paper~\cite{DollarICCV13edges} as ``custom ensemble m
 
 \begin{itemize}
  \item accurate edge detector,
- \item fast at training time,
- \item real time at test time (edge detection),
+ \item fast at training time (which is done offline),
+ \item real-time speed at test time - during edge detection,
  \item has potential as a general-purpose edge detector, %TODO add note - gPb seems to be highly-tuned for the BSDS500 dataset
  \item is able to predict a most-likely segmentation for a given input patch,
  \item can be augmented to store all those intermediate predictions made during the edge detection.
