@@ -5,6 +5,9 @@
 Our current approach discards edge saliency information (the Structured edge~\cite{DollarICCV13edges} output - probability of boundary values) and instead relies only on the structured information contained in the trained Structured forest.
 
 \section{Problem definition}
+
+As the field is young, it is worth pointing out that there is a certain lack of consistency and differences in definitions as concerns related terminology. In the following we define the basic vocabulary for our method and we will be consistent in using it throughout this report.
+
 \subsection{Edge detection}
 %- application in tasks such as object detection/recognition, structure from motion, segmentation and tracking
 %- general consensus in the community that edge detection is somewhat ill defined in that it is not quiteclear what defines a correct output \cite{martin2004learning}
@@ -40,6 +43,11 @@ the negative of the probability is shown, \ie the darker the pixel, the higher t
 
 \subsubsection*{Contour, segmentation, region boundary, hierarchical segmentation}
 
+Note that it is sufficiently easy, given a segmentation, to obtain an edge map - one just has to consider the boundaries between the regions / segments. %superpixels.
+
+Depending on the representation, that could still be tricky - implicit and explicit boundary. In case of segmentation given by labelling the different segments (up to permutation of the labels) and implicit boundaries, super-resolution, \ie, doubling the resolution of the image and placing the boundaries in between the segment labels solves the ambiguity of exact placement of boundaries.
+%TODO more
+
 \section{Related work}
 % \subsubsection*{Edge Detection}
 \subsection{From edges to contours}
@@ -51,7 +59,8 @@ More higher-level detectors incorporate colour and texture~\cite{rubner1996coale
 
 Globalisation-based methods.
 
-Recent approaches are interested in high quality edge detection. They therefore rely on learning to incorporate context and object knowledge. They address more challenging scenarios which arise in natural images. As Martin \etal argue in \cite{martin2004learning}, those methods solve the so-called ``boundary detection'' problem. A boundary delineates the pixels that belong to one object, material, or surface from those that belong to another. One possible approach to boundary detection would be to use edges as low-level cues to judge for the presence of object boundaries (a bottom-up approach). Another solution is to go top-down and use higher-level object knowledge to infer the object boundaries.
+Higher quality edge detection is desirable. Texture edges and illusory contours are ellusive to % escape from
+traditional edge-detection approaches. Recent approaches therefore rely on learning to incorporate context and object knowledge. They address more challenging scenarios which arise in natural images. As Martin \etal argue in~\cite{martin2004learning}, those methods solve the so-called ``boundary detection'' problem. A boundary delineates the pixels that belong to one object, material, or surface from those that belong to another. One possible approach to boundary detection would be to use edges as low-level cues to judge for the presence of object boundaries (a bottom-up approach). Another solution is to go top-down and use higher-level object knowledge to infer the object boundaries.
 
 In such more challenging situations a \textit{general} edge detector would not be adequate, since the desired output is application-specific.
 
