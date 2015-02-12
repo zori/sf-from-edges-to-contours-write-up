@@ -1,27 +1,23 @@
 \documentclass[a4paper, twoside]{Thesis}
 % \documentclass[8pt, a4paper, twoside]{Thesis} % this generated warning about unused option [8pt]
-\usepackage{dcolumn}
-% \DeclareMathVersion{nxbold}
-% \SetSymbolFont{operators}{nxbold}{OT1}{cmr} {b}{n}
-% \SetSymbolFont{letters}  {nxbold}{OML}{cmm} {b}{it}
-% \SetSymbolFont{symbols}  {nxbold}{OMS}{cmsy}{b}{n}
+\usepackage[export]{adjustbox}
 \usepackage{afterpage}
-%\usepackage{subcaption}
-\usepackage[hang,center]{subfigure}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{tocbibind}
 %\usepackage{packages/algorithm2e}
 \usepackage[ruled,linesnumbered,vlined]{algorithm2e}
-\usepackage{multirow}
-\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{dcolumn}
 \usepackage{dsfont}
+\usepackage{multirow}
 \usepackage[section]{placeins}
-\usepackage[export]{adjustbox}
+\usepackage{setspace}
+%\usepackage{subcaption}
+\usepackage[hang,center]{subfigure}
+\usepackage{tocbibind}
 \usepackage{xcolor}
+
 \definecolor{dark-blue}{rgb}{0.2,0.2,0.6}
-% \usepackage{algorithm}
-% \usepackage{algpseudocode}
+
 \setlength{\parindent}{8pt}
 \makeatletter
 \DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
@@ -46,6 +42,10 @@
 \newcommand{\incmargin}[1]{\IncMargin{#1}}%
 \newcommand{\decmargin}[1]{\DecMargin{-#1}}%
 \newcommand{\Setnlsty}[3]{\SetNlSty{#1}{#2}{#3}}%
+
+% fancy paragraph labelling
+\renewcommand{\theparagraph}{\S\arabic{paragraph}}
+\setcounter{secnumdepth}{5}
 
 \begin{document}
 % *************** Front matter ***************
