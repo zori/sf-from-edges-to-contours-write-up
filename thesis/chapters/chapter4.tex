@@ -8,6 +8,13 @@ Given an edge detection result, various methods could be employed to obtain imag
 
 In the terms of the framework of Arbelaez et al.\cite{Arbelaez11} - gPb-OWT-UCM, we propose to use SE instead of gPb as an edge detector. Further, we replace the Oriented watershed transform (OWT) by SV to obtain scored region boundary locations. Our image segmentation pipeline could then be titled SE-SV-UCM.
 
+\begin{figure}[ht!]
+\centering
+ \includegraphics[width=1\textwidth]{images/SE-SV-UCM/SE-SV-UCM_pipeline.png}
+\caption{Our SE-SV-UCM algorithm in the context of gPb-OWT-UCM pipeline.}
+\label{fig:SE-SV-UCM-pipeline}
+\end{figure}
+
 \section{First stage of the pipeline - Edge detection - SE}
 \textbf{gPb vs. structured edge}
 
@@ -205,7 +212,7 @@ F=\frac{2PR}{P+R}
 \subsection{Giving output a probabilistic interpretation}
 
 \subsubsection*{Structured edge}
-In the SE algorithm~\cite{DollarICCV13edges,Dollar2014fast} every pixels receives between 0 and 256 votes. The decisions are ensembled by superposing patches of edge masks. Rather than avergaing however, the number of votes is divided by 128, which leaves an output that would theoretically fall into the $[0, 2]$ range. As a post-processing a triangular filter is applied, which has a smoothing and denoising effect. The resulting output indeed could match a probabilistic interpretation - only the strongest edges would have a value above 1, and that would be cut-off when benchmarking using BPR.
+In the SE algorithm~\cite{DollarICCV13edges,Dollar2015PAMI} every pixels receives between 0 and 256 votes. The decisions are ensembled by superposing patches of edge masks. Rather than avergaing however, the number of votes is divided by 128, which leaves an output that would theoretically fall into the $[0, 2]$ range. As a post-processing a triangular filter is applied, which has a smoothing and denoising effect. The resulting output indeed could match a probabilistic interpretation - only the strongest edges would have a value above 1, and that would be cut-off when benchmarking using BPR.
 
 \subsubsection*{gPb-OWT-UCM}
 Arbelaez \etal~\cite{Arbelaez11} learn a sigmoid on the BSDS500 training subset, and finish their segmentation algorithm by rescaling with a the learn sigmoid. The learnt values, of course, are exclusively suitable for their approach. For consistency we also apply the signmoid transformation, before finally rescaling (see next paragraph).
