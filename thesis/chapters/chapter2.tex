@@ -1,4 +1,3 @@
-% TODO double-check the sections hierarchy
 % TODO for a $16\times 16$ segmentation patch there exist, in theory $2^256$ possible edge masks. Due to the inherent structure in image patches however, not all of them are likely, and those containing simple structures are prevalent.
 \chapter{Capturing image edge structure} %Structured random decision forests}
 \label{Chapter2}
@@ -12,7 +11,8 @@ notable %prominent
 forms of local structure (some examples in Fig.~\ref{fig:srf-structure-in-edge-patches}). As edges are interdependent, often shapes like straight and curved lines, T-junctions and Y-junctions, convexities, sharp corners and parallel lines are to be observed in a local neighbourhood.
 
 \textbf{Capturing more context:} A family of learning approaches have tried to leverage local context to organise images - discover image edges, or recognise %discern
-figure from background objects. First the Boosted Edge Learning (BEL) algorithm~\cite{dollar2006supervised} made at each location in the image an independent binary decision as to the presence or absence of image edge. Noticing the abundance of edge structure in a local patch, \textit{sketch tokens}~\cite{LimZD13} and \textit{shapemes}~\cite{Ren2006figure} organise local edge shapes by clustering. The Structured forest (SF)~\cite{DollarICCV13edges} takes this idea a step further and keeps all local segmentation patches it has seen at training time in the leaves of its decision trees. By abstaining from using pre-defined classes of edge patches, clustering, or averaging \textbf{to model local edge context}, the SF framework has the potential to learn subtle variations in edge structure. It is flexible - it is able to adapt to the training dataset at hand by letting the data speak for itself. That is one of the reasons for its highly accurate edge detection.
+figure from background objects. First the Boosted Edge Learning (BEL) algorithm~\cite{dollar2006supervised} made at each location in the image an independent binary decision as to the presence or absence of image edge. Noticing the abundance of edge structure in a local patch, \textit{sketch tokens}~\cite{LimZD13} and \textit{shapemes}~\cite{Ren2006figure} organise local edge shapes by clustering. 
+The Structured forest (SF)~\cite{DollarICCV13edges} takes this idea a step further and keeps all local segmentation patches it has seen at training time in the leaves of its decision trees. By abstaining from using pre-defined classes of edge patches, clustering, or averaging \textbf{to model local edge context}, the SF framework has the potential to learn subtle variations in edge structure. It is flexible - it is able to adapt to the training dataset at hand by letting the data speak for itself. That is one of the reasons for its highly accurate edge detection.
 
 \textbf{Structured forest ``knows'' image edge context:} Precisely the ability of the structured forest to predict a local segmentation mask given an input image patch is so important to us. Even better, the edge detector SE could provide as a by-product the segmentation predictions that it has made at every image location. We would like to use this information in order to obtain image segmentation.
 
@@ -91,7 +91,7 @@ The test sample - a feature vector computed based on an input image patch $x$, t
 \begin{enumerate}
  \item{in decision tree inference:} in order to associate a prediction with the each leaf (like in~\ref{fig:srf-tree-inference}). To this end, the medoid segmentation patch \textit{for the proxy output space} is chosen. This is the one that minimises the sum of distances to all others in the leaf patch, see~\ref{fig:srf-leaf}. The medoid is the only patch that is subsequently used out of all those in the tree leaf. Note that only patches which have been observed during training can be predicted during testing %by the SF
  in this scenario.
- \item{in detection:} to make the final edge detection, a means to combine multiple overlapping decisions is necessary. Details will be given shortly in \textsection~\ref{subsection:edge-detection}.
+ \item{in detection:} to make the final edge detection, a means to combine multiple overlapping decisions is necessary. Details will be given shortly in \textsection~\ref{sec:ch2-edge-detection}.
 \end{enumerate}
 
 \begin{figure}[ht!]
@@ -123,7 +123,7 @@ The test sample - a feature vector computed based on an input image patch $x$, t
 \end{figure}
 
 \subsection{Edge detection}
-\label{subsection:edge-detection}
+\label{sec:ch2-edge-detection}
 Now that a most-likely segmentation can be obtained given an input image patch, how to do edge detection on a whole image?
 
 \subsubsection*{Sliding window}

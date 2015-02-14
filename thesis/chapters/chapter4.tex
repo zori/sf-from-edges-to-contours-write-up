@@ -25,11 +25,19 @@ In the rest of the chapter we describe our algorithm's pipeline. We finish with 
 
 \section[First stage of the pipeline - Structured edge]{First stage of the pipeline - edge detection - Structured edge}
 \subsection{gPb vs. SE}
+The gPb algorithm uses a combination of carefully designed features - the gradients, each at 3 scales of: 1) texture, 2) brightness, and 3) color (a total of 9 channels). As Doll\'ar reports in~\cite{DollarICCV13edges}, despite a high score on BSDS500 dataset, gPb performs poorly when tested on other dataset. This could be a symptom of over-tuning of the algorithm to the dataset.
+
+Beside being heavily-engineered, it does not come close to the real-time performance of SE.
+
+The most important reasons for using SE for us, however, is that this edge detector can provide as a by-product the intermediate most likely-segmentations that it has predicted per location in the image. This is important information about the local edge structure that we will build on to develop our Structured voting.
 
 
 \section{Second stage of the pipeline - Structured voting}
-\label{sec:SE-SV-UCM_SV_details}
-\textbf{Weighting the watershed locations}
+\label{sec:ch4-SE-SV-UCM_SV_details}
+\textbf{Weighting the watershed locations:} The goal of SV is to propose a suitable way of associating a score with each of the watershed pixel. Inspired by the ``local patch as a means of capturing context'' philosophy of previous works~\cite{dollar2006supervised,LimZD13,DollarICCV13edges}, we take a patch comparison approach. 
+The SE provides us ``for free'' with the best segmentation patches - local decisions that the trees of the decision forest have made on all locations of the image. We crop, centred around the same location, a patch of the same size ($16\times 16$ pixels) from the watershed superpixels  image. Comparing the two gives us a score, which we associate with the location on the watershed contours. A number of $T=4$ votes are cast per watershed pixel, and we take the mean of those. To further denoise the voting and give our votes a larger platform % stage, dais, rostrum, podium
+we average all votes per \textit{watershed arc}. The watershed arcs, as discussed in~\ref{sec:ch3-OWT}, are edges of the watershed contours, which are fairly consistent in their orientation. They are obtained by recursively subdividing the region boundaries of the watershed until the approximation given by the straight line through the end of the watershed arc is a sufficiently good one. % TODO artifact from the OWT
+
 \subsection{Comparing a structured forest patch to a watershed patch}
 
 \subsubsection{Patch transformations}
@@ -262,7 +270,10 @@ In most experiments (to be comprehensively % systematically detailedly
 review in \textsection~\ref{sec:ch5-structured-voting}) the ``other patch'' is a segmentation patch from a decision tree leaf - one predicted as most likely segmentation for the location. In another series of experiments (detailed in \textsection~\ref{sec:ch5-oracle}) the ``other patch'' being compared is a crop from the ground truth annotated segmentations.
 It is then clear that the watershed patch, since it is always one, as the machine segmentation, receives this allocation. Also, it is only natural in the context of the VPR benchmark to assign the $T$ tree leaf patches, or the ground truth cropped patches to the set of ground truth segmentations $\{\mathbb{G}_i\}_{i=1}^M$.
 
+\subsection*{Weighting the watershed}
+
 \section[Third stage of the pipeline - UCM]{Third stage of the pipeline - hierarchical segmentation - UCM}
+{sec:ch3-UCM}
 
 \section{Discussion}
 \subsection*{Giving output a probabilistic interpretation}

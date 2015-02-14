@@ -8,6 +8,7 @@
 \usepackage{amssymb}
 \usepackage{dcolumn}
 \usepackage{dsfont}
+\usepackage{etoolbox} % for the bibliography ``badness''
 \usepackage{multirow}
 \usepackage[section]{placeins}
 \usepackage{setspace}
@@ -15,6 +16,8 @@
 \usepackage[hang,center]{subfigure}
 \usepackage{tocbibind}
 \usepackage{xcolor}
+
+\apptocmd{\sloppy}{\hbadness 10000\relax}{}{}
 
 \definecolor{dark-blue}{rgb}{0.2,0.2,0.6}
 
