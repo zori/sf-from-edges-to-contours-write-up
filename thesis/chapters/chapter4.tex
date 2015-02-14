@@ -1,12 +1,18 @@
 \chapter{Leveraging structured forest for segmentation}
 \label{Chapter4}
-Given an edge detection result, various methods could be employed to obtain image segmentation.  One approach is to try and identify all possible boundaries of segmentation regions, based on the probability of boundary score produced by the edge detector. Those boundaries finely partition the image pixel graph. The regions closed by them constitute an oversegmentation of the image. Different tasks require segmentation at different level of detail. It is useful, therefore, to be able to obtain coarser segmentations as well. By reasoning about the salience of region boundaries, one could construct a hierarchy of segmentations. Going up the hierarchy corresponds to coarsening the segmentation by merging neighbouring regions which are separated by a weak boundary. To establish the order in which to merge the regions, we must be able to tell weak from strong boundaries. We want to associate a score with every possible region boundary, which score should reflect the strength of that intervening boundary.
+Given an edge detection result, various methods could be employed to obtain image segmentation.  One approach is to try and identify all possible boundaries of segmentation regions, based on the probability of boundary score produced by the edge detector. Those boundaries %, called \textit{watershed pixels}, 
+finely partition the image pixel graph (see \textsection~\ref{sec:ch3-watershed} for a description of the \textit{watershed transform} which we will use). The regions closed by them constitute an oversegmentation of the image. Different tasks require segmentation at different level of detail. It is useful, therefore, to be able to obtain coarser segmentations as well. 
+By reasoning about the salience of region boundaries, one could construct a \textit{hierarchy of segmentations} (see \textsection~\ref{sec:ch3-UCM} for details on the UCM). Going up the hierarchy corresponds to coarsening the segmentation by merging neighbouring regions which are separated by a weak boundary. To establish the order in which to merge the regions, we must be able to tell weak from strong boundaries. We want to associate a \textit{score} with every possible region boundary, which score should reflect the strength of that intervening boundary.
 
 \textbf{Structured voting:} To score the region boundaries we take a patch comparison approach. The edge detector which we employ, Structured edge (SE) by Doll\'ar~\etal~\cite{DollarICCV13edges}, associates a segmentation to every patch centred around a pixel location in the image - its most likely segmentation. The possible region boundaries locations are obtained by a watershed transformation on the output of this detector. For the same location we attain a patch from the watershed locations image. We then explore strategies to compare those two patches and score the similarity between them, a higher score meaning higher local evidence for boundary. We call those \textbf{watershed weighting strategies}. The choice of such an approach defines how we conduct our \textbf{Structured voting (SV)}.
 
-\textbf{How to vote? Two essentials:} We identify two important points in order to be able to score the two patches just described. Firstly, one being a local segmentation, and the other - a local oversegmentation, they are quite dissimilar. Therefore, one patch needs to be sensibly transformed, so that the two patches are comparable. Secondly, given that the two patches are comparable, what scoring function should be employed? We cast the problem of comparing two segmentation patches as a segmentation benchmark problem. Various boundary- and region-based metrics have been proposed for the task of evaluating image segmentation. We analyse the theoretical properties of some, and use a reasonable subset of them in our practical experiments. So a watershed weighting strategy has two aspects - making the patches sufficiently similar to compare, and choosing a scoring function to compare them.
+\textbf{How to vote? Two essentials:} We identify two important points in order to be able to score the two patches just described. 
+Firstly, one being a local segmentation, and the other - a local oversegmentation, they are quite dissimilar. Therefore, one patch needs to be sensibly \textbf{transformed}, so that the two patches are comparable. 
+Secondly, given that the two patches are comparable, what \textbf{scoring function} should be employed? We cast the problem of comparing two segmentation patches as a segmentation benchmark problem. Various boundary- and region-based metrics have been proposed for the task of evaluating image segmentation. We analyse the theoretical properties of some, and use a suitable %reasonable 
+subset of them in our practical experiments. 
+So a watershed weighting strategy has two aspects - making the patches sufficiently similar to compare, and choosing a scoring function to compare them.
 
-In the terms of the framework of Arbel\'aez~\etal~\cite{Arbelaez11} - gPb-OWT-UCM, we propose to use SE instead of gPb as an edge detector. Further, we replace the Oriented watershed transform (OWT) by SV to obtain scored region boundary locations. Our image segmentation pipeline could then be titled \textbf{SE-SV-UCM}, see Fig.~\ref{fig:SE-SV-UCM-pipeline}.
+\textbf{Pipeline:} In the terms of the framework of Arbel\'aez~\etal~\cite{Arbelaez11} - gPb-OWT-UCM, we propose to use SE instead of gPb as an edge detector. Further, we replace the Oriented watershed transform (OWT) by SV to obtain scored region boundary locations. Our image segmentation pipeline could then be titled \textbf{SE-SV-UCM}, see Fig.~\ref{fig:SE-SV-UCM-pipeline}.
 
 \begin{figure}[ht!]
 \centering
@@ -15,23 +21,29 @@ In the terms of the framework of Arbel\'aez~\etal~\cite{Arbelaez11} - gPb-OWT-UC
 \label{fig:SE-SV-UCM-pipeline}
 \end{figure}
 
-\section{First stage of the pipeline - Edge detection - Structured edge}
+In the rest of the chapter we describe our algorithm's pipeline. We finish with a discussion on practical issues concerning edge detection and image segmentation output format.
+
+\section[First stage of the pipeline - Structured edge]{First stage of the pipeline - edge detection - Structured edge}
 \subsection{gPb vs. SE}
 
-\section{Second stage of the pipeline - Structured voting}
 
+\section{Second stage of the pipeline - Structured voting}
+\label{sec:SE-SV-UCM_SV_details}
 \textbf{Weighting the watershed locations}
 \subsection{Comparing a structured forest patch to a watershed patch}
 
 \subsubsection{Patch transformations}
 \subsection{Scoring functions for patch similarity}
-\subsubsection{Cast as a segmentation benchmark problem}
+We cast the problem of scoring the similarity of a watershed and a structured tree leaf patch as a segmentation benchmark problem. To this end we review some popular boundary and region metrics proposed for the task and see what are the challenges in using them as scoring functions in our scenario.
+
 \subsubsection{Boundary and region metrics}
-\label{boundary-and-region-metrics-maths}
+\label{sec:ch4-boundary-and-region-metrics-maths}
+In the following we will use $S$ to denote machine boundary map, $\mathbb{S}$ for machine segmentation, $s$ for a segment in it, $G$ for a ground-truth boundary map, $\mathbb{G}$ for ground-truth segmentation, and $g$ for a segment in it.
 
-\paragraph{Boundary Precision-Recall (BPR)}
+\paragraph{Boundary Precision-Recall (BPR)}\mbox{}\\\mbox{}\\ % force some space after the paragraph name
+The metric was proposed by~\cite{Arbelaez11} to evaluate the quality of edge detection algorithms in a precision-recall framework. Precision measures the fraction of true positive edge pixels. Recall evaluates the amount of real (\eg ground-truth-annotated) edge pixels detected by the algorithm under test. The reported measure is the \textbf{F-score}, which is the harmonic mean of the precision and recall.
 
-\label{BPR-maths}
+\label{sec:ch4-BPR-maths}
 \[
 P=\frac{\left|S\cap\left(\bigcup\limits _{i=1}^{M}G_{i}\right)\right|}{|S|}
 \]
@@ -42,15 +54,14 @@ R=\frac{{\sum\limits _{i=1}^{M}\left|S\cap G_{i}\right|}}{\sum\limits _{i=1}^{M}
 F=\frac{2PR}{P+R}
 \]
 
-
 where $S$ and $\{G_{i}\}_{i=1}^{M}$ are boundary maps and $\cap$
-does a bipartite graph assignment between them.
+computes a bipartite graph assignment between them.
 
-\paragraph{Rand index (RI)}\mbox{}\\
+\paragraph{Rand index (RI)}\mbox{}\\\mbox{}\\
 Rand index, or Rand measure~\cite{rand1971objective} is a statistical measure of the similarity between two data clusters.
 
 \subparagraph*{Rand index (RI)}\mbox{}\\
-between two segmentations
+Here is how the RI between two segmentations could be defined.
 
 \begin{align*}
 RI(S,G) & =\frac{1}{T}\sum\limits _{j<k}\left[\mathbb{I}\left(S(j)=S(k)\wedge G(j)=G(k)\right)+\mathbb{I}\left(S(j)\neq S(k)\wedge G(j)\neq G(k)\right)\right]\\
@@ -67,30 +78,29 @@ of pixels $j$ and $k$ having the same label in segmentation $S$,
 $A=\{(j,k)|j<k\}$ - the set of unique pairs of pixels,
 
 $N=\left|S\right|=\left|G\right|$ - the number of pixels in the image
-(and each segmentation), and 
+(and each segmentation); in our case with $16\times 16$ patches, $N=16 . 16 = 256$, and 
 
 $T=|A|=\binom{N}{2}$ - the number of possible unique pairs among
-$N$ pixels.
+$N$ pixels; for us - $\binom{16 . 16}{2}=32 640$.
 
 
 \subparagraph*{Rand Index Monte Carlo (RIMC)}\mbox{}\\ %RSRI (Random Subsample RI)} previously CPD (Crude Patch Distance), which was a misnomer
-\label{RIMC-maths}
-
-Monte Carlo sample of the possible unique pairs of pixels.
-
-between two segmentations
+\label{sec:ch4-RIMC-maths}
+The RIMC is different from RI in that it takes a Monte Carlo subsample of the possible unique pairs of pixels and only considers their segment membership. It is inspired by the implementation of randomised label mapping to a simpler discrete space in training nodes of a decision forests in~\cite{DollarICCV13edges}. We define the RIMC between two segmentations.
 
 \[
-RSRI(S,G)=\frac{1}{T}\sum\limits _{(j,k)\in B}\left[c_{jk}\mathbb{I}\left(G(j)=G(k)\right)+(1-c_{jk})\mathbb{I}\left(G(j)\neq G(k)\right)\right]
+RIMC(S,G)=\frac{1}{T}\sum\limits _{(j,k)\in B}\left[c_{jk}\mathbb{I}\left(G(j)=G(k)\right)+(1-c_{jk})\mathbb{I}\left(G(j)\neq G(k)\right)\right]
 \]
 
-
-where $B\subsetneq A$ - a (random) subset of the pairs of pixels.
+where $B\subsetneq A$ - a random subset of the pairs of pixels.
 In our experiments $|B|=256$.
 
 
 \subparagraph*{Probabilistic Rand index (PRI)}\mbox{}\\
-between a test segmentation and multiple ground truths
+Probabilistic Rand index~\cite{UnnikrishnanPH07} counts the number of pixel pairs with agreement in %consistent 
+labelling between a machine generated segmentation on one hand, and \textbf{multiple} ground truth segmentations on the other hand.
+
+% between a test segmentation and multiple ground truths
 
 \[
 PRI(S,\{G_{i}\}_{i=1}^{M})=\frac{1}{T}\sum\limits _{j<k}\left[c_{jk}p_{jk}+\left(1-c_{jk}\right)\left(1-p_{jk}\right)\right]
@@ -101,60 +111,91 @@ where $p_{jk}$ - probability of $c_{jk}$; possible estimator of
 $p_{jk}$ is the sample mean of the corresponding Bernoulli distribution.
 
 
-\paragraph{Segmentation covering (SC)}\mbox{}\\
-To be able to understand Segmentation covering, it is helpful to first define the related \textit{Overlap} and \textit{Intersection over union}.
+\paragraph{Segmentation covering (SC)}\mbox{}\\\mbox{}\\
+To be able to understand Segmentation covering and Volume Precision-Recall, which we define in the next paragraph, it is helpful to first have a notion of the related \textit{Overlap} and \textit{Intersection over union}.
 
 \subparagraph*{Overlap, or Jaccard index}\mbox{}\\
-Overlap of two regions $s$ and $g$
+Overlap of two regions % segments
+$s$ and $g$
 
 \[
 \mathcal{O}\left(s,g\right)=\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
 \]
+For visualisation, see fig.~\ref{fig:overlap-IoU}.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.3\textwidth]{images/scoring_fcns/intersection-over-union_score_illustrated.png}
+\caption{Illustration of the \textit{Overlap} of two segments. The score is computed as their intersection (\textit{tp}) divided by their union (\textit{tp} + \textit{fp} + \textit{fn}).}
+\label{fig:overlap-IoU}
+\end{figure}
 
 \subparagraph*{Intersection over union (IoU)}\mbox{}\\
-How to normalise it in the case of two segmentations $S=\left\{ {s_{i}}\right\} _{i=1}^{p}$
-and $G=\left\{ {g_{j}}\right\} _{j=1}^{q}$ ?
+The Intersection over union score (or utility) %also loss
+is popular in the computer vision community through its use in the PASCAL VOC challenge~\cite{pascal-voc-2012}. It is applied for the benchmark of pixel-level semantic segmentation. There, the measure is applied per object class, counting the pixels - true positives (\textit{tp}), false positives (\textit{fp}), and false negatives (\textit{fn}) \wrt a human-annotated ground truth. Segmentation accuracy is then computed as
+\[
+ \text{accuracy} = \frac{\textit{tp}}{\textit{tp} + \textit{fp} + \textit{fn}}
+\]
+
+See also fig.~\ref{fig:overlap-IoU}.
+
+Even though the PASCAL challenge includes multiple object classes, the evaluation is done on a per-class basis. Hence, the above metric is practically the \textit{Overlap} for the two regions - one in the machine segmentation, and the other in the ground truth one. 
+% TODO discuss the problem that requires normalisation
+Considering one class at a time, in a one-vs-all fashion, poses the problem as a binary classification problem. Thus normalisation is naturally provided, as the number of classes is fixed to 2.
+
+In our scenario we have multiple regions in a segmentation (multi-class classification). One-vs-all is not suitable for efficiency reasons - the scoring function is in the inner-most loop of our algorithm. How can we normalise the IoU in the case of two segmentations $S=\left\{ {s_{i}}\right\} _{i=1}^{p}$
+and $G=\left\{ {g_{j}}\right\} _{j=1}^{q}$ with multiple (and different) number of segments each? Two ways to normalise come to mind.
+
+\begin{enumerate}
+\item{\textbf{Normalise by dividing by the number of ground-truth segments}}
 \[
 IoU(S,G)=\frac{\sum\limits _{i=1}^{p}\sum\limits _{j=1}^{q}\mathcal{O}\left(s_{i},g_{j}\right)}{\Gamma_{G}}
 \]
-where $\Gamma_{S}=p$ and $\Gamma_{G}=q$ - number of segments in
-each segmentation.
+where $\Gamma_{S}=p$ and $\Gamma_{G}=q$ - number of segments in each segmentation.
 
-The above is not symmetric w.r.t. $S$ and $G$.
+The above is not symmetric \wrt $S$ and $G$, and would consequently not be sufficient as a metric on its own.
 
+\item{\textbf{Normalise by dividing by both the number of machine-provided and ground-truth segments}}
 \[
 IoU(S,G)=\frac{\sum\limits _{i=1}^{p}\sum\limits _{j=1}^{q}\mathcal{O}\left(s_{i},g_{j}\right)}{\Gamma_{S}\Gamma_{G}}
 \]
 
-
-The above would penalise two equal segmentations if they have larger
-amount of segments.
-
+The above erroneously penalises two equal segmentations (perfect match) just for having larger amount of segments.
+\end{enumerate}
+Both our proposals suffer from limitations that make them unsuitable for our task.
 
 \subparagraph*{Segmentation covering (SC)}\mbox{}\\
-Asymmetric metric, therefore two possible uses:
+The metric builds on the idea of a best \textit{Overlap} score. 
+It is asymmetric, therefore two possible variants exist. The second version reviewed here - estimation of the best covering of the ground truth by the machine segments, is proposed in~\cite{Arbelaez09} as a benchmark for image segmentation.
 
-%\subsubparagraph
-\textbf{Covering of the Test Segmentation with the Ground Truths}
-
+\begin{enumerate}
+\item{\textbf{Covering of the test segmentation with the ground truths}}
 \[
 C\left(\left\{ {G_{i}}\right\} _{i=1}^{M}\longrightarrow S\right)=\frac{1}{M}\sum\limits _{i=1}^{M}\frac{1}{N}\sum\limits _{s\in S}\left|s\right|\max_{g\in G_{i}}\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
 \]
 
-where $N=\left|S\right|=\left|G_{i}\right|$ - number of pixels in
-the image.
+where $N=\left|S\right|=\left|G_{i}\right|$ - number of pixels in the image.
 
-%\subsubparagraph
-\textbf{Covering of the Ground Truths with the Test Segmentation}
+\item{\textbf{Covering of the ground truths with the test segmentation}}
 
 \[
-C\left(S\longrightarrow\left\{ {G_{i}}\right\} _{i=1}^{M}\right)=\frac{1}{M}\sum\limits _{i=1}^{M}\frac{1}{N}\sum\limits _{g\in G_{i}}\left|g\right|\max_{g\in G_{i}}\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
+C\left(S\longrightarrow\left\{ {G_{i}}\right\} _{i=1}^{M}\right)=\frac{1}{M}\sum\limits _{i=1}^{M}\frac{1}{N}\sum\limits _{g\in G_{i}}\left|g\right|\max_{s\in S}\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
 \]
+\end{enumerate}
+A reasonable %sensible 
+way to combine the two cases of SC is missing.
 
-\paragraph{Volume Precision-Recall (VPR) (VPR)}
-\label{VPR-maths}
+Further, in practice, both metrics are thwarted by certain pathological cases. While those are atypical for segmentations of whole natural images, they occur quite often in the comparison of local patches. Examples include comparison of background to non-background patch, or of patch containing a single vertical edge to one containing single horizontal edge. 
 
-\subparagraph*{VPR unnormalised}
+Next we review a metric which, when normalised, is capable to an extent of addressing those issues.
+
+\paragraph{Volume Precision-Recall (VPR)}\mbox{}\\\mbox{}\\
+\label{sec:ch4-VPR-maths}
+The VPR metric~\cite{Galasso13} also aims to measure the overlap between the test segmentation and the (multiple) human annotated segmentations. It was introduced for the purposes of evaluating the quality of video segmentations, and also respects temporal consistency of superpixels (called \textit{supervoxels} in the video case). It is also applicable for still images - this is the use case when considering only a single frame of the video sequence. In this scenario the metric is a region-based metric evaluating the size of and overlap between the segments. 
+In the way just described is how we use the VPR metric.
+
+\subparagraph*{VPR not-normalised}\mbox{}\\
+The following is the first attempt in~\cite{Galasso13} at defining such region-centric metric.
 
 \[
 \tilde{P}=\frac{1}{M}\sum\limits _{i=1}^{M}\frac{\sum\limits _{s\in\mathbb{S}}\max\limits _{g\in\mathbb{G}_{i}}\left|s\cap g\right|}{\left|\mathbb{S}\right|}=\frac{\sum\limits _{i=1}^{M}\sum\limits _{s\in\mathbb{S}}\max\limits _{g\in\mathbb{G}_{i}}\left|s\cap g\right|}{M\left|\mathbb{S}\right|}
@@ -173,9 +214,13 @@ where $\mathbb{S}$ and $\{\mathbb{G}_{i}\}_{i=1}^{M}$ - segmentations,
 
 $\cap$ computes volume overlap between segments, and 
 
-$\left|\centerdot\right|$ counts the pixels in the voxel.
+$\left|\centerdot\right|$ counts the pixels in the segment.%voxel.
 
-\subparagraph*{VPR normalised (lower bound)}
+\textbf{Necessity of normalisation:} In the above definition, extreme over- and undersegmentations receive unreasonably high scores, \ie every pixel is a separate segment, or all pixels belong to a single segmentation. To remedy this, the P and R overlap scores are augmented by subtracting a lower bound from the numerator and the denominator of the ratio. Depending on whether the lower bound is computed \wrt the ground truth or the machine model, we distinguish two possible normalisations. In the next two paragraphs the normalisations in the formulae are given boxed.
+
+\subparagraph*{VPR normalised (according to the ground truths)}\mbox{}\\ % (on the side of the ground truth)} (lower bound)
+This is the normalisation defined in~\cite{Galasso13} and utilised %employed 
+in their benchmark.
 
 \[
 P=\frac{\sum\limits _{i=1}^{M}\sum\limits _{s\in\mathbb{S}}\max\limits _{g\in\mathbb{G}_{i}}\left|s\cap g\right|-\boxed{\sum\limits _{i=1}^{M}\max\limits _{g\in\mathbb{G}_{i}}\left|g\right|}}{M\left|\mathbb{S}\right|-\boxed{\sum\limits _{i=1}^{M}\max\limits _{g\in\mathbb{G}_{i}}\left|g\right|}}
@@ -189,8 +234,8 @@ R=\frac{\sum\limits _{i=1}^{M}\sum\limits _{g\in\mathbb{G}_{i}}\max\limits _{s\i
 F=\frac{2PR}{P+R}
 \]
 
-
-\subparagraph*{VPR normalised (according to the model capacity of test segmentation)} % new
+\subparagraph*{VPR normalised (according to the model capacity of the test segmentation)}\mbox{}\\ % new
+Further, we define the following normalisation with the lower bound being computed on the side of the machine segmentation.
 
 \[
 \hat{P}=\frac{\sum\limits _{i=1}^{M}\sum\limits _{s\in\mathbb{S}}\max\limits _{g\in\mathbb{G}_{i}}\left|s\cap g\right|-\boxed{M\Gamma_{\mathbb{S}}}}{M\left|\mathbb{S}\right|-\boxed{M\Gamma_{\mathbb{S}}}}
@@ -204,17 +249,43 @@ F=\frac{2PR}{P+R}
 \hat{{F}}=\frac{2\hat{P}\hat{R}}{\hat{P}+\hat{R}}
 \]
 
-\section{Third stage of the pipeline - Hierarchical segmentaion - UCM}
+\subsection*{Symmetric and asymmetric metrics}
+Of the above metrics, BPR, RI, and not-normalised VPR are symmetric \wrt the segmentation under test and the ground truth segmentation. SC as well as the two normalised versions of VPR are asymmetric. VPR incorporates and develops the idea present in SC about a maximal \textit{Overlap}, but additionally provides normalisation. Therefore in our experiments in \textsection~\ref{Chapter5} we don't consider SC.
 
-\subsection{Giving output a probabilistic interpretation}
+% for the normalisation:
+% G - ground truth = trees
+% S - segmentation under test = ws
+
+\textbf{Assigning patches to $\mathbb{S}$ and $\mathbb{G}_i$:} It bears mentioning %is worth pointing out
+that for normalised VPR we have considered the transformed \textbf{watershed patch} to be the \textbf{segmentation under test ($\mathbb{S}$)} and the other patch to be a ground truth ($\mathbb{G}_i$). 
+In most experiments (to be comprehensively % systematically detailedly 
+review in \textsection~\ref{sec:ch5-structured-voting}) the ``other patch'' is a segmentation patch from a decision tree leaf - one predicted as most likely segmentation for the location. In another series of experiments (detailed in \textsection~\ref{sec:ch5-oracle}) the ``other patch'' being compared is a crop from the ground truth annotated segmentations.
+It is then clear that the watershed patch, since it is always one, as the machine segmentation, receives this allocation. Also, it is only natural in the context of the VPR benchmark to assign the $T$ tree leaf patches, or the ground truth cropped patches to the set of ground truth segmentations $\{\mathbb{G}_i\}_{i=1}^M$.
+
+\section[Third stage of the pipeline - UCM]{Third stage of the pipeline - hierarchical segmentation - UCM}
+
+\section{Discussion}
+\subsection*{Giving output a probabilistic interpretation}
+This section remarks on an implementation aspect of edge detection and image segmentation, namely the format of the output. We found it relevant, since in practice it influences the correct running of the benchmark code and the intercomparability %interpretability 
+of results across detectors and segmentation algorithms.
+
+It is beneficial %desirable 
+for the benchmark task to have the outputs of both edge detector and image segmentation into $[0,1]$. That additionally lends itself to probabilistic interpretation, which could potentially allow to easily combine different models.
 
 \subsubsection*{Structured edge}
-In the SE algorithm~\cite{DollarICCV13edges,Dollar2015PAMI} every pixels receives between 0 and 256 votes. The decisions are ensembled by superposing patches of edge masks. Rather than avergaing however, the number of votes is divided by 128, which leaves an output that would theoretically fall into the $[0, 2]$ range. As a post-processing a triangular filter is applied, which has a smoothing and denoising effect. The resulting output indeed could match a probabilistic interpretation - only the strongest edges would have a value above 1, and that would be cut-off when benchmarking using BPR.
+In the SE algorithm~\cite{DollarICCV13edges,Dollar2015PAMI} every pixels receives between 0 and 256 votes. The decisions are ensembled by superposing patches of edge masks. Rather than averaging, however, the number of votes is divided by 128, which leaves an output that would theoretically fall into the $[0, 2]$ range. As a post-processing a triangular filter is applied, which has a smoothing and denoising effect. The resulting output indeed is used to %could match 
+a probabilistic interpretation - only the strongest edges do have a value above 1, and those values are practically cut-off when benchmarking using BPR (the implementation of Arbel\'aez\etal).
 
 \subsubsection*{gPb-OWT-UCM}
-Arbelaez \etal~\cite{Arbelaez11} learn a sigmoid on the BSDS500 training subset, and finish their segmentation algorithm by rescaling with a the learn sigmoid. The learnt values, of course, are exclusively suitable for their approach. For consistency we also apply the signmoid transformation, before finally rescaling (see next paragraph).
+Arbel\'aez \etal~\cite{Arbelaez11} learn a sigmoid on the BSDS500 training subset, and finish their segmentation algorithm by rescaling with a the learn sigmoid. The learnt values, of course, are exclusively suitable for their approach. For consistency we also apply the sigmoid transformation, before finally rescaling (see next paragraph).
 
-\subsubsection*{Our approach - scale the UCM output} %The missing recall comes from UCM values not being scaled in [0,1]. Here, I believe, the nonzero values are in [0.0015, 0,5964].  On a different experiment I get the nonzeros in [0.93, 0.99].  Bad results certainly can't be remedied by rescaling the ucm output.
-We apply rescaling of the nonzero UCM values into $[0.01, 0.99]$ as post-processing step of out SE-SV-UCM pipeline. Thereby the relative order of the image edges delimiting the regions is preserved. Note that rescaling doesn't change the shape of the curve, just extends it to cover as much of the recall range as possible. So the boundary- and region-based benchmark values are unaffected. The curve of the method being evaluated, however, better reflects its quality on the full operational range of BPR and VPR.
+\subsubsection*{Our approach - scale the UCM output} %The missing recall comes from UCM values not being scaled in [0,1]. Here, I believe, the non-zero values are in [0.0015, 0,5964].  On a different experiment I get the non zeros in [0.93, 0.99].  Bad results certainly can't be remedied by rescaling the ucm output.
+We apply rescaling of the non-zero UCM values into $[0.01, 0.99]$ as post-processing step of out SE-SV-UCM pipeline. Thereby the relative order of the image edges delimiting the regions is preserved. Note that rescaling doesn't change the shape of the curve, just extends it to cover as much of the recall range as possible. So the boundary- and region-based benchmark values are unaffected. The curve of the method being evaluated, however, better reflects its quality on the full operational range of BPR and VPR.
 
 In their recent paper~\cite{Hallman2014} Hallman and Fowlkes also remark on the histogram of UCM values, as they would like to be able to visually compare the UCM output of different algorithms. Their main goal is the meaningful visualisation of output results of different algorithms and qualitative comparison by visual inspection of outputs - hierarchical segmentations. In Appendix A they discuss the computation of a monotonic transformation to approximate the histogram of values \wrt a ``reference'' algorithm.
+
+\subsection*{Using Pb values for segmentation} % TODO how to name it?
+Our current approach discards edge saliency information - the probability of boundary values obtained by the Structured edge~\cite{DollarICCV13edges}, and uses just the watershed contours locations. We relies only on the structured information contained in the trained Structured forest to weight the watershed.
+
+Both the output of our algorithm and structured edge lend themselves to % TODO
+a probabilistic interpretation. As a future work, it would perhaps be beneficial to combine those differently designed submodels into one.
