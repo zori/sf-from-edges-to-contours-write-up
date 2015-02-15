@@ -54,6 +54,62 @@ we average all votes per \textit{watershed arc}. The watershed arcs, as discusse
 For a specific location one tree of the structured forest predicts a segmentation. From the watershed we have a corresponding patch, see fig.~\ref{fig:weighting-the-watershed-contours}. As mentioned already, there are two aspects to scoring their similarity: 1) making them suitable (\ie sufficiently similar) for comparison, and 2) choosing a function that can assess the agreement between the two patches as to the presence or absence of an edge.
 
 \subsubsection{Patch transformations}
+To appreciate the necessity of making the two types of segmentation patches comaprable, look at fig.~\ref{fig:watershed-and-leaf-patches}.
+
+\textbf{Watershed patch:} The watershed patch is an oversegmentation with an \textbf{explicit boundary of size 1 pixel} between the segments.
+
+\textbf{Tree leaf patch:} The segmentation patches from the Structured forest are the learnt best segmentation for the given location in the image (based on the features computed from a cropped image patch). They are patches ``seen'' by the forest during the training phase. Since the SE algorithm uses \textbf{supervised learning}, the patches are cropped from the ground truth annotated segmentations. 
+For the BSDS500 the segmentation labels  are assigned by humans, and they are never oversegmentations (fig.~\ref{fig:BSDS-annotations} has an example image and its annotations). 
+For a $16\times 16$ pixels local segmentation patch there rarely are more than \textbf{2 or 3 segments}. 
+A ground truth segmentation in this dataset constitutes a labelling of the pixels, so that homogenous regions - superpixels, are formed. The labels are unique and the \textbf{boundary between segments is implicit}.
+Note that in~\ref{fig:watershed-and-leaf-patches} we only show examples of \textbf{non-background} patches. Background patches would contain a single region - the whole patch. Evidently, they present local evidence of lack of boundary.
+
+\begin{figure}[ht!]
+\begin{center}
+  \begin{tabular}{ cccccc }
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/watershed-patches/watershed-patch1.png} &  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/watershed-patches/watershed-patch2.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/watershed-patches/watershed-patch3.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/leaf-patches/leaf-patch2.png} & % \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/leaf-patches/leaf-patch1.png} & % too similar to leaf-patch4.png
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/leaf-patches/leaf-patch13.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/leaf-patches/leaf-patch4.png} \\
+
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/watershed-patches/watershed-patch4.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/watershed-patches/watershed-patch5.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/watershed-patches/watershed-patch6.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/leaf-patches/leaf-patch3.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/leaf-patches/leaf-patch5.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/leaf-patches/leaf-patch6.png} \\
+
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/watershed-patches/watershed-patch9.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/watershed-patches/watershed-patch7.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/watershed-patches/watershed-patch8.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/leaf-patches/leaf-patch7.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/leaf-patches/leaf-patch8.png} & % \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/leaf-patches/leaf-patch9.png} \\ % too similar to leaf-patch8.png
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/leaf-patches/leaf-patch18.png} \\
+
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/watershed-patches/watershed-patch10.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/watershed-patches/watershed-patch11.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/watershed-patches/watershed-patch12.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/leaf-patches/leaf-patch10.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/leaf-patches/leaf-patch11.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/leaf-patches/leaf-patch12.png} \\
+
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/watershed-patches/watershed-patch13.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/watershed-patches/watershed-patch14.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/watershed-patches/watershed-patch15.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/leaf-patches/leaf-patch-3-segms1.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/leaf-patches/leaf-patch-3-segms2.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/leaf-patches/leaf-patch-3-segms3.png} \\
+  \end{tabular}
+  % unused watershed patches: watershed-patch 16 17
+  %
+  % unused leaf patches: leaf-patch 1 9 14 15 16 17
+  %                      leaf-patch-3-segms 4 5 6 7 
+  % leaf-patch-_maybe_problematic - two separate segments with the same label % do we handle that? hmmm....
+\end{center}
+\caption{Examples of \textbf{watershed} patch segmentations (colour-coded on the \textbf{left}; white pixels mark the explicit boundary) and structured decision \textbf{tree leaf} patch segmentations (greyscale on the \textbf{right}).}
+\label{fig:watershed-and-leaf-patches}
+\end{figure}
 
 \subsection{Scoring functions for patch similarity}
 We cast the problem of scoring the similarity of a watershed and a structured tree leaf patch as a segmentation benchmark problem. To this end we review some popular boundary and region metrics proposed for the task and see what are the challenges in using them as scoring functions in our scenario.

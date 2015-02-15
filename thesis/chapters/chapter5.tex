@@ -14,7 +14,7 @@ In the rest of the chapter we briefly describe the dataset and evaluation metric
 
 \section{Evaluation setup}
 \subsection{Dataset}
-The Berkeley Segmentation Data Set (BSDS), introduced in~\cite{Martin01}, is a large dataset of natural images that have been manually segmented by multiple participants. It, therefore, provides the ground truth label for each pixel as being on- or off-boundary. Initially the dataset featured 300 images (BSDS300). It was later extended - in BSDS500~\cite{Arbelaez11} the original 300 images are used for training (200) and validation (100), and 200 new human-annotated images are added for testing. Again, each image is segmented by different subjects.
+The Berkeley Segmentation Data Set (BSDS), introduced in~\cite{Martin01}, is a large dataset of natural images that have been manually segmented by multiple participants. It, therefore, provides the ground truth label for each pixel as being on- or off-boundary. Initially the dataset featured 300 images (BSDS300). It was later extended - in BSDS500~\cite{Arbelaez11} the original 300 images are used for training (200) and validation (100), and 200 new human-annotated images are added for testing. Again, each image is segmented by different subjects. See fig.~\ref{fig:BSDS-annotations} for an example image and its annotations by two different people.
 
 % \begin{figure}[ht!]
 %  \centering
@@ -49,6 +49,7 @@ The Berkeley Segmentation Data Set (BSDS), introduced in~\cite{Martin01}, is a l
   \end{tabular}
 \end{center}
 \caption{Image from the validation subset of~\cite{BSDS500resources} and two of its annotations - subject~1 on the first row, subject~2 on the second row. Human-marked boundaries are the central column, and their corresponding segmentation reconstructions are given next to them.}
+\label{fig:BSDS-annotations}
 \end{figure}
 
 \subsection{Metrics}
