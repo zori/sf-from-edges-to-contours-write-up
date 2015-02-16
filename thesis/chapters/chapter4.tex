@@ -62,7 +62,8 @@ To appreciate the necessity of making the two types of segmentation patches coma
 For the BSDS500 the segmentation labels  are assigned by humans, and they are never oversegmentations (fig.~\ref{fig:BSDS-annotations} has an example image and its annotations). 
 For a $16\times 16$ pixels local segmentation patch there rarely are more than \textbf{2 or 3 segments}. 
 A ground truth segmentation in this dataset constitutes a labelling of the pixels, so that homogenous regions - superpixels, are formed. The labels are unique and the \textbf{boundary between segments is implicit}.
-Note that in~\ref{fig:watershed-and-leaf-patches} we only show examples of \textbf{non-background} patches. Background patches would contain a single region - the whole patch. Evidently, they present local evidence of lack of boundary.
+Note that in~\ref{fig:watershed-and-leaf-patches} we only show examples of \textbf{non-background} patches. Background patches would contain a single region - the whole patch. Clearly, %Evidently, 
+they present local evidence of lack of boundary.
 
 \begin{figure}[ht!]
 \begin{center}
@@ -111,6 +112,103 @@ Note that in~\ref{fig:watershed-and-leaf-patches} we only show examples of \text
 \label{fig:watershed-and-leaf-patches}
 \end{figure}
 
+\paragraph{Greedy merge}\mbox{}\\\mbox{}\\ % force some space after the paragraph name
+For this paragraph, please first have a look at fig.~\ref{fig:ws-greedy-merge}. Evidently merely converting the watershed oversegmentation to have implicit boundaries (from the original watershed patch segmentation - fig.~\ref{fig:sub:watershed-colour-coded} to the segmentation labelling - fig.~\ref{fig:sub:watershed-segments}) is not sufficient. The watershed is still very different from the target - the decision tree leaf patch (fig.~\ref{fig:sub:tree-leaf}), in the sense that it contains many more segments.
+
+\textbf{Na\"{\i}ve greedy merge:} Our first attempt, which we call na\"{\i}ve greedy merge, suffered from the limitation of being overly 
+greedy. The transformed watershed patch (see fig.
+~\ref{fig:sub:watershed-naive-greedy-merge}) adapts itself excessively to the tree leaf segmentation which we use to guide the merging. As a consequence, it does not respect the fact that the watershed patch has a boundary pixel in the middle, hence, there must be no less than two segments abutting its centre pixel.
+
+\textbf{Fair greedy merge:} As a remedy, we propose a ``fairer'' greedy merge. It %uses heuristic to
+aims for an optimal superpixels merge into segments, according to the structured tree patch (fig.~\ref{fig:sub:tree-leaf}). At the same time it still respects the condition that the central watershed pixel lies on a boundary between two regions. Fig.~\ref{fig:sub:watershed-fairer-greedy-merge} shows an example.
+
+\begin{figure}[ht!]
+\centering
+ \subfigure[Input image]{%
+  \includegraphics[width=0.5\textwidth]{images/SE-SV-UCM/ws-greedy-merge/zebras2.png}
+ }
+ \subfigure[Cropped image patch]{%
+  \includegraphics[width=0.2\textwidth]{images/SE-SV-UCM/ws-greedy-merge/selected-image-patch.png}
+ }
+
+ \subfigure[Cropped watershed patch]{%
+  \includegraphics[width=0.2\textwidth,frame]{images/SE-SV-UCM/ws-greedy-merge/watershed-colour-coded.png}
+  \label{fig:sub:watershed-colour-coded}
+ }
+ \subfigure[Watershed patch with implicit region boundaries]{%
+  \includegraphics[width=0.2\textwidth,frame]{images/SE-SV-UCM/ws-greedy-merge/watershed-segments.png}
+  \label{fig:sub:watershed-segments}
+ } \qquad\qquad\qquad\qquad\qquad
+
+ \subfigure[Tree leaf segmentation patch that guides the merging]{%
+  \includegraphics[width=0.2\textwidth,frame]{images/SE-SV-UCM/ws-greedy-merge/tree-leaf.png}
+  \label{fig:sub:tree-leaf}
+ }
+ \subfigure[Watershed patch {\bf na\"{\i}ve} greedy merge]{%
+  \includegraphics[width=0.2\textwidth,frame]{images/SE-SV-UCM/ws-greedy-merge/watershed-naive-greedy-merge.png}
+  \label{fig:sub:watershed-naive-greedy-merge}
+ }
+ \subfigure[Watershed patch {\bf fair} greedy merge]{%
+  \includegraphics[width=0.2\textwidth,frame]{images/SE-SV-UCM/ws-greedy-merge/watershed-fairer-greedy-merge.png}
+  \label{fig:sub:watershed-fairer-greedy-merge}
+ }
+\caption[{\bf Greedy merge} of watershed patch.]{{\bf Greedy merge} of watershed patch. The central pixel of the patches is marked, as it is important, see the text for details.}
+\label{fig:ws-greedy-merge}
+\end{figure}
+
+\paragraph{Watershed arc}\mbox{}\\\mbox{}\\ % previously called ``just contour'' % region boundary
+Watershed
+
+\begin{figure}[ht!]
+\begin{center}
+ \subfigure[Input image]{%
+  \includegraphics[width=0.14\textwidth]{images/SE-SV-UCM/ws-just-contour/old_man.png}
+ }
+ \subfigure[Cropped image patch]{%
+  \includegraphics[width=0.15\textwidth]{images/SE-SV-UCM/ws-just-contour/selected-image-patch.png}
+ }
+ \subfigure[Matching %Corresponding 
+ watershed patch]{%
+  \includegraphics[width=0.15\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/watershed-colour-coded.png}
+  \label{fig:sub:ws-just-contour-watershed-colour-coded}
+ }
+ \subfigure[\protect\subref{fig:sub:ws-just-contour-watershed-colour-coded}~transformed - just an arc]{%
+  \includegraphics[width=0.15\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/watershed-just-contour.png}
+  \label{fig:sub:ws-just-contour-watershed-just-contour}
+ }
+
+ % for the next 8 images, wisth=0.15 also works
+ \subfigure[The 4 tree leaf segmentations]{%
+  \begin{tabular}{ cccc }
+  Tree 1 & Tree 2 & Tree 3 & Tree 4 \\
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/tree1-seg.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/tree2-seg.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/tree3-seg.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/tree4-seg.png} \\
+  \end{tabular}
+  \label{fig:sub:tree-leaf-segments}
+ }
+
+ \subfigure[\protect\subref{fig:sub:tree-leaf-segments}~transformed to boundaries]{
+  \begin{tabular}{ cccc }
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/tree1-bdry.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/tree2-bdry.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/tree3-bdry.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/tree4-bdry.png} \\
+  \end{tabular}
+  \label{fig:sub:tree-leaf-boundaries}
+  }
+\end{center}
+\caption[Watershed transformation to just {\bf region boundary}]{Watershed transformation to just {\bf region boundary}.}
+\label{fig:watershed-just-contour}
+\end{figure}
+
+\paragraph{Line fitting}\mbox{}\\\mbox{}\\
+Line
+
+\paragraph{Quadratic fitting}\mbox{}\\\mbox{}\\
+Quadratic
+
 \subsection{Scoring functions for patch similarity}
 We cast the problem of scoring the similarity of a watershed and a structured tree leaf patch as a segmentation benchmark problem. To this end we review some popular boundary and region metrics proposed for the task and see what are the challenges in using them as scoring functions in our scenario.
 
@@ -118,7 +216,7 @@ We cast the problem of scoring the similarity of a watershed and a structured tr
 \label{sec:ch4-boundary-and-region-metrics-maths}
 In the following we will use $S$ to denote machine boundary map, $\mathbb{S}$ for machine segmentation, $s$ for a segment in it, $G$ for a ground-truth boundary map, $\mathbb{G}$ for ground-truth segmentation, and $g$ for a segment in it.
 
-\paragraph{Boundary Precision-Recall (BPR)}\mbox{}\\\mbox{}\\ % force some space after the paragraph name
+\paragraph{Boundary Precision-Recall (BPR)}\mbox{}\\\mbox{}\\
 The metric was proposed by~\cite{Arbelaez11} to evaluate the quality of edge detection algorithms in a precision-recall framework. Precision measures the fraction of true positive edge pixels. Recall evaluates the amount of real (\eg ground-truth-annotated) edge pixels detected by the algorithm under test. The reported measure is the \textbf{F-score}, which is the harmonic mean of the precision and recall.
 
 \label{sec:ch4-BPR-maths}
