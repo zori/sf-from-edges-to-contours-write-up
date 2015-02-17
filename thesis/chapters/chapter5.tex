@@ -14,6 +14,7 @@ In the rest of the chapter we briefly describe the dataset and evaluation metric
 
 \section{Evaluation setup}
 \subsection{Dataset}
+\label{sec:ch5-BSDS500-dataset}
 The Berkeley Segmentation Data Set (BSDS), introduced in~\cite{Martin01}, is a large dataset of natural images that have been manually segmented by multiple participants. It, therefore, provides the ground truth label for each pixel as being on- or off-boundary. Initially the dataset featured 300 images (BSDS300). It was later extended - in BSDS500~\cite{Arbelaez11} the original 300 images are used for training (200) and validation (100), and 200 new human-annotated images are added for testing. Again, each image is segmented by different subjects. See fig.~\ref{fig:BSDS-annotations} for an example image and its annotations by two different people.
 
 % \begin{figure}[ht!]
@@ -149,7 +150,7 @@ Fig.~\ref{fig:segs-to-greedy-merge-RIMC} shows the improvement we get over water
   \includegraphics[width=0.7\textwidth]{images/plots/segs-to-greedy-merge-RIMC-VPR.png}
   %\label{fig:subfigure1}
  }
-\caption{Greedy merge experiments. In all cases the scoring function used for patches comparison was the RIMC~(\hyperref[sec:ch4-RIMC-maths]{RIMC description in Chapter 4}).} % \ref{sec:ch4-RIMC-maths}
+\caption[Greedy merge experiments]{Greedy merge experiments. In all cases the scoring function used for patches comparison was the RIMC (\textsection~\ref{sec:ch4-RIMC-maths} contains a description of the RIMC metric).} % (\hyperref[sec:ch4-RIMC-maths]{RIMC description in Chapter 4}).} % that looks bad on paper, still useful for .pdf, as it contains the link
 \label{fig:segs-to-greedy-merge-RIMC}
 \end{figure}
 
@@ -164,7 +165,7 @@ Our conclusion from this experiment is that the combination of only the edge wit
 \subsection*{Line fitting}
 Our best performing weighting strategy. We implemented three line fitting algorithms:
 \begin{enumerate}
-  \item parametric, based on the derivative direction of the end-lines of the watershed edge we vote on,
+  \item parametric, based on the derivative direction of the end-points of the watershed edge we vote on,
   \item as above, but enforcing adherence to the centre of the image patch,
   \item linear least squares fitting to all the watershed edge pixels.
  % also possible - PCA-based fit
@@ -201,7 +202,7 @@ Discussion: It would be useful to see the effect of a ``mixed'' scope of voting 
   \includegraphics[width=0.7\textwidth]{images/plots/scope_of_voting_oracle_disagreement__line_centre_VPR_ws_VPR.png}
   %\label{fig:subfigure1}
  }
-\caption{Voting scope experiments. The three segmentation methods and their oracles are variants of our best performing weighting strategy - central line fitting, cobined with VPR normalised on the side of the watershed~(\hyperref[sec:ch4-VPR-maths]{VPR description in Chapter 4}).}
+\caption{Voting scope experiments. The three segmentation methods and their oracles are variants of our best performing weighting strategy - central line fitting, cobined with VPR normalised on the side of the watershed. A description of VPR is given in~\textsection~\ref{sec:ch4-VPR-maths}).}
 \label{fig:voting-scope-line-centre-VPR-ws}
 \end{figure}
 
