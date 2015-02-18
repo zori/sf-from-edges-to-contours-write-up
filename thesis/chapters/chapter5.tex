@@ -135,9 +135,10 @@ It unifies benchmarks for boundary detection (BPR) and image segmentation (VPR, 
 PRI, VoI) and allows the testing of coarse-to-fine methods. %, capturing the tradeoff in a precision-recall framework.
 
 \section{From edges to contours - a proof of concept}
-We apply a vanilla watershed algorithm~\cite{beucher1992morphological,najman1996geodesic,PINKlibrary} to the SE output, as described in \sref{sec:ch3-watershed}. The result is a single segmentation. 
+We apply a {\bf vanilla watershed} algorithm~\cite{beucher1992morphological,najman1996geodesic,PINKlibrary} to the SE output, as described in \sref{sec:ch3-watershed}. The result is a single segmentation. 
 
-In our benchmark plots (\fref{fig:SE-watershed}) the outcome of the experiment is not a Precision-Recall curve, but a single dot, indicative of the model error. Since the watershed transformation provides an oversegmentation of the image, the dot is located in the high-recall, low-precision range on the BPR plot (lower right). In contrast, oversegmentations occupy the low-recall, high-precision part of the VPR domain (upper left). 
+In our benchmark plots (\fref{fig:SE-watershed}) the outcome of the experiment is not a Precision-Recall curve, but a single point, %dot, 
+indicative of the model error. Since the watershed transformation provides an oversegmentation of the image, the dot is located in the high-recall, low-precision range on the BPR plot (lower right). In contrast, oversegmentations occupy the low-recall, high-precision part of the VPR domain (upper left). 
 
 \begin{figure}[ht!]
 \centering
@@ -147,30 +148,17 @@ In our benchmark plots (\fref{fig:SE-watershed}) the outcome of the experiment i
  \subfigure[VPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/SE-watershed_VPR.png}
  }
-\caption[SE-watershed plots]{SE-watershed provides a single oversegmentation.}
+\caption[SE-watershed and baseline: SE-UCM plots]{{\bf SE-watershed} provides a single oversegmentation. Our {\bf baseline - SE-UCM} is a UCM hierarchy built on top of the probability of boundary output of the SE edge detector.}
 \label{fig:SE-watershed}
 \end{figure}
-
-% Boundary PR global
-%    G-ODS: F( R 0.99, P 0.24 ) = 0.39   [th = 1.00]
-%    G-OIS: F( R 0.99, P 0.24 ) = 0.39
-%    Area_PR = 0.24
-% Volume PR global
-%    G-ODS: F( R 0.21, P 0.96 ) = 0.34   [th = 1.00]
-%    G-OSS: F( R 0.21, P 0.96 ) = 0.34
-%    G-Area_PR = 0.20
-% Region
-%    GT covering: ODS = 0.20 [th = 1.00]. OSS = 0.20. Best = 0.20
-% Region
-%    Rand Index: ODS = 0.75 [th = 1.00]. OSS = 0.75.
-%    Var. Info.: ODS = 6.26 [th = 1.00]. OSS = 6.26.
 
 \textbf{A point at issue % problem, trouble 
 with non-maximum suppressed edges:} Note that the SE algorithm implements non-maximum suppression on the edge detection output to provide thinned edges. Non-maximum suppression is a method first introduced as a means of reducing thick edge responses to thin lines for the task of edge detection in greyscale images~\cite{rosenfeld1976digital}. Non-maximum suppression considers only the maxima in the gradient direction. As a consequence, the final output of the SE often has only single regional minimum. In the presence of a unique lake, the watershed is empty. To circumvent this problem, we use the SE detector \textit{before non-maxima suppression} as a topographic surface for the flooding.
 
 \section{Baseline: SE-UCM}
-As a baseline, we create a hierarchy of segmentations on top of the SE detector result. This is in the spirit of~\cite{Arbelaez2006boundary} who, however, use the edge detector of Martin, Fowlkes, and Malik (MFM)~\cite{martin2004learning}. 
-We observe the problem of strong edges ``bleeding'' into non-salient ones, despite lack of good local boundary evidence, as on the tikis examples (see \fref{fig:SE-UCM-tikis-bleeding-sub2}) between the heads of the middle and right statues.
+As a baseline, we create a hierarchy of segmentations on top of the SE detector result. This is in the spirit of~\cite{Arbelaez2006boundary} who, however, use the edge detector of Martin, Fowlkes, and Malik (MFM)~\cite{martin2004learning}. What we do for this baseline could also be thought as our pipeline SE-SV-UCM without structured voting. Instead, the values from the probability of boundary, which is the output of the edge detector are directly transfered as values for the watershed pixels. Benchmark plots are on \fref{fig:SE-watershed}.
+
+We observe the problem of strong edges ``bleeding'' into non-salient ones, despite lack of good local boundary evidence, as on the tikis examples (see \fref{fig:SE-UCM-tikis-bleeding-sub2}) between the heads of the middle and right statues. This issue is one of the motivations for the Structured voting (SV) described in \sref{sec:ch4-SE-SV-UCM_SV_details}.% Similarly
 
 \begin{figure}[ht!]
 \centering
@@ -204,20 +192,8 @@ This experiment shows us that globalisation could easily be introduced to our me
 \label{fig:SE_nnms_sPb-UCM}
 \end{figure}
 
-% all the numbers for SE_nnms_sPb-UCM
-% Boundary PR global
-%    G-ODS: F( R 0.72, P 0.72 ) = 0.72   [th = 0.08]
-%    G-OIS: F( R 0.74, P 0.76 ) = 0.75
-%    Area_PR = 0.76
-% Volume PR global
-%    G-ODS: F( R 0.70, P 0.76 ) = 0.73   [th = 0.10]
-%    G-OSS: F( R 0.74, P 0.77 ) = 0.76
-%    G-Area_PR = 0.78
-% Region
-%    GT covering: ODS = 0.59 [th = 0.12]. OSS = 0.64. Best = 0.74
-% Region
-%    Rand Index: ODS = 0.82 [th = 0.08]. OSS = 0.85.
-%    Var. Info.: ODS = 1.68 [th = 0.15]. OSS = 1.48.
+% TODO here is a table of all results we will show. What to do with it, can't just dump all the data without proper analysis / conclusion?
+\input{chapters/chapter5-all-results.tex}
 
 \section[Structured voting]{Structured voting - experimental study of watershed weighting strategies}
 \label{sec:ch5-structured-voting}
@@ -288,36 +264,9 @@ Conic sections - parabola, hyperbola and ellipse that fit the data. Too complex 
  \subfigure[VPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/SE-quadratic_VPR.png}
  }
-\caption[Quadratic linear least squares fitting compared to the linear model - plots]{Quadratic linear least squares fitting compared to the linear model.}
+\caption[Quadratic linear least squares fitting compared to the linear model - plots]{{\bf Quadratic} linear least squares fitting compared to the {\bf linear} model. The scoring function for the two experiments was the VPR normalised on the side of the watershed.}
 \label{fig:SE-quadratic}
 \end{figure}
-
-% linear
-% Boundary PR global
-%    G-ODS: F( R 0.69, P 0.67 ) = 0.68   [th = 0.35]
-%    G-OIS: F( R 0.74, P 0.67 ) = 0.71
-%    Area_PR = 0.71
-% Volume PR global
-%    G-ODS: F( R 0.68, P 0.70 ) = 0.69   [th = 0.27]
-%    G-OSS: F( R 0.70, P 0.73 ) = 0.71
-%    G-Area_PR = 0.71
-% Region
-%    GT covering: ODS = 0.55 [th = 0.37]. OSS = 0.60. Best = 0.67
-% Region
-%    Rand Index: ODS = 0.81 [th = 0.17]. OSS = 0.83.
-%    Var. Info.: ODS = 1.90 [th = 0.67]. OSS = 1.72.
-
-% quadratic
-% Boundary PR global
-%    G-ODS: F( R 0.57, P 0.52 ) = 0.54   [th = 0.12]
-%    G-OIS: F( R 0.57, P 0.54 ) = 0.56
-%    Area_PR = 0.40
-% Volume PR global
-%    G-ODS: F( R 0.79, P 0.27 ) = 0.40   [th = 0.02]
-%    G-OSS: F( R 0.79, P 0.26 ) = 0.40
-%    G-Area_PR = 0.25
-% Region
-%    GT covering: ODS = 0.34 [th = 0.21]. OSS = 0.35. Best = 0.37
 
 \section[Oracle for Structured voting]{Oracle for SV - experiments using ground truth}
 \label{sec:ch5-oracle}

@@ -1,0 +1,111 @@
+\begin{table}[htbp]
+\renewcommand{\arraystretch}{1.3}
+\centering
+\scriptsize
+\begin{tabular}{l|c|c|c||c|c|c||c|c|c|}
+\cline{2-10} % ZZ
+\multirow{2}{*}{} & \multicolumn{3}{c||}{\textbf{BPR}} & \multicolumn{3}{c||}{\textbf{VPR}}& \multicolumn{3}{c|}{\textbf{Region}}\\
+\cline{2-10}
+& \textbf{ODS}  & \textbf{OIS} & \textbf{AP} % <- BPR
+& \textbf{ODS} & \textbf{OSS} & \textbf{AP} % <- VPR
+& \textbf{SC} & \textbf{PRI} & \textbf{VoI} \\
+\hline
+\multicolumn{1}{|c|}{Human} & .79 & .79 & - & - & - & - & .72 & .88 & 1.17 \\ % actually, we had .80 for humans on BPR from \cite{Arbelaez11}; % TODO for VPR - we don't know ODS = OIS for humans
+\hline
+\hline
+\multicolumn{1}{|c|}{\cite{DollarICCV13edges} Structured edge (SE)} & .70 & .72 & .63 & - & - & - & - & - & - \\
+\hline
+\multicolumn{1}{|c|}{\cite{Arbelaez11} gPb-OWT-UCM} & .73 & .76 & .77 & .73 & .76 & .78 & .59 & .83 & 1.69 \\
+\hline
+\hline
+\multicolumn{1}{|c|}{SE-watershed} & .39 & .39 & - & .34 & .34 & - & .20 & .75 & 6.26 \\
+\hline
+\multicolumn{1}{|c|}{SE-UCM (baseline)} & .69 &.73 & .75 & .72 & .75 & .77 & .58 & .82 & 1.80 \\
+\hline
+\multicolumn{1}{|c|}{SE+sPb-UCM} & .72 & .75 & .76 & .73 & .76 & .78 & .59 & .82 & 1.68 \\ % SE_nnms_sPb-UCM
+\hline
+\hline
+\multicolumn{1}{|c|}{linear LLS} & .68 & .71 & .71 & .69 & .71 & .71 & .55 & .81 & 1.90 \\% linear model - linear least squares fitting}
+\hline
+\multicolumn{1}{|c|}{quadratic LLS} & .54 & .56 & .40 & .40 & .40 & .25 & .37 & .55 & 2.45 \\
+\hline
+\hline
+\end{tabular}
+\caption[All results]{Results of all our experiments.}
+%The table shows aggregate measures (ODS, OSS, AP) for boundary precision-recall (BPR), volume precision-recall (VPR) and 
+%includes region statistics (SC, PRI, VoI).}
+\label{tab:all-results}
+\end{table}
+
+% quadratic
+% Boundary PR global
+%    G-ODS: F( R 0.57, P 0.52 ) = 0.54   [th = 0.12]
+%    G-OIS: F( R 0.57, P 0.54 ) = 0.56
+%    Area_PR = 0.40
+% Volume PR global
+%    G-ODS: F( R 0.79, P 0.27 ) = 0.40   [th = 0.02]            <- NOTE: very low threshold! can't recall all boundaries, that explains the plot
+%    G-OSS: F( R 0.79, P 0.26 ) = 0.40
+%    G-Area_PR = 0.25
+% Region
+%    GT covering: ODS = 0.34 [th = 0.21]. OSS = 0.35. Best = 0.37
+% Region
+%    Rand Index: ODS = 0.55 [th = 0.02]. OSS = 0.55.
+%    Var. Info.: ODS = 2.45 [th = 0.73]. OSS = 2.37.
+
+
+% SE-UCM baseline
+% Boundary PR global
+%    G-ODS: F( R 0.70, P 0.69 ) = 0.69   [th = 0.27]
+%    G-OIS: F( R 0.73, P 0.73 ) = 0.73
+%    Area_PR = 0.75
+% Volume PR global
+%    G-ODS: F( R 0.71, P 0.73 ) = 0.72   [th = 0.25]
+%    G-OSS: F( R 0.73, P 0.77 ) = 0.75
+%    G-Area_PR = 0.77
+% Region
+%    GT covering: ODS = 0.58 [th = 0.29]. OSS = 0.64. Best = 0.73
+% Region
+%    Rand Index: ODS = 0.82 [th = 0.17]. OSS = 0.86.
+%    Var. Info.: ODS = 1.80 [th = 0.52]. OSS = 1.57.
+
+% SE_nnms_sPb-UCM
+% Boundary PR global
+%    G-ODS: F( R 0.72, P 0.72 ) = 0.72   [th = 0.08]
+%    G-OIS: F( R 0.74, P 0.76 ) = 0.75
+%    Area_PR = 0.76
+% Volume PR global
+%    G-ODS: F( R 0.70, P 0.76 ) = 0.73   [th = 0.10]
+%    G-OSS: F( R 0.74, P 0.77 ) = 0.76
+%    G-Area_PR = 0.78
+% Region
+%    GT covering: ODS = 0.59 [th = 0.12]. OSS = 0.64. Best = 0.74
+% Region
+%    Rand Index: ODS = 0.82 [th = 0.08]. OSS = 0.85.
+%    Var. Info.: ODS = 1.68 [th = 0.15]. OSS = 1.48.
+
+% linear LLS
+% Boundary PR global
+%    G-ODS: F( R 0.69, P 0.67 ) = 0.68   [th = 0.35]
+%    G-OIS: F( R 0.74, P 0.67 ) = 0.71
+%    Area_PR = 0.71
+% Volume PR global
+%    G-ODS: F( R 0.68, P 0.70 ) = 0.69   [th = 0.27]
+%    G-OSS: F( R 0.70, P 0.73 ) = 0.71
+%    G-Area_PR = 0.71
+% Region
+%    GT covering: ODS = 0.55 [th = 0.37]. OSS = 0.60. Best = 0.67
+% Region
+%    Rand Index: ODS = 0.81 [th = 0.17]. OSS = 0.83.
+%    Var. Info.: ODS = 1.90 [th = 0.67]. OSS = 1.72.
+
+% quadratic LLS
+% Boundary PR global
+%    G-ODS: F( R 0.57, P 0.52 ) = 0.54   [th = 0.12]
+%    G-OIS: F( R 0.57, P 0.54 ) = 0.56
+%    Area_PR = 0.40
+% Volume PR global
+%    G-ODS: F( R 0.79, P 0.27 ) = 0.40   [th = 0.02]
+%    G-OSS: F( R 0.79, P 0.26 ) = 0.40
+%    G-Area_PR = 0.25
+% Region
+%    GT covering: ODS = 0.34 [th = 0.21]. OSS = 0.35. Best = 0.37
