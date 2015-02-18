@@ -128,7 +128,7 @@
    colorlinks,linkcolor={dark-blue},citecolor={dark-blue},urlcolor={dark-blue},
    pdfstartview={FitV},unicode,breaklinks=true]{hyperref}
 \usepackage{url}
-% \usepackage{breakurl} % was causing warnings when compiled with pdflatex
+% \usepackage{breakurl} % Zori: was causing warnings when compiled with pdflatex
 \pdfstringdefDisableCommands{
    \let\\\space
 }
