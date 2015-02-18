@@ -41,9 +41,9 @@ the negative of the probability is shown, \ie the darker the pixel, the higher t
 
 \textbf{Image edge:} Image edge detection deals with the problem of finding pixels which belong to object boundaries within a digital image. The pixels belonging to object boundaries in an image are often locations where a sharp change of image brightness occurs. Those locations of image intensity discontinuities, typically grouped together, are called \textit{image edges}.
 
-\textbf{Edge map:} We will call an \textit{edge map} a binary image depicting edges locations. The pixels belonging to an edge are set to 1. The rest of the pixels are not part of an edge. They have a value of 0. Therefore, for a given pixel location $(x,y)$, the corresponding edge map value is $em_{x,y} \in \{0,1\}$ (see Figure~\ref{fig:edge_detection}\subref{fig:edge_detection-sub2}).
+\textbf{Edge map:} We will call an \textit{edge map} a binary image depicting edges locations. The pixels belonging to an edge are set to 1. The rest of the pixels are not part of an edge. They have a value of 0. Therefore, for a given pixel location $(x,y)$, the corresponding edge map value is $em_{x,y} \in \{0,1\}$ (see \fref{fig:edge_detection-sub2}).
 
-\textbf{Probability of boundary:} To allow to express a level of (un)certainty as to the presence of an edge in an image, we employ a probabilistic means. We define a real-valued image called a \textit{Probability of boundary (Pb)} (see Fig.~\ref{fig:edge_detection}\subref{fig:edge_detection-sub3}). 
+\textbf{Probability of boundary:} To allow to express a level of (un)certainty as to the presence of an edge in an image, we employ a probabilistic means. We define a real-valued image called a \textit{Probability of boundary (Pb)} (see \fref{fig:edge_detection-sub3}). 
 The notion of probability of a location being an edge point was first introduced in~\cite{martin2004learning}. % TODO really?
 It has ever since been used as an output to many edge detection algorithms~\cite{Maire2008using,LimZD13,DollarICCV13edges,Isola2014crisp,Ganin2014n4fields,Hallman2014}.
 
