@@ -1,4 +1,5 @@
 % TODO for a $16\times 16$ segmentation patch there exist, in theory $2^256$ possible edge masks. Due to the inherent structure in image patches however, not all of them are likely, and those containing simple structures are prevalent.
+% TODO put an image of decision of 4 trees in one pixel
 \chapter{Capturing image edge structure} %Structured random decision forests}
 \label{Chapter2}
 In this chapter we discuss the recent edge detection works by Doll\'ar and Zitnick~\cite{DollarICCV13edges,Dollar2015PAMI}. Their algorithm - Structured edge (SE) takes a data-driven approach to learning of semantic edges. % Let the data speak for itself
@@ -130,7 +131,7 @@ Now that a most-likely segmentation can be obtained given an input image patch, 
 Structured labels capture information about entire pixel neighbourhood. Therefore a small number - $T$ of tree predictions per pixel suffice for high edge detection quality. Detection is performed by sliding a window across the image, with a stride $s = 2$, and evaluating, in a chequerboard-pattern a set of $T$ trees. So a total of $2T$ trees are trained. Each of the trees makes a prediction for the given location, many are overlapping. For a patch side of $d = 16$, with $T=4$, each pixel receives $\frac{T*d*d}{s*s}=256$ independent decisions.
 
 \subsubsection*{Averaging of overlapping decisions}
-The individual decisions are local segmentation masks. As discussed in \textsection~\ref{Chapter1} it is fairly easy to obtain an edge map, given a segmentation. This is how the multiple patches decisions have to be represented in order to aggregate the information in them for the purposes of edge detection. The combining is done by superimposing, %merging
+The individual decisions are local segmentation masks. As discussed in \cref{Chapter1}, it is fairly easy to obtain an edge map, given a segmentation. This is how the multiple patches decisions have to be represented in order to aggregate the information in them for the purposes of edge detection. The combining is done by superimposing, %merging
 and then averaging the edge maps from multiple overlapping patches. %decisions. 
 This is referred to in the paper~\cite{DollarICCV13edges} as ``custom ensemble model''.
 

@@ -172,7 +172,7 @@ See fig.~\ref{fig:ws-just-contour} for an example. Here we take into account onl
 
 \textbf{Tree leaf segmentation transformation:} As the resulting watershed patch is not a segmentation - often it would contain just an edge, and not a contour, we cannot keep the tree leaf as segmentation labelling (see fig.~\ref{fig:sub:tree-leaf-segments}. Instead we transform it, making the boundaries between the regions explicit, as in fig.~\ref{fig:sub:tree-leaf-boundaries}.
 
-\textbf{Edge detection comparison:} Consequently, we would need a boundary evaluation metric to compare the two, as the watershed patch, when transformed, won't necessarily contain regions. Details on the metric that we will use are given in~\textsection~\ref{sec:ch4-BPR-maths}.
+\textbf{Edge detection comparison:} Consequently, we would need a boundary evaluation metric to compare the two, as the watershed patch, when transformed, won't necessarily contain regions. Details on the metric that we will use are given in Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-BPR-maths}.
 
 Note that, unlike with \textit{greedy merge}, none of the transformations given here depend on the other patch. The watershed arc is uniquely determined by the pixel around which the watershed patch is centred.
 
@@ -229,7 +229,7 @@ We utilise 3 types of line fitting, shown on figures~\ref{fig:ws-line-fitting} a
   \item{Line estimated with {\bf linear least squares}:} least squares minimisation, taking into account \textbf{all} the watershed arc pixels; see the examples in~\ref{fig:sub:ws-line-fitting-lls} and~\ref{fig:sub:ws-line-fitting-lls2}. Also notice how in the second sub-figure line fitting disagrees with the direction of the line determined by the parametric methods.
 \end{enumerate}
 
-\textbf{Region boundary subdivision into watershed arc:} Note that the first two approaches only use the end points, so it is important for their proper functioning that the arcs have a ``consistent orientation'', \ie, can well be approximated by a line. In~\textsection~\ref{Chapter5} we conduct experiments to determine whether it is of any importance to use watershed arcs instead of the whole region boundary.
+\textbf{Region boundary subdivision into watershed arc:} Note that the first two approaches only use the end points, so it is important for their proper functioning that the arcs have a ``consistent orientation'', \ie, can well be approximated by a line. In \cref{Chapter5} we conduct experiments to determine whether it is of any importance to use watershed arcs instead of the whole region boundary.
 
 \textbf{Patch transformation to a labelling:} In practice we first fit a line, which gives a segmentation patch with two regions and explicit boundary between them (the first image in the examples). Then we convert the patch to a segmentation labelling (the second image in the examples). Thus the tree leaf segmentation does not need to change. We can apply any segmentation comparison metric on the two patches.
 
@@ -373,7 +373,7 @@ We cast the problem of scoring the similarity of the two patches as a segmentati
 In the following we will use $S$ to denote machine boundary map, $\mathbb{S}$ for machine segmentation, $s$ for a segment in it, $G$ for a ground-truth boundary map, $\mathbb{G}$ for ground-truth segmentation, and $g$ for a segment in it.
 
 \paragraph{Boundary Precision-Recall (BPR)}\mbox{}\\\mbox{}\\
-\label{sec:ch4-BPR-maths}
+\label{par:ch4-BPR-maths}
 The metric was proposed by~\cite{Arbelaez11} to evaluate the quality of edge detection algorithms in a precision-recall framework. Precision measures the fraction of true positive edge pixels. Recall evaluates the amount of real (\eg ground-truth-annotated) edge pixels detected by the algorithm under test. The reported measure is the \textbf{F-score}, which is the harmonic mean of the precision and recall.
 
 \[
@@ -417,7 +417,7 @@ $N$ pixels; for us - $\binom{16 . 16}{2}=32 640$.
 
 
 \subparagraph*{Rand Index Monte Carlo (RIMC)}\mbox{}\\ %RSRI (Random Subsample RI)} previously CPD (Crude Patch Distance), which was a misnomer
-\label{sec:ch4-RIMC-maths}
+\label{par:ch4-RIMC-maths}
 The RIMC is different from RI in that it takes a Monte Carlo subsample of the possible unique pairs of pixels and only considers their segment membership. It is inspired by the implementation of randomised label mapping to a simpler discrete space in training nodes of a decision forests in~\cite{DollarICCV13edges}. We define the RIMC between two segmentations.
 
 \[
@@ -429,6 +429,7 @@ In our experiments $|B|=256$.
 
 
 \subparagraph*{Probabilistic Rand index (PRI)}\mbox{}\\
+\label{par:ch4-PRI-maths}
 Probabilistic Rand index~\cite{UnnikrishnanPH07} counts the number of pixel pairs with agreement in %consistent 
 labelling between a machine generated segmentation on one hand, and \textbf{multiple} ground truth segmentations on the other hand.
 
@@ -444,6 +445,7 @@ $p_{jk}$ is the sample mean of the corresponding Bernoulli distribution.
 
 
 \paragraph{Segmentation covering (SC)}\mbox{}\\\mbox{}\\
+\label{par:ch4-SC-maths}
 To be able to understand Segmentation covering and Volume Precision-Recall, which we define in the next paragraph, it is helpful to first have a notion of the related \textit{Overlap} and \textit{Intersection over union}.
 
 \subparagraph*{Overlap, or Jaccard index}\mbox{}\\
@@ -469,9 +471,9 @@ is popular in the computer vision community through its use in the PASCAL VOC ch
  \text{accuracy} = \frac{\textit{tp}}{\textit{tp} + \textit{fp} + \textit{fn}}
 \]
 
-See also fig.~\ref{fig:overlap-IoU}.
+See also \fref{fig:overlap-IoU}.
 
-Even though the PASCAL challenge includes multiple object classes, the evaluation is done on a per-class basis. Hence, the above metric is practically the \textit{Overlap} for the two regions - one in the machine segmentation, and the other in the ground truth one. 
+Even though the PASCAL challenge includes multiple object classes, the evaluation is done on a per-class basis. Hence, the above metric is practically the {\it Overlap} for the two regions - one in the machine segmentation, and the other in the ground truth one. 
 % TODO discuss the problem that requires normalisation
 Considering one class at a time, in a one-vs-all fashion, poses the problem as a binary classification problem. Thus normalisation is naturally provided, as the number of classes is fixed to 2.
 
@@ -522,7 +524,7 @@ Further, in practice, both metrics are thwarted by certain pathological cases. W
 Next we review a metric which, when normalised, is capable to an extent of addressing those issues.
 
 \paragraph{Volume Precision-Recall (VPR)}\mbox{}\\\mbox{}\\
-\label{sec:ch4-VPR-maths}
+\label{par:ch4-VPR-maths}
 The VPR metric~\cite{Galasso13} also aims to measure the overlap between the test segmentation and the (multiple) human annotated segmentations. It was introduced for the purposes of evaluating the quality of video segmentations, and also respects temporal consistency of superpixels (called \textit{supervoxels} in the video case). It is in addition applicable to %for 
 still images - this is the use case when considering only a single frame of the video sequence. In this scenario the metric is a region-based metric evaluating the size of and overlap between the segments. 
 In the way just described is how we use the VPR metric.
@@ -583,7 +585,7 @@ Further, we define the following normalisation with the lower bound being comput
 \]
 
 \subsection*{Symmetric and asymmetric metrics}
-Of the above metrics, BPR, RI, and not-normalised VPR are symmetric \wrt the segmentation under test and the ground truth segmentation. SC as well as the two normalised versions of VPR are asymmetric. VPR incorporates and develops the idea present in SC about a maximal \textit{Overlap}, but additionally provides normalisation. Therefore in our experiments in \textsection~\ref{Chapter5} we don't consider SC.
+Of the above metrics, BPR, RI, and not-normalised VPR are symmetric \wrt the segmentation under test and the ground truth segmentation. SC as well as the two normalised versions of VPR are asymmetric. VPR incorporates and develops the idea present in SC about a maximal \textit{Overlap}, but additionally provides normalisation. Therefore in our experiments in \cref{Chapter5} we don't consider SC.
 
 % for the normalisation:
 % G - ground truth = trees
@@ -596,7 +598,7 @@ review in \textsection~\ref{sec:ch5-structured-voting}) the ``other patch'' is a
 It is then clear that the watershed patch, since it is always one, as the machine segmentation, receives this allocation. Also, it is only natural in the context of the VPR benchmark to assign the $T$ tree leaf patches, or the ground truth cropped patches to the set of ground truth segmentations $\{\mathbb{G}_i\}_{i=1}^M$.
 
 \section[Third stage of the pipeline - UCM]{Third stage of the pipeline - hierarchical segmentation - UCM}
-The result from the SV - a weighted watershed locations image, is suitable for input to the UCM algorithm. The UCM builds a hierarchy of segmentations by agglomerative clustering of regions based on the strength of their separating boundary. We reviewed UCM in~\ref{sec:ch3-UCM}. By thresholding the UCM we can obtain segmentations at different level of detail. The boundaries of the regions in a segmentation constitute contours, \ie, they are ``closed'' edges. This makes our algorithm suitable for evaluation by edge detector as well as image segmentation benchmarks.
+The result from the SV - a weighted watershed locations image, is suitable for input to the UCM algorithm. The UCM, which stands for {\it ultrametric contour maps}, is a method introduced in~\cite{Arbelaez2006boundary}. It builds a hierarchy of segmentations by agglomerative clustering of regions based on the strength of their separating boundary. We reviewed UCM in~\ref{sec:ch3-UCM}. By thresholding the UCM we can obtain segmentations at different level of detail. The boundaries of the regions in a segmentation constitute contours, \ie, they are ``closed'' edges. This makes our algorithm suitable for evaluation by edge detector as well as image segmentation benchmarks.
 
 \section{Discussion}
 \subsection*{Giving output a probabilistic interpretation}
