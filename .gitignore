@@ -1,3 +1,6 @@
+" this is a file used by the inverse search
+*.synctex.gz
+
 *.bbl
 *.blg
 *.toc
@@ -21,3 +24,5 @@
 *.kilepr
 
 everything_else/
+" separate project for small changes and tweaks - complies faster
+tryout.tex
