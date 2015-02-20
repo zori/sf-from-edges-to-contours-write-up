@@ -1,53 +1,72 @@
 \chapter{Introduction}
+Image edge detection and image segmentation are key problems in computer vision.
+%While the two problems are related
+
 \label{Chapter1}
 \section{Motivation}
+Recently, very good edge detection results were achieved using random decision forests~\cite{DollarICCV13edges}. While a certain edge model is % required, needed % a requirement
+imperative, few segmentation algorithms use edge detection output as a first step to image segmentation. Consequently, many edge detection algorithms re-use the same approach to obtain image segmentation in addition %additionally 
+to their edge detection.
+
+Therefore, the field is limited by lack of research on the problem of edge-based hierarchical segmentation. We investigate an alternative % possibility 
+to obtain image segmentation, given an edge detector output.
 
 \section{Problem definition}
-Our objectives are  twofold:  first to provide a principled way of obtaining hierarchical image segmentation based on probabilistic edge detection results, and second, to explore ways to improve the quality of the so %thus 
-obtained segmentation.
+We address the problem of semantic image segmentation. To help understand it, it is necessary to first introduce the notions of an {\it edge} - an essential for edge detection, and {\it contour} - a prerequisite for image segmentation.
 
+\textbf{Terminology:} As the field is young, it is worth pointing out that there is a certain lack of consistency and differences in definitions as concerns related terminology. In the following we define the basic vocabulary for our method and we will be consistent in using it throughout this report.
+
+\subsection{Edge detection}
+The detection of edges in digital images has its application in %tasks such as 
+object detection and recognition, segmentation, structure from motion and tracking.
+
+\begin{figure}[ht!]
+\centering
+ \subfigure[Input image from %the validation subset of 
+ BSDS500~\cite{BSDS500resources}]{%
+  \includegraphics[width=0.4\textwidth]{images/examples/koala/koala.jpg} % hawaii/arbelaez2011-035.png}
+ }
+ \subfigure[Edge map]{%
+  \includegraphics[width=0.4\textwidth]{images/examples/koala/koala_gPb_edge_map.png} % too thin - SE are thicker koala_SE_edge_map % hawaii/edge_map_arbelaez2011-039.png}
+  \label{fig:sub:edge_detection-edge-map}
+ }
+ \subfigure[Probability of boundary]{%
+  \includegraphics[width=0.4\textwidth]{images/examples/koala/koala_gPb.png} % koala_SE % hawaii/Pb_arbelaez2011-039.png}
+  \label{fig:sub:edge_detection-pb}
+ }
+ \subfigure[Probability of boundary jet colour-coded]{%
+  \includegraphics[width=0.4\textwidth]{images/examples/koala/koala_gPb_cc.png} % koala_SE_cc % hawaii/Pb_arbelaez2011-039.png}
+  \label{fig:sub:edge_detection-pb-cc}
+ }
+\caption[Edge detection - edge map and probability of boundary]{{\bf Edge detection}. Note that for ease of view, %illustration
+the negative of the probability and the edge map are shown, \ie the darker the pixel, the higher the probability of an edge. Visualisation code for \protect\subref{fig:sub:edge_detection-pb-cc} courtesy of Hallman and Fowlkes~\cite{Hallman2014}.}
+\label{fig:edge_detection}
+\end{figure}
+
+\subsubsection*{Edge, edge map, probability of boundary}
+\textbf{Image edge:} Image edge detection deals with the problem of finding pixels which belong to object boundaries within a digital image. The pixels belonging to object boundaries in an image are often locations where a sharp change of image brightness occurs. Those locations of image intensity discontinuities, typically grouped together, are called \textit{image edges}.
+
+\textbf{Edge map:} We will call an \textit{edge map} a binary image $M$ depicting edges locations. The pixels belonging to an edge are set to 1. The rest of the pixels are not part of an edge. They have a value of 0. Therefore, for a given pixel location $(x,y)$, the corresponding edge map value is $M_{(x,y)} \in \{0,1\}$ (see \fref{fig:sub:edge_detection-edge-map}).
+
+\textbf{Probability of boundary:} To allow to express a level of (un)certainty as to the presence of an edge in an image, we employ a probabilistic means. We define a real-valued image $Pb$, which stands for \textit{Probability of boundary} (see \fref{fig:sub:edge_detection-pb} and \fref{fig:sub:edge_detection-pb-cc}). For a given pixel location $(x,y)$, the corresponding value is $Pb_{(x,y)} \in [0,1]$.
+
+The notion of probability of a location being an edge point was first introduced in~\cite{martin2004learning}. % TODO really?
+It has ever since been used as an output to many edge detection algorithms~\cite{Maire2008using,LimZD13,DollarICCV13edges,Isola2014crisp,Ganin2014n4fields,Hallman2014}.
+
+\textbf{Thresholding:} Given a Pb, we can obtain edge maps at different levels of detail by {\it thresholding}. We choose a threshold $t\in(0,1)$ and consider as detected edge pixels those locations $(x,y)$ such that $Pb(x,y)>t$. Obviously, lower thresholds allows to discover more edges, while higher threshold would only honour the most salient ones.
+
+In \fref{fig:edge_detection} we show the result of the edge detection algorithm gPb~\cite{Arbelaez11}. The last two images show the detector output - a {\it Probability of boundary}. For improved viewing in case of probabilistic output we will utilise a visualisation with black as background and heatmap-coloured boundaries according to their strength. The edge map \fref{fig:sub:edge_detection-edge-map} was obtained by thresholding at $t=0.3$.
+
+%- TODO general consensus in the community that edge detection is somewhat ill defined in that it is not quiteclear what defines a correct output \cite{martin2004learning}
+
+
+\subsection{Image segmentation}
 % TODO: for image segmentation 
 % If the task is unspecified as a general video segmentation task, then there is an ambiguity of the correct level of granularity on the ground truth segments, and different human annotators would show different acceptable ways to segment the video. And one can see the agreement among the human annotators are around 80-90 percent. Especially, they tend to agree on the main subjects but differ on the background ones.
 %
 % from \cite{Martin01}:
 % It is imperative that variation among human segmenta-tions of an image is due to different perceptual organiza-tions of the scene, rather than aspects of the experimentalsetup. In order to minimize variation due to different inter-pretations of the task, the instructions were made intention-ally vague in an effort to cause the subjects to break up thescene in a ``natural'' manner:Divide each image into pieces,where each piece represents a distinguished thing in the im-age. It isimportant that all of the pieces have approximatelyequal importance. The number of things in each image is upto you.  Something between 2 and 20 should be reasonablefor any of our images.
 
-\textbf{Terminology:} As the field is young, it is worth pointing out that there is a certain lack of consistency and differences in definitions as concerns related terminology. In the following we define the basic vocabulary for our method and we will be consistent in using it throughout this report.
-
-\subsection{Edge detection}
-%- application in tasks such as object detection/recognition, structure from motion, segmentation and tracking
-%- general consensus in the community that edge detection is somewhat ill defined in that it is not quiteclear what defines a correct output \cite{martin2004learning}
-
-\subsubsection*{Edge, edge map, probability of boundary}
-
-\begin{figure}[ht!]
-\centering
- \subfigure[Input image]{%
-  \includegraphics[width=0.3\textwidth]{images/examples/hawaii/arbelaez2011-035.png}
- }
- \subfigure[Edge map]{%
-  \includegraphics[width=0.3\textwidth]{images/examples/hawaii/edge_map_arbelaez2011-039.png}
-  \label{fig:edge_detection-sub2}
- }
- \subfigure[Probability of boundary]{%
-  \includegraphics[width=0.3\textwidth]{images/examples/hawaii/Pb_arbelaez2011-039.png}
-  \label{fig:edge_detection-sub3}
- }
-\caption{{\bf Edge detection} (courtesy of~\cite{Arbelaez11}). Note that for ease of view, %illustration
-the negative of the probability is shown, \ie the darker the pixel, the higher the probability of an edge.}
-\label{fig:edge_detection}
-\end{figure}
-
-
-\textbf{Image edge:} Image edge detection deals with the problem of finding pixels which belong to object boundaries within a digital image. The pixels belonging to object boundaries in an image are often locations where a sharp change of image brightness occurs. Those locations of image intensity discontinuities, typically grouped together, are called \textit{image edges}.
-
-\textbf{Edge map:} We will call an \textit{edge map} a binary image depicting edges locations. The pixels belonging to an edge are set to 1. The rest of the pixels are not part of an edge. They have a value of 0. Therefore, for a given pixel location $(x,y)$, the corresponding edge map value is $em_{x,y} \in \{0,1\}$ (see \fref{fig:edge_detection-sub2}).
-
-\textbf{Probability of boundary:} To allow to express a level of (un)certainty as to the presence of an edge in an image, we employ a probabilistic means. We define a real-valued image called a \textit{Probability of boundary (Pb)} (see \fref{fig:edge_detection-sub3}). 
-The notion of probability of a location being an edge point was first introduced in~\cite{martin2004learning}. % TODO really?
-It has ever since been used as an output to many edge detection algorithms~\cite{Maire2008using,LimZD13,DollarICCV13edges,Isola2014crisp,Ganin2014n4fields,Hallman2014}.
-
-\subsection{Image segmentation}
 
 \subsubsection*{Contour, segmentation, region boundary, hierarchical segmentation}
 
@@ -76,7 +95,11 @@ In such more challenging situations a \textit{general} edge detector would not b
 \subsubsection{Image segmentation}
 
 SoA: Multiscale combinatorial grouping~\cite{Arbelaez2014multiscale}.
+
 \section{Goal}
+Our objectives are  twofold:  first to provide a principled way of obtaining hierarchical image segmentation based on probabilistic edge detection results, and second, to explore ways to improve the quality of the so %thus 
+obtained segmentation.
+
 % a more principled approach to boundary-guided image segmentation. % analysis?
 % \section{Outline}
 % The rest of this work is structured as follows:
