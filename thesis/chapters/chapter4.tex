@@ -31,16 +31,23 @@ The gPb algorithm uses a combination of carefully designed features - the gradie
 
 Beside being heavily-engineered, in terms of detection speed it does not come close to the real-time performance of SE.
 
-The chief reason for using SE for us, however, is that this edge detector can provide as a by-product the intermediate most likely-segmentations that it has predicted per location in the image. This is important information about the local edge structure that we will build on when developing our Structured voting.
+The chief reason for using SE for us, however, is that this edge detector can provide as a by-product the intermediate most likely-segmentations that it has predicted per location in the image. This is important information about the local edge structure that we will build on when developing our Structured voting (SV).
 
 \section{Second stage of the pipeline - Structured voting}
 \label{sec:ch4-SE-SV-UCM_SV_details}
-The goal of SV is to propose a suitable way of associating a score with each of the watershed pixel. Inspired by the ``local patch as a means of capturing context'' philosophy of previous works~\cite{dollar2006supervised,LimZD13,DollarICCV13edges}, we take a patch comparison approach.
+The goal of SV is to propose a suitable way of associating a score with each of the {\it watershed pixels} (the computed possible locations of boundary). Inspired by the ``local patch as a means of capturing context'' philosophy of previous works~\cite{dollar2006supervised,LimZD13,DollarICCV13edges}, we take a patch comparison approach.
 
 \subsection{Weighting the watershed contours} %locations}
-\textbf{Casting a single vote:} The SE provides us ``for free'' with the best segmentation patches - local decisions that the trees of the decision forest have made on all locations of the image. We crop, centred around the same location, a patch of the same size ($16\times 16$ pixels) from the watershed superpixels  image. Comparing the two gives us a score, which we associate with the location on the watershed contours.
+The SE provides us ``for free'' with the best segmentation patches - local decisions that the trees of the decision forest have made {\bf on all locations} of the image. The size of those medoid tree leaf patches (as well as of all structured forest segmentation patches) is $16\times 16$ pixels.
 
-\textbf{Votes averaging:} A total number of $T=4$ votes are cast per watershed pixel, and we take the mean of those. To further denoise the voting and give our votes a larger platform, % stage, dais, rostrum, podium
+\subsubsection*{Casting a single vote}
+We only cast votes on the {\bf watershed contour pixels}. To this end, we crop from the watershed superpixels image a patch (the same size as the tree leaves patches), such that its centre is a potential boundary pixel. We want to quantify the strength of this boundary. 
+% We crop, centred around the same location, a patch of the same size.
+
+That we do by comparing the two - the watershed pixels patch and a tree leaf patch centred around the same location. This comparison gives us a score, which we associate with the chosen location on the watershed contours.
+
+\subsubsection*{Votes averaging}
+A total number of $T=4$ votes are cast per watershed pixel, and we take the mean of those. To further denoise the voting and give our votes a larger platform, % stage, dais, rostrum, podium
 we average all votes per \textit{watershed arc}. The watershed arcs, as discussed in~\ref{sec:ch3-OWT}, are edges of the watershed contours, which are fairly consistent in their orientation. They are obtained by recursively subdividing the region boundaries of the watershed until the approximation given by the straight line through the end of the watershed arc is a sufficiently good one. % TODO artifact from the OWT
 
 \subsection{Comparing a structured forest patch to a watershed patch}
@@ -115,14 +122,13 @@ they present local evidence of lack of boundary.
 \end{figure}
 
 \paragraph{Greedy merge}\mbox{}\\\mbox{}\\ % force some space after the paragraph name
-For this paragraph, please first have a look at fig.~\ref{fig:ws-greedy-merge}. Evidently merely converting the watershed oversegmentation to have implicit boundaries (from the original watershed patch segmentation - fig.~\ref{fig:sub:watershed-colour-coded} to the segmentation labelling - fig.~\ref{fig:sub:watershed-segments}) is not sufficient. The watershed is still very different from the target - the decision tree leaf patch (fig.~\ref{fig:sub:tree-leaf}), in the sense that it contains many more segments.
+For this paragraph, please first have a look at \fref{fig:ws-greedy-merge}. Evidently merely converting the watershed oversegmentation to have implicit boundaries (from the original watershed patch segmentation - \fref{fig:sub:ws-greedy-merge-ws-colour-coded} to the segmentation labelling - \fref{fig:sub:ws-greedy-merge-ws-segments}) is not sufficient. The watershed is still very different from the target - the decision tree leaf patch (\fref{fig:sub:ws-greedy-merge-tree-leaf}), in the sense that it contains many more segments.
 
 \textbf{Na\"{\i}ve greedy merge:} Our first attempt, which we call na\"{\i}ve greedy merge, suffered from the limitation of being overly 
-greedy. The transformed watershed patch (see fig.
-~\ref{fig:sub:watershed-naive-greedy-merge}) adapts itself excessively to the tree leaf segmentation which we use to guide the merging. As a consequence, it does not respect the fact that the watershed patch has a \textbf{boundary pixel in the middle}, hence, there must have been no less than two segments abutting its centre pixel.
+greedy. The transformed watershed patch (see \fref{fig:sub:ws-greedy-merge-ws-naive-greedy-merge}) adapts itself excessively to the tree leaf segmentation which we use to guide the merging. As a consequence, it does not respect the fact that the watershed patch has a \textbf{boundary pixel in the middle}, hence, there must have been no less than two segments abutting its centre pixel.
 
 \textbf{Fair greedy merge:} As a remedy, we propose a ``fairer'' greedy merge. It %uses heuristic to
-aims for an optimal superpixels merge into segments, according to the structured tree patch (fig.~\ref{fig:sub:tree-leaf}). At the same time it still respects the condition that the central watershed pixel lies on a boundary between two regions. Fig.~\ref{fig:sub:watershed-fairer-greedy-merge} shows an example.
+aims for an optimal superpixels merge into segments, according to the structured tree patch (\fref{fig:sub:ws-greedy-merge-tree-leaf}). At the same time it still respects the condition that the central watershed pixel lies on a boundary between two regions. \fref{fig:sub:ws-greedy-merge-ws-fairer-greedy-merge} shows an example.
 
 \begin{figure}[ht!]
 \centering
@@ -135,31 +141,33 @@ aims for an optimal superpixels merge into segments, according to the structured
 
  \subfigure[Cropped watershed patch]{%
   \includegraphics[width=0.2\textwidth,frame]{images/SE-SV-UCM/ws-greedy-merge/watershed-colour-coded.png}
-  \label{fig:sub:watershed-colour-coded}
+  \label{fig:sub:ws-greedy-merge-ws-colour-coded}
  }
  \subfigure[Watershed patch with implicit region boundaries]{%
   \includegraphics[width=0.2\textwidth,frame]{images/SE-SV-UCM/ws-greedy-merge/watershed-segments.png}
-  \label{fig:sub:watershed-segments}
+  \label{fig:sub:ws-greedy-merge-ws-segments}
  } \qquad\qquad\qquad\qquad\qquad
 
  \subfigure[Tree leaf segmentation patch that guides the merging]{%
-  \includegraphics[width=0.2\textwidth,frame]{images/SE-SV-UCM/ws-greedy-merge/tree-leaf.png}
-  \label{fig:sub:tree-leaf}
+  \fboxrule=2pt %border thickness
+  \fcolorbox{red}{white}{\fboxrule=0.5pt \includegraphics[width=0.2\textwidth,frame]{images/SE-SV-UCM/ws-greedy-merge/tree-leaf.png}}
+  \label{fig:sub:ws-greedy-merge-tree-leaf}
  }
  \subfigure[Watershed patch {\bf na\"{\i}ve} greedy merge]{%
   \includegraphics[width=0.2\textwidth,frame]{images/SE-SV-UCM/ws-greedy-merge/watershed-naive-greedy-merge.png}
-  \label{fig:sub:watershed-naive-greedy-merge}
+  \label{fig:sub:ws-greedy-merge-ws-naive-greedy-merge}
  }
  \subfigure[Watershed patch {\bf fair} greedy merge]{%
-  \includegraphics[width=0.2\textwidth,frame]{images/SE-SV-UCM/ws-greedy-merge/watershed-fairer-greedy-merge.png}
-  \label{fig:sub:watershed-fairer-greedy-merge}
+  \fboxrule=2pt %border thickness
+  \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.2\textwidth,frame]{images/SE-SV-UCM/ws-greedy-merge/watershed-fairer-greedy-merge.png}}
+  \label{fig:sub:ws-greedy-merge-ws-fairer-greedy-merge}
  }
-\caption[{\bf Greedy merge} of watershed patch.]{{\bf Greedy merge} of watershed patch. The central pixel of the patches is marked, as it is important, see the text for details.}
+\caption[{\bf Greedy merge} of watershed patch.]{{\bf Greedy merge} of watershed patch. The central pixel of the patches is marked, as it is important, see the text for details. The comparison is between a tree leaf patch (in red \protect\subref{fig:sub:ws-greedy-merge-tree-leaf}) and a watershed patch (in green \protect\subref{fig:sub:ws-greedy-merge-ws-fairer-greedy-merge}).}
 \label{fig:ws-greedy-merge}
 \end{figure}
 
 \paragraph{Watershed arc}\mbox{}\\\mbox{}\\ % previously called ``just contour'' % region boundary
-See fig.~\ref{fig:ws-just-contour} for an example. Here we take into account only the underlying region boundary, on which the central pixel of the watershed patch is.
+See \fref{fig:ws-just-contour} for an example. Here we take into account only the underlying region boundary, on which the central pixel of the watershed patch is.
 
 \begin{figure}[ht!]
  \centering
@@ -168,9 +176,9 @@ See fig.~\ref{fig:ws-just-contour} for an example. Here we take into account onl
  \label{fig:Arbelaez11-contour-subdivision}
 \end{figure}
 
-\textbf{Watershed arc:} We recursively subdivide this boundary until a \textbf{watershed arc} is obtained, fig.~\ref{fig:sub:ws-just-contour-watershed-just-contour}, whose shape could be sufficiently accurately approximated by the straight line through the arc's end points. See fig.~\ref{fig:Arbelaez11-contour-subdivision}. The procedure is as first described in ``Contour Detection and Hierarchical Image Segmentation''~\cite{Arbelaez11}.
+\textbf{Watershed arc:} We recursively subdivide this boundary until a \textbf{watershed arc} is obtained, \fref{fig:sub:ws-just-contour-watershed-just-contour}, whose shape could be sufficiently accurately approximated by the straight line through the arc's end points. See \fref{fig:Arbelaez11-contour-subdivision}. The procedure is as first described in ``Contour Detection and Hierarchical Image Segmentation''~\cite{Arbelaez11}.
 
-\textbf{Tree leaf segmentation transformation:} As the resulting watershed patch is not a segmentation - often it would contain just an edge, and not a contour, we cannot keep the tree leaf as segmentation labelling (see fig.~\ref{fig:sub:tree-leaf-segments}. Instead we transform it, making the boundaries between the regions explicit, as in fig.~\ref{fig:sub:tree-leaf-boundaries}.
+\textbf{Tree leaf segmentation transformation:} As the resulting watershed patch is not a segmentation - often it would contain just an edge, and not a contour, we cannot keep the tree leaf as segmentation labelling (see \fref{fig:sub:tree-leaf-segments}. Instead we transform it, making the boundaries between the regions explicit, as in \fref{fig:sub:tree-leaf-boundaries}.
 
 \textbf{Edge detection comparison:} Consequently, we would need a boundary evaluation metric to compare the two, as the watershed patch, when transformed, won't necessarily contain regions. Details on the metric that we will use are given in Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-BPR-maths}.
 
@@ -190,7 +198,8 @@ Note that, unlike with \textit{greedy merge}, none of the transformations given 
   \label{fig:sub:ws-just-contour-watershed-colour-coded}
  }
  \subfigure[\protect\subref{fig:sub:ws-just-contour-watershed-colour-coded}~transformed - just an arc]{%
-  \includegraphics[width=0.15\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/watershed-just-contour.png}
+  \fboxrule=2pt %border thickness
+  \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.15\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/watershed-just-contour.png}}
   \label{fig:sub:ws-just-contour-watershed-just-contour}
  }
 
@@ -208,15 +217,15 @@ Note that, unlike with \textit{greedy merge}, none of the transformations given 
 
  \subfigure[\protect\subref{fig:sub:tree-leaf-segments}~transformed to boundaries]{
   \begin{tabular}{ c c c c }
-  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/tree1-bdry.png} &
-  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/tree2-bdry.png} &
-  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/tree3-bdry.png} &
-  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/tree4-bdry.png} \\
+  {\fboxrule=2pt \fcolorbox{red}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/tree1-bdry.png}}} &
+  {\fboxrule=2pt \fcolorbox{red}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/tree2-bdry.png}}} &
+  {\fboxrule=2pt \fcolorbox{red}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/tree3-bdry.png}}} &
+  {\fboxrule=2pt \fcolorbox{red}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-just-contour/tree4-bdry.png}}} \\
   \end{tabular}
   \label{fig:sub:tree-leaf-boundaries}
   }
 \end{center}
-\caption[Watershed transformation to just {\bf region boundary}]{Watershed transformation to just {\bf region boundary}.}
+\caption[Watershed transformation to just {\bf region boundary}]{Watershed transformation to just {\bf region boundary}. The comparison is between the watershed patch (in green \protect\subref{fig:sub:ws-just-contour-watershed-just-contour}) and a tree leaf patch (in red \protect\subref{fig:sub:tree-leaf-boundaries}).}
 \label{fig:ws-just-contour}
 \end{figure}
 
@@ -255,21 +264,21 @@ We utilise 3 types of line fitting, shown on figures~\ref{fig:ws-line-fitting} a
 
  \subfigure[Line fitted through arc {\bf end points}]{
   \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-line-fitting/ends-line.png}
-  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-line-fitting/ends-seg.png}
+  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-line-fitting/ends-seg.png}}}
   \label{fig:sub:ws-line-fitting-ends}
   }
  \subfigure[Line fitting through {\bf centre} based on arc end points]{
   \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-line-fitting/centre-line.png}
-  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-line-fitting/centre-seg.png}
+  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-line-fitting/centre-seg.png}}}
   \label{fig:sub:ws-line-fitting-centre}
   }
  \subfigure[Line estimated with {\bf linear least squares}]{
   \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-line-fitting/lls-line.png}
-  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-line-fitting/lls-seg.png}
+  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-line-fitting/lls-seg.png}}}
   \label{fig:sub:ws-line-fitting-lls}
   }
 \end{center}
-\caption[First example of watershed {\bf line fitting}]{First example of watershed line fitting.}
+\caption[First example of watershed {\bf line fitting}]{First example of watershed line fitting. The comparison is between a watershed patch (in green \protect\subref{fig:sub:ws-line-fitting-ends},\protect\subref{fig:sub:ws-line-fitting-centre},\protect\subref{fig:sub:ws-line-fitting-lls}) and a tree leaf segmentation patch (not given, since no transformation is applied; hence, they would be similar to the greyscale patches on the right of \fref{fig:watershed-and-leaf-patches}).}
 \label{fig:ws-line-fitting}
 \end{figure}
 
@@ -293,17 +302,17 @@ We utilise 3 types of line fitting, shown on figures~\ref{fig:ws-line-fitting} a
 
  \subfigure[Line fitted through arc {\bf end points}]{
   \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-line-fitting/ends-line2.png}
-  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-line-fitting/ends-seg2.png}
+  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-line-fitting/ends-seg2.png}}}
   \label{fig:sub:ws-line-fitting-ends2}
   }
  \subfigure[Line fitting through {\bf centre} based on arc end points]{
   \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-line-fitting/centre-line2.png}
-  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-line-fitting/centre-seg2.png}
+  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-line-fitting/centre-seg2.png}}}
   \label{fig:sub:ws-line-fitting-centre2}
   }
  \subfigure[Line estimated with {\bf linear least squares}]{
   \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-line-fitting/lls-line2.png}
-  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-line-fitting/lls-seg2.png}
+  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-line-fitting/lls-seg2.png}}}
   \label{fig:sub:ws-line-fitting-lls2}
   }
 \end{center}
@@ -347,17 +356,17 @@ the relevant for the fit information, namely the watershed contour whose pixels 
   \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-bdry5.png} &
   \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-bdry6.png} \\
   
-  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg1.png} &
-  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg2.png} &
-  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg3.png} &
-  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg4.png} &
-  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg6.png} &
-  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg5.png} \\
+  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg1.png}}} &
+  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg2.png}}} &
+  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg3.png}}} &
+  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg4.png}}} &
+  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg6.png}}} &
+  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg5.png}}} \\
 
   ex. 1 & ex. 2 & ex. 3 & ex. 4 & ex. 5 & ex. 6 \\
   \end{tabular}
 \end{center}
-\caption[Watershed quadratic fitting]{Watershed quadratic fitting. For each of the 6 examples, the {\bf first} row features the cropped watershed patch. The {\bf second} row has the relevant watershed arc. The {\bf third} row has the result from the {\bf quadratic fitting} (boundary is explicit). On the {\bf fourth} row is the segmentation labelling - the final transformed watershed patch which we use to compare to the structured forest segmentations.}
+\caption[Watershed quadratic fitting]{Watershed quadratic fitting. For each of the 6 examples, the {\bf first} row features the cropped watershed patch. The {\bf second} row has the relevant watershed arc. The {\bf third} row has the result from the {\bf quadratic fitting} (boundary is explicit). On the {\bf fourth} row is the segmentation labelling - the final transformed watershed patch (in green) which we use to compare to the structured forest segmentations (not given, since no transformation is applied; hence, they would be similar to the greyscale patches on the right of \fref{fig:watershed-and-leaf-patches}).}
 \label{fig:ws-quadratic-fitting}
 \end{figure}
 
@@ -608,7 +617,7 @@ This section remarks on an implementation aspect of edge detection and image seg
 of results across detectors and segmentation algorithms.
 
 It is beneficial %desirable 
-for the benchmark task to have the outputs of both edge detector and image segmentation into $[0,1]$. That additionally lends itself to probabilistic interpretation, which could potentially allow to easily combine different models.
+for the benchmark task to have the output values of both edge detector and image segmentation into $[0,1]$. That additionally lends itself to probabilistic interpretation, which could potentially allow to easily combine different models.
 
 \subsubsection*{Structured edge}
 In the SE algorithm~\cite{DollarICCV13edges,Dollar2015PAMI} every pixels receives between 0 and 256 votes. The decisions are ensembled by superposing patches of edge masks. Rather than averaging, however, the number of votes is divided by 128, which leaves an output that would theoretically fall into the $[0, 2]$ range. As a post-processing a triangular filter is applied, which has a smoothing and denoising effect. The resulting output indeed is used to %could match 
