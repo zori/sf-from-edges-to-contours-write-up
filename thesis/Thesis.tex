@@ -15,6 +15,7 @@
 %\usepackage{subcaption}
 \usepackage[hang,center]{subfigure}
 \usepackage{tocbibind}
+\usepackage{tocvsec2} % for \settocdepth
 \usepackage{xcolor}
 
 \apptocmd{\sloppy}{\hbadness 10000\relax}{}{}
@@ -48,7 +49,7 @@
 
 % fancy paragraph labelling
 \renewcommand{\theparagraph}{\S\arabic{paragraph}}
-\setcounter{secnumdepth}{5}
+\setcounter{secnumdepth}{5} % give numbering up to depth 5: 1) section 2) subsection 3) subsubsection 4) paragraph 5)subparagraph
 
 \begin{document}
 % *************** Front matter ***************
