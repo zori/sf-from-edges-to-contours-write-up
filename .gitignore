@@ -8,7 +8,11 @@
 *.aux
 *.log
 *.out
-*.pdf
+"*.pdf
+" only the output project files
+segmentation_scores_formulas.pdf
+Thesis.pdf
+tryout.pdf
 
 " catch-it-all for temporary files:
 *~
