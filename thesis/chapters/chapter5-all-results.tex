@@ -10,28 +10,47 @@
 & \textbf{ODS} & \textbf{OSS} & \textbf{AP} % <- VPR
 & \textbf{SC} & \textbf{PRI} & \textbf{VoI} \\
 \hline
-\multicolumn{1}{|c|}{Human} & .79 & .79 & - & - & - & - & .72 & .88 & 1.17 \\ % actually, we had .80 for humans on BPR from \cite{Arbelaez11}; % TODO for VPR - we don't know ODS = OIS for humans
+\multicolumn{1}{|l|}{Human} & .79 & .79 & - & - & - & - & .72 & .88 & 1.17 \\ % actually, we had .80 for humans on BPR from \cite{Arbelaez11}; % TODO for VPR - we don't know ODS = OIS for humans
 \hline
 \hline
-\multicolumn{1}{|c|}{\cite{DollarICCV13edges} Structured edge (SE)} & .70 & .72 & .63 & - & - & - & - & - & - \\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SoA. More, perhaps for here: Sketch tokens, SCG, DeepNet, 
+\multicolumn{1}{|l|}{\cite{Felzenszwalb04} Felz-Hutt [2004]} & .61 & .64 & .56 & - & - & - & .52 & .80 & 2.21 \\ % from \cite{Arbelaez11}
 \hline
-\multicolumn{1}{|c|}{\cite{Arbelaez11} gPb-OWT-UCM} & .73 & .76 & .77 & .73 & .76 & .78 & .59 & .83 & 1.69 \\
+\multicolumn{1}{|l|}{\cite{Arbelaez11} gPb [2011]} & .71 & .74 & .65 & - & - & - & - & - & - \\ % from cite{Hallman2014}
+\hline
+\multicolumn{1}{|l|}{\cite{Arbelaez11} gPb-OWT-UCM [2011]} & .73 & .76 & .73 & .73 & .76 & .78 & .59 & .83 & 1.69 \\ % from \cite{Arbelaez11} % our measured AP was .77
+\hline
+\multicolumn{1}{|l|}{\cite{DollarICCV13edges} SE-multi [2013]} & .74 & .76 & .78 & - & - & - & - & - & - \\ % from cite{Hallman2014}
+\hline
+\multicolumn{1}{|l|}{\cite{Dollar2015PAMI} SE-sharp [2015]} & {\bf .75} & .77 & .80 & - & - & - & - & - & - \\ % from cite{Hallman2014}
+\hline
+\multicolumn{1}{|l|}{\cite{Arbelaez2014multiscale} MCG [2014]} & {\bf .75} & {\bf .78} & .76 & - & - & - & - & - & - \\ % from cite{Hallman2014}
+\hline
+\multicolumn{1}{|l|}{\cite{Ganin2014n4fields} {$N^4$}-{F}ields [2014]} & {\bf .75} & .77 & .78 & - & - & - & - & - & - \\ % their output, our benchmark
+\hline
+\multicolumn{1}{|l|}{\cite{Isola2014crisp} Crisp (PMI) [2014]} & .74 & .77 & .78 & - & - & - & - & - & - \\ % from cite{Hallman2014}
+\hline
+\multicolumn{1}{|l|}{\cite{Hallman2014} OEF [2014]} & {\bf .75} & .77 & {\bf .82} & - & - & - & - & - & - \\ % from cite{Hallman2014}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \hline
 \hline
-\multicolumn{1}{|c|}{SE-watershed} & .39 & .39 & - & .34 & .34 & - & .20 & .75 & 6.26 \\
+\multicolumn{1}{|l|}{\cite{DollarICCV13edges} SE-single [2013]} & .70 & .72 & .63 & - & - & - & - & - & - \\
 \hline
-\multicolumn{1}{|c|}{SE-UCM (baseline)} & .69 &.73 & .75 & .72 & .75 & .77 & .58 & .82 & 1.80 \\
+\multicolumn{1}{|l|}{SE-watershed} & .39 & .39 & - & .34 & .34 & - & .20 & .75 & 6.26 \\
 \hline
-\multicolumn{1}{|c|}{SE+sPb-UCM} & .72 & .75 & .76 & .73 & .76 & .78 & .59 & .82 & 1.68 \\ % SE_nnms_sPb-UCM
+\multicolumn{1}{|l|}{SE-UCM (baseline)} & .69 &.73 & .75 & .72 & .75 & .77 & .58 & .82 & 1.80 \\
+\hline
+\multicolumn{1}{|l|}{SE+sPb-UCM} & .72 & .75 & .76 & .73 & .76 & .78 & .59 & .82 & 1.68 \\ % SE_nnms_sPb-UCM
 \hline
 \hline
-\multicolumn{1}{|c|}{linear LLS} & .68 & .71 & .71 & .69 & .71 & .71 & .55 & .81 & 1.90 \\% linear model - linear least squares fitting}
+\multicolumn{1}{|l|}{linear LLS} & .68 & .71 & .71 & .69 & .71 & .71 & .55 & .81 & 1.90 \\% linear model - linear least squares fitting}
 \hline
-\multicolumn{1}{|c|}{quadratic LLS} & .54 & .56 & .40 & .40 & .40 & .25 & .37 & .55 & 2.45 \\
+\multicolumn{1}{|l|}{quadratic LLS} & .54 & .56 & .40 & .40 & .40 & .25 & .37 & .55 & 2.45 \\
 \hline
 \hline
 \end{tabular}
-\caption[All results]{Results of all our experiments.}
+\caption[Benchmark scores for SoA and ours]{State-of-the-art edge detection and segmentation methods, and all our experiments - benchmark scores on BSDS500~\cite{BSDS500resources}.}
 %The table shows aggregate measures (ODS, OSS, AP) for boundary precision-recall (BPR), volume precision-recall (VPR) and 
 %includes region statistics (SC, PRI, VoI).}
 \label{tab:all-results}
