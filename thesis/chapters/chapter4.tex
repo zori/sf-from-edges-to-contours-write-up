@@ -1,5 +1,6 @@
 \chapter{Leveraging structured forest for segmentation}
 \label{Chapter4}
+\settocdepth{paragraph}
 Given an edge detection result, various methods could be employed to obtain image segmentation.  One approach is to try and identify all possible boundaries of segmentation regions, based on the probability of boundary score produced by the edge detector. Those boundaries %, called \textit{watershed pixels}, 
 finely partition the image pixel graph (see \sref{sec:ch3-watershed} for a description of the \textit{watershed transform} which we will use). The regions closed by them constitute an oversegmentation of the image. Different tasks require segmentation at different level of detail. It is useful, therefore, to be able to obtain coarser segmentations as well. 
 By reasoning about the salience of region boundaries, one could construct a \textit{hierarchy of segmentations} (see \sref{sec:ch3-UCM} for details on the UCM). Going up the hierarchy corresponds to coarsening the segmentation by merging neighbouring regions which are separated by a weak boundary. To establish the order in which to merge the regions, we must be able to tell weak from strong boundaries. We want to associate a \textit{score} with every possible region boundary, which score should reflect the strength of that intervening boundary.
@@ -17,7 +18,7 @@ So a watershed weighting strategy has two aspects - making the patches sufficien
 \begin{figure}[ht!]
 \centering
  \includegraphics[width=1\textwidth]{images/SE-SV-UCM/SE-SV-UCM_pipeline.png}
-\caption{Our SE-SV-UCM algorithm in the context of gPb-OWT-UCM pipeline, see Fig.~\protect\ref{fig:gPb-OWT-UCM-pipeline}.}
+\caption{Our SE-SV-UCM algorithm in the context of gPb-OWT-UCM pipeline, see \fref{fig:gPb-OWT-UCM-pipeline}.}
 \label{fig:SE-SV-UCM-pipeline}
 \end{figure}
 
@@ -40,13 +41,17 @@ The goal of SV is to propose a suitable way of associating a score with each of 
 \subsection{Weighting the watershed contours} %locations}
 The SE provides us ``for free'' with the best segmentation patches - local decisions that the trees of the decision forest have made {\bf on all locations} of the image. The size of those medoid tree leaf patches (as well as of all structured forest segmentation patches) is $16\times 16$ pixels.
 
-\subsubsection*{Casting a single vote}
+\settocdepth{subsection}
+\subsubsection{Casting a single vote}
+\settocdepth{paragraph}
 We only cast votes on the {\bf watershed contour pixels}. To this end, we crop from the watershed superpixels image a patch (the same size as the tree leaves patches), such that its centre is a potential boundary pixel. We want to quantify the strength of this boundary. 
 % We crop, centred around the same location, a patch of the same size.
 
 That we do by comparing the two - the watershed pixels patch and a tree leaf patch centred around the same location. This comparison gives us a score, which we associate with the chosen location on the watershed contours.
 
-\subsubsection*{Votes averaging}
+\settocdepth{subsection}
+\subsubsection{Votes averaging}
+\settocdepth{paragraph}
 A total number of $T=4$ votes are cast per watershed pixel, and we take the mean of those. To further denoise the voting and give our votes a larger platform, % stage, dais, rostrum, podium
 we average all votes per \textit{watershed arc}. The watershed arcs, as discussed in~\ref{sec:ch3-OWT}, are edges of the watershed contours, which are fairly consistent in their orientation. They are obtained by recursively subdividing the region boundaries of the watershed until the approximation given by the straight line through the end of the watershed arc is a sufficiently good one. % TODO artifact from the OWT
 
@@ -58,15 +63,15 @@ we average all votes per \textit{watershed arc}. The watershed arcs, as discusse
 \label{fig:weighting-the-watershed-contours}
 \end{figure}
 
-For a specific location one tree of the structured forest predicts a segmentation. From the watershed we have a corresponding patch, see fig.~\ref{fig:weighting-the-watershed-contours}. As mentioned already, there are two aspects to scoring their similarity: 1) making them suitable (\ie sufficiently similar) for comparison, and 2) choosing a function that can assess the agreement between the two patches as to the presence or absence of an edge.
+For a specific location one tree of the structured forest predicts a segmentation. From the watershed we have a corresponding patch, see \fref{fig:weighting-the-watershed-contours}. As mentioned already, there are two aspects to scoring their similarity: 1) making them suitable (\ie sufficiently similar) for comparison, and 2) choosing a function that can assess the agreement between the two patches as to the presence or absence of an edge.
 
 \subsubsection{Patch transformations}
-To appreciate the necessity of making the two types of segmentation patches comparable, look at fig.~\ref{fig:watershed-and-leaf-patches} which features a selection of watershed and tree leaf patches.
+To appreciate the necessity of making the two types of segmentation patches comparable, look at \fref{fig:watershed-and-leaf-patches} which features a selection of watershed and tree leaf patches.
 
 \textbf{Watershed patch:} The watershed patch is an oversegmentation with an \textbf{explicit boundary of size 1 pixel} between the segments.
 
 \textbf{Tree leaf patch:} The segmentation patches from the Structured forest are the learnt best segmentation for the given location in the image (based on the features computed from a cropped image patch). They are patches ``seen'' by the forest during the training phase. Since the SE algorithm uses \textbf{supervised learning}, the patches are cropped from the ground truth annotated segmentations. 
-For the BSDS500 dataset, which we use, the segmentation labels  are assigned by humans, and they are never oversegmentations. In \textsection~\ref{sec:ch5-BSDS500-dataset} we give details about this dataset, and fig.~\ref{fig:BSDS-annotations} has an example image and its annotations.
+For the BSDS500 dataset, which we use, the segmentation labels  are assigned by humans, and they are never oversegmentations. In \textsection~\ref{sec:ch5-BSDS500-dataset} we give details about this dataset, and \fref{fig:BSDS-annotations} has an example image and its annotations.
 
 For a $16\times 16$ pixels local segmentation patch there rarely are more than \textbf{2 or 3 segments}. 
 A ground truth segmentation in this dataset constitutes a labelling of the pixels, so that homogeneous regions - superpixels, are formed. The labels are unique and the \textbf{boundary between segments is implicit}.
@@ -124,10 +129,10 @@ they present local evidence of lack of boundary.
 \paragraph{Greedy merge}\mbox{}\\\mbox{}\\ % force some space after the paragraph name
 For this paragraph, please first have a look at \fref{fig:ws-greedy-merge}. Evidently merely converting the watershed oversegmentation to have implicit boundaries (from the original watershed patch segmentation - \fref{fig:sub:ws-greedy-merge-ws-colour-coded} to the segmentation labelling - \fref{fig:sub:ws-greedy-merge-ws-segments}) is not sufficient. The watershed is still very different from the target - the decision tree leaf patch (\fref{fig:sub:ws-greedy-merge-tree-leaf}), in the sense that it contains many more segments.
 
-\textbf{Na\"{\i}ve greedy merge:} Our first attempt, which we call na\"{\i}ve greedy merge, suffered from the limitation of being overly 
+\subparagraph{Na\"{\i}ve greedy merge:} Our first attempt, which we call na\"{\i}ve greedy merge, suffered from the limitation of being overly 
 greedy. The transformed watershed patch (see \fref{fig:sub:ws-greedy-merge-ws-naive-greedy-merge}) adapts itself excessively to the tree leaf segmentation which we use to guide the merging. As a consequence, it does not respect the fact that the watershed patch has a \textbf{boundary pixel in the middle}, hence, there must have been no less than two segments abutting its centre pixel.
 
-\textbf{Fair greedy merge:} As a remedy, we propose a ``fairer'' greedy merge. It %uses heuristic to
+\subparagraph{Fair greedy merge:} As a remedy, we propose a ``fairer'' greedy merge. It %uses heuristic to
 aims for an optimal superpixels merge into segments, according to the structured tree patch (\fref{fig:sub:ws-greedy-merge-tree-leaf}). At the same time it still respects the condition that the central watershed pixel lies on a boundary between two regions. \fref{fig:sub:ws-greedy-merge-ws-fairer-greedy-merge} shows an example.
 
 \begin{figure}[ht!]
@@ -230,13 +235,20 @@ Note that, unlike with \textit{greedy merge}, none of the transformations given 
 \end{figure}
 
 \paragraph{Line fitting}\mbox{}\\\mbox{}\\
-We utilise 3 types of line fitting, shown on figures~\ref{fig:ws-line-fitting} and~\ref{fig:ws-line-fitting2}.
+We utilise 3 types of line fitting, shown on \fref{fig:ws-line-fitting} and \fref{fig:ws-line-fitting2}.
 
-\begin{enumerate}
-  \item{Line fitted through arc {\bf end points}:} a parametric fit, based on the derivative direction of the end-pixels of the watershed edge we vote on; this is shown in sub-figures~\ref{fig:sub:ws-line-fitting-ends} and~\ref{fig:sub:ws-line-fitting-ends2} in our examples,
-  \item{Line fitting through {\bf centre} of the patch, based on arc end points:} as above, but enforcing adherence to the centre of the image patch; the examples are sub-figures~\ref{fig:sub:ws-line-fitting-centre}~\ref{fig:sub:ws-line-fitting-centre2},
-  \item{Line estimated with {\bf linear least squares}:} least squares minimisation, taking into account \textbf{all} the watershed arc pixels; see the examples in~\ref{fig:sub:ws-line-fitting-lls} and~\ref{fig:sub:ws-line-fitting-lls2}. Also notice how in the second sub-figure line fitting disagrees with the direction of the line determined by the parametric methods.
-\end{enumerate}
+\subparagraph{Line fitted through arc {\bf end points}:} a parametric fit, based on the derivative direction of the end-pixels of the watershed edge we vote on; this is shown in \fref{fig:sub:ws-line-fitting-ends} and \fref{fig:sub:ws-line-fitting-ends2} in our examples.
+
+\subparagraph{Line fitting through {\bf centre} of the patch, based on arc end points:} as above, but enforcing adherence to the centre of the image patch; the examples are \fref{fig:sub:ws-line-fitting-centre} and \fref{fig:sub:ws-line-fitting-centre2}.
+
+\subparagraph{Line estimated with {\bf linear least squares (LLS)}:} least squares minimisation, taking into account \textbf{all} the watershed arc pixels; see the examples in \fref{fig:sub:ws-line-fitting-lls} and \fref{fig:sub:ws-line-fitting-lls2}. Also notice how in the second example  %(\fref{fig:ws-line-fitting2}) 
+the LLS line fitting (\fref{fig:sub:ws-line-fitting-lls2}) disagrees with the direction of the line determined by the parametric methods (\fref{fig:sub:ws-line-fitting-ends2} and \fref{fig:sub:ws-line-fitting-centre2}).
+
+% \begin{enumerate}
+%   \item{Line fitted through arc {\bf end points}:} a parametric fit, based on the derivative direction of the end-pixels of the watershed edge we vote on; this is shown in sub-figures~\ref{fig:sub:ws-line-fitting-ends} and~\ref{fig:sub:ws-line-fitting-ends2} in our examples,
+%   \item{Line fitting through {\bf centre} of the patch, based on arc end points:} as above, but enforcing adherence to the centre of the image patch; the examples are sub-figures~\ref{fig:sub:ws-line-fitting-centre}~\ref{fig:sub:ws-line-fitting-centre2},
+%   \item{Line estimated with {\bf linear least squares}:} least squares minimisation, taking into account \textbf{all} the watershed arc pixels; see the examples in~\ref{fig:sub:ws-line-fitting-lls} and~\ref{fig:sub:ws-line-fitting-lls2}. Also notice how in the second sub-figure line fitting disagrees with the direction of the line determined by the parametric methods.
+% \end{enumerate}
 
 \textbf{Region boundary subdivision into watershed arc:} Note that the first two approaches only use the end points, so it is important for their proper functioning that the arcs have a ``consistent orientation'', \ie, can well be approximated by a line. In \cref{Chapter5} we conduct experiments to determine whether it is of any importance to use watershed arcs instead of the whole region boundary.
 
@@ -328,7 +340,7 @@ the model with higher-order - quadratic, terms to allow for polynomial (of degre
 \]
 When $A + B + C \ne 0$ the graph of the solutions is a \textbf{conic section} - an ellipse, parabola or hyperbola. In the case of hyperbola, whenever both branches of the hyperbola are present in the patch, we choose the one minimising the distance to the watershed arc edge (according to which the fit is made).
 
-In fig.~\ref{fig:ws-quadratic-fitting} we show 6 examples of quadratic fitting. We have omitted the source image % leopard and hawaii
+In \fref{fig:ws-quadratic-fitting} we show 6 examples of quadratic fitting. We have omitted the source image % leopard and hawaii
 and local patch and adhere to % stick to
 the relevant for the fit information, namely the watershed contour whose pixels are used in the minimisation.
 
@@ -356,12 +368,12 @@ the relevant for the fit information, namely the watershed contour whose pixels 
   \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-bdry5.png} &
   \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-bdry6.png} \\
   
-  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg1.png}}} &
-  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg2.png}}} &
-  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg3.png}}} &
-  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg4.png}}} &
-  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg6.png}}} &
-  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg5.png}}} \\
+  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.11\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg1.png}}} &
+  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.11\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg2.png}}} &
+  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.11\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg3.png}}} &
+  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.11\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg4.png}}} &
+  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.11\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg6.png}}} &
+  {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.11\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg5.png}}} \\
 
   ex. 1 & ex. 2 & ex. 3 & ex. 4 & ex. 5 & ex. 6 \\
   \end{tabular}
@@ -397,11 +409,12 @@ F=\frac{2PR}{P+R}
 
 where $S$ and $\{G_{i}\}_{i=1}^{M}$ are boundary maps and $\cap$
 computes a bipartite graph assignment between them.
-
+\settocdepth{paragraph}
 \paragraph{Rand index (RI)}\mbox{}\\\mbox{}\\
+\settocdepth{section}
 Rand index, or Rand measure~\cite{rand1971objective} is a statistical measure of the similarity between two data clusters.
 
-\subparagraph*{Rand index (RI)}\mbox{}\\
+\subparagraph{Rand index (RI)}\mbox{}\\
 Here is how the RI between two segmentations could be defined.
 
 \begin{align*}
@@ -425,7 +438,7 @@ $T=|A|=\binom{N}{2}$ - the number of possible unique pairs among
 $N$ pixels; for us - $\binom{16 . 16}{2}=32 640$.
 
 
-\subparagraph*{Rand Index Monte Carlo (RIMC)}\mbox{}\\ %RSRI (Random Subsample RI)} previously CPD (Crude Patch Distance), which was a misnomer
+\subparagraph{Rand Index Monte Carlo (RIMC)}\mbox{}\\ %RSRI (Random Subsample RI)} previously CPD (Crude Patch Distance), which was a misnomer
 \label{par:ch4-RIMC-maths}
 The RIMC is different from RI in that it takes a Monte Carlo subsample of the possible unique pairs of pixels and only considers their segment membership. It is inspired by the implementation of randomised label mapping to a simpler discrete space in training nodes of a decision forests in~\cite{DollarICCV13edges}. We define the RIMC between two segmentations.
 
@@ -437,7 +450,7 @@ where $B\subsetneq A$ - a random subset of the pairs of pixels.
 In our experiments $|B|=256$.
 
 
-\subparagraph*{Probabilistic Rand index (PRI)}\mbox{}\\
+\subparagraph{Probabilistic Rand index (PRI)}\mbox{}\\
 \label{par:ch4-PRI-maths}
 Probabilistic Rand index~\cite{UnnikrishnanPH07} counts the number of pixel pairs with agreement in %consistent 
 labelling between a machine generated segmentation on one hand, and \textbf{multiple} ground truth segmentations on the other hand.
@@ -452,19 +465,20 @@ PRI(S,\{G_{i}\}_{i=1}^{M})=\frac{1}{T}\sum\limits _{j<k}\left[c_{jk}p_{jk}+\left
 where $p_{jk}$ - probability of $c_{jk}$; possible estimator of
 $p_{jk}$ is the sample mean of the corresponding Bernoulli distribution.
 
-
+\settocdepth{paragraph}
 \paragraph{Segmentation covering (SC)}\mbox{}\\\mbox{}\\
 \label{par:ch4-SC-maths}
+\settocdepth{section}
 To be able to understand Segmentation covering and Volume Precision-Recall, which we define in the next paragraph, it is helpful to first have a notion of the related \textit{Overlap} and \textit{Intersection over union}.
 
-\subparagraph*{Overlap, or Jaccard index}\mbox{}\\
+\subparagraph{Overlap, or Jaccard index}\mbox{}\\
 Overlap of two regions % segments
 $s$ and $g$
 
 \[
 \mathcal{O}\left(s,g\right)=\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
 \]
-For visualisation, see fig.~\ref{fig:overlap-IoU}.
+For visualisation, see \fref{fig:overlap-IoU}.
 
 \begin{figure}[ht!]
 \centering
@@ -473,7 +487,7 @@ For visualisation, see fig.~\ref{fig:overlap-IoU}.
 \label{fig:overlap-IoU}
 \end{figure}
 
-\subparagraph*{Intersection over union (IoU)}\mbox{}\\
+\subparagraph{Intersection over union (IoU)}\mbox{}\\
 The Intersection over union score (or utility) %also loss
 is popular in the computer vision community through its use in the PASCAL VOC challenge~\cite{pascal-voc-2012}. It is applied for the benchmark of pixel-level semantic segmentation. There, the measure is applied per object class, counting the pixels - true positives (\textit{tp}), false positives (\textit{fp}), and false negatives (\textit{fn}) \wrt a human-annotated ground truth. Segmentation accuracy is then computed as
 \[
@@ -507,7 +521,7 @@ The above erroneously penalises two equal segmentations (perfect match) just for
 \end{enumerate}
 Both our proposals suffer from limitations that make them unsuitable for our task.
 
-\subparagraph*{Segmentation covering (SC)}\mbox{}\\
+\subparagraph{Segmentation covering (SC)}\mbox{}\\
 The metric builds on the idea of a best \textit{Overlap} score. 
 It is asymmetric, therefore two possible variants exist. The second version reviewed here - estimation of the best covering of the ground truth by the machine segments, is proposed in~\cite{Arbelaez09} as a benchmark for image segmentation.
 
@@ -532,13 +546,15 @@ Further, in practice, both metrics are thwarted by certain pathological cases. W
 
 Next we review a metric which, when normalised, is capable to an extent of addressing those issues.
 
+\settocdepth{paragraph}
 \paragraph{Volume Precision-Recall (VPR)}\mbox{}\\\mbox{}\\
 \label{par:ch4-VPR-maths}
+\settocdepth{section}
 The VPR metric~\cite{Galasso13} also aims to measure the overlap between the test segmentation and the (multiple) human annotated segmentations. It was introduced for the purposes of evaluating the quality of video segmentations, and also respects temporal consistency of superpixels (called \textit{supervoxels} in the video case). It is in addition applicable to %for 
 still images - this is the use case when considering only a single frame of the video sequence. In this scenario the metric is a region-based metric evaluating the size of and overlap between the segments. 
 In the way just described is how we use the VPR metric.
 
-\subparagraph*{VPR not-normalised}\mbox{}\\
+\subparagraph{VPR not-normalised}\mbox{}\\
 The following is the first attempt in~\cite{Galasso13} at defining such region-centric metric.
 
 \[
@@ -562,7 +578,7 @@ $\left|\centerdot\right|$ counts the pixels in the segment.%voxel.
 
 \textbf{Necessity of normalisation:} In the above definition, extreme over- and undersegmentations receive unreasonably high scores, \ie every pixel is a separate segment, or all pixels belong to a single segmentation. To remedy this, the P and R overlap scores are augmented by subtracting a lower bound from the numerator and the denominator of the ratio. Depending on whether the lower bound is computed \wrt the ground truth or the machine model, we distinguish two possible normalisations. In the next two paragraphs the normalisations in the formulae are given boxed.
 
-\subparagraph*{VPR normalised (according to the ground truths)}\mbox{}\\ % (on the side of the ground truth)} (lower bound)
+\subparagraph{VPR normalised (according to the ground truths)}\mbox{}\\ % (on the side of the ground truth)} (lower bound)
 This is the normalisation defined in~\cite{Galasso13} and utilised %employed 
 in their benchmark.
 
@@ -578,7 +594,7 @@ R=\frac{\sum\limits _{i=1}^{M}\sum\limits _{g\in\mathbb{G}_{i}}\max\limits _{s\i
 F=\frac{2PR}{P+R}
 \]
 
-\subparagraph*{VPR normalised (according to the model capacity of the test segmentation)}\mbox{}\\ % new
+\subparagraph{VPR normalised (according to the model capacity of the test segmentation)}\mbox{}\\ % new
 Further, we define the following normalisation with the lower bound being computed on the side of the machine segmentation.
 
 \[
@@ -593,14 +609,15 @@ Further, we define the following normalisation with the lower bound being comput
 \hat{{F}}=\frac{2\hat{P}\hat{R}}{\hat{P}+\hat{R}}
 \]
 
-\subsection*{Symmetric and asymmetric metrics}
+\subsection{Symmetric and asymmetric metrics}
 Of the above metrics, BPR, RI, and not-normalised VPR are symmetric \wrt the segmentation under test and the ground truth segmentation. SC as well as the two normalised versions of VPR are asymmetric. VPR incorporates and develops the idea present in SC about a maximal \textit{Overlap}, but additionally provides normalisation. Therefore in our experiments in \cref{Chapter5} we don't consider SC.
 
 % for the normalisation:
 % G - ground truth = trees
 % S - segmentation under test = ws
 
-\textbf{Assigning patches to $\mathbb{S}$ and $\mathbb{G}_i$:} It bears mentioning %is worth pointing out
+\subsubsection{Assigning patches to \texorpdfstring{$\mathbb{S}$}{S} and \texorpdfstring{$\mathbb{G}_i$}{G}}
+It bears mentioning %is worth pointing out
 that for normalised VPR we have considered the transformed \textbf{watershed patch} to be the \textbf{segmentation under test ($\mathbb{S}$)} and the other patch to be a ground truth ($\mathbb{G}_i$). 
 In most experiments (to be comprehensively % systematically detailedly 
 review in \sref{sec:ch5-structured-voting}) the ``other patch'' is a segmentation patch from a decision tree leaf - one predicted as most likely segmentation for the location. In another series of experiments (detailed in \sref{sec:ch5-oracle}) the ``other patch'' being compared is a crop from the ground truth annotated segmentations.
@@ -612,28 +629,27 @@ The result from the SV - a weighted watershed locations image, is suitable for i
 By thresholding the UCM we can obtain segmentations at different level of detail. The boundaries of the regions in a segmentation constitute contours, \ie, they are ``closed'' edges. This makes our algorithm suitable for evaluation by edge detector as well as image segmentation benchmarks.
 
 \section{Discussion}
-\subsection*{Giving output a probabilistic interpretation}
+\subsection{Giving output a probabilistic interpretation}
 This section remarks on an implementation aspect of edge detection and image segmentation, namely the format of the output. We found it relevant, since in practice it influences the correct running of the benchmark code and the intercomparability %interpretability 
 of results across detectors and segmentation algorithms.
 
 It is beneficial %desirable 
 for the benchmark task to have the output values of both edge detector and image segmentation into $[0,1]$. That additionally lends itself to probabilistic interpretation, which could potentially allow to easily combine different models.
 
-\subsubsection*{Structured edge}
+\subsubsection{Structured edge}
 In the SE algorithm~\cite{DollarICCV13edges,Dollar2015PAMI} every pixels receives between 0 and 256 votes. The decisions are ensembled by superposing patches of edge masks. Rather than averaging, however, the number of votes is divided by 128, which leaves an output that would theoretically fall into the $[0, 2]$ range. As a post-processing a triangular filter is applied, which has a smoothing and denoising effect. The resulting output indeed is used to %could match 
 a probabilistic interpretation - only the strongest edges do have a value above 1, and those values are practically cut-off when benchmarking using BPR (the implementation of Arbel\'aez\etal).
 
-\subsubsection*{gPb-OWT-UCM}
+\subsubsection{gPb-OWT-UCM}
 Arbel\'aez \etal~\cite{Arbelaez11} learn a sigmoid on the BSDS500 training subset, and finish their segmentation algorithm by rescaling with a the learn sigmoid. The learnt values, of course, are exclusively suitable for their approach. For consistency we also apply the sigmoid transformation, before finally rescaling (see next paragraph).
 
-\subsubsection*{Our approach - scale the UCM output} %The missing recall comes from UCM values not being scaled in [0,1]. Here, I believe, the non-zero values are in [0.0015, 0,5964].  On a different experiment I get the non zeros in [0.93, 0.99].  Bad results certainly can't be remedied by rescaling the ucm output.
+\subsubsection{Our approach - scale the UCM output} %The missing recall comes from UCM values not being scaled in [0,1]. Here, I believe, the non-zero values are in [0.0015, 0,5964].  On a different experiment I get the non zeros in [0.93, 0.99].  Bad results certainly can't be remedied by rescaling the ucm output.
 We apply rescaling of the non-zero UCM values into $[0.01, 0.99]$ as post-processing step of out SE-SV-UCM pipeline. Thereby the relative order of the image edges delimiting the regions is preserved. Note that rescaling doesn't change the shape of the curve, just extends it to cover as much of the recall range as possible. So the boundary- and region-based benchmark values are unaffected. The curve of the method being evaluated, however, better reflects its quality on the full operational range of BPR and VPR.
 
 In their recent paper~\cite{Hallman2014} Hallman and Fowlkes also remark on the histogram of UCM values, as they would like to be able to visually compare the UCM output of different algorithms. Their main goal is the meaningful visualisation of output results of different algorithms and qualitative comparison by visual inspection of outputs - hierarchical segmentations. In Appendix A they discuss the computation of a monotonic transformation to approximate the histogram of values \wrt a ``reference'' algorithm.
 
-\subsection*{Using Pb values for segmentation} % TODO how to name it?
+\subsection{Using Pb values for segmentation} % TODO how to name it?
 Our current approach discards edge saliency information - the probability of boundary values obtained by the Structured edge~\cite{DollarICCV13edges}, and uses just the watershed contours locations. We relies only on the structured information contained in the trained Structured forest to weight the watershed.
 
 Both the output of our algorithm and structured edge lend themselves to % TODO
 a probabilistic interpretation. As a future work, it would perhaps be beneficial to combine those differently designed submodels into one.
-

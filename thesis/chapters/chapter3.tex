@@ -1,8 +1,8 @@
 \chapter{From edges to contours} % - Current State-of-the-Art}
 \label{Chapter3}
+\settocdepth{subsubsection}
+
 \section{gPb-OWT-UCM algorithm pipeline}
-
-
 \begin{figure}[ht!]
 \centering
  \includegraphics[width=1\textwidth]{images/gPb-OWT-UCM/gPb-OWT-UCM_pipeline.png}
@@ -31,12 +31,21 @@ The watershed transform is a suitable intermediate step in obtaining hierarchica
 
 In practice the vanilla watershed implementation in MATLAB~\cite{MATLABwatershed} is used, with 8-connected neighbourhood for the regions.
 
-\subsubsection*{Oriented watershed transform (OWT)}
+\settocdepth{section}
+\subsubsection{Oriented watershed transform (OWT)}
+\settocdepth{subsubsection}
 \label{sec:ch3-OWT}
 % TODO define watershed arcs
 
 \subsection{Third stage of the pipeline - UCM}
 \label{sec:ch3-UCM}
+% TODO
+The {\it Ultrametric contour map} (UCM) was introduced in \cite{Arbelaez2006boundary}. It constitutes a convenient datastructure for the representation of a hierarchical segmentation. 
+
+The map is constructed by agglomerative clustering of regions based on the weight of their common boundary. It represents a tree, at the leaves of which are the superpixels at the highest level of detail. Going up the tree merges regions. It is an real-valued image (see \fref{fig:sub:segmentation-ucm} and \fref{fig:sub:segmentation-ucm-cc}) in which every region boundary is weighted by its scale of disappearance.
+
+% Multiple segmentatons, but going up the UCM coarsens the segmentation.
+
 % TODO give the algorithm in an appendix
 % coarse-to-fine
 % agglomerative clustering
