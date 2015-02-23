@@ -221,7 +221,42 @@ We first address the second of our conclusions from the previous experiment. We 
 
 \subsubsection{Fair greedy merge}
 To remedy this shortcoming of the na\"{\i}ve greedy merge, we introduce what we call ``fairness'' in the greedy merge approach. As described previously, we cast votes only on the watershed locations. That means, the patches that we consider contain a potential boundary location at their central pixel. It is the strength of this boundary that we strive to quantify. We enforce the greedy merge to respect a boundary-at-centre-location condition by preventing excessive merge of the segments around the central pixel of the patch.
-% TODO image of the patches
+
+\begin{figure}[ht!]
+\centering
+ \subfigure[Input image]{%
+  \includegraphics[width=0.5\textwidth]{images/experiments/ws-greedy-merge/corrida.png}
+ }
+ \subfigure[Cropped image patch]{%
+  \includegraphics[width=0.2\textwidth]{images/experiments/ws-greedy-merge/selected-image-patch.png}
+ }
+
+ \subfigure[Cropped watershed patch]{%
+  \includegraphics[width=0.2\textwidth,frame]{images/experiments/ws-greedy-merge/watershed-colour-coded.png}
+  %\label{fig:sub:ws-greedy-merge-ws-colour-coded}
+ }
+ \subfigure[Watershed patch with implicit region boundaries]{%
+  \includegraphics[width=0.2\textwidth,frame]{images/experiments/ws-greedy-merge/watershed-segments.png}
+  %label{fig:sub:ws-greedy-merge-ws-segments}
+ } \qquad\qquad\qquad\qquad\qquad
+
+ \subfigure[Tree leaf segmentation patch that guides the merging]{%
+  \fboxrule=2pt %border thickness
+  \fcolorbox{red}{white}{\fboxrule=0.5pt \includegraphics[width=0.2\textwidth,frame]{images/experiments/ws-greedy-merge/tree-leaf.png}}
+  \label{fig:sub:ex-ws-greedy-merge-tree-leaf}
+ }
+ \subfigure[Watershed patch {\bf na\"{\i}ve} greedy merge]{%
+  \includegraphics[width=0.2\textwidth,frame]{images/experiments/ws-greedy-merge/watershed-naive-greedy-merge.png}
+  \label{fig:sub:ex-ws-greedy-merge-ws-naive-greedy-merge}
+ }
+ \subfigure[Watershed patch {\bf fair} greedy merge]{%
+  \fboxrule=2pt %border thickness
+  \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.2\textwidth,frame]{images/experiments/ws-greedy-merge/watershed-fairer-greedy-merge.png}}
+  \label{fig:sub:ex-ws-greedy-merge-ws-fairer-greedy-merge}
+ }
+\caption[{\bf Greedy merge} of watershed patch.]{{\bf Greedy merge} of watershed patch. The central pixel of the patches is marked, as it is important, see the text for details. The comparison is between a tree leaf patch (in red \protect\subref{fig:sub:ex-ws-greedy-merge-tree-leaf}) and a watershed patch (in green \protect\subref{fig:sub:ex-ws-greedy-merge-ws-fairer-greedy-merge}).}
+\label{fig:ex-ws-greedy-merge} % experiments-ws-greedy-merge
+\end{figure}
 
 \fref{fig:segs-to-greedy-merge-RIMC} shows the improvement we get over watershed oversegmentation with the last two experiments.
 
