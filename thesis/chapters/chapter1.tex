@@ -6,7 +6,8 @@ Image edge detection and image segmentation are key problems in computer vision.
 
 \section{Motivation}
 Recently, very good edge detection results were achieved using random decision forests \cite{DollarICCV13edges}. While a certain edge model is imperative, % required, needed % a requirement
-few segmentation algorithms use edge detection output as a first step to image segmentation. Consequently, many edge detection algorithms re-use the same approach to obtain image segmentation in addition %additionally 
+few segmentation algorithms use edge detection output as a first step towards %to 
+image segmentation. Consequently, many edge detection algorithms re-use the same approach to obtain image segmentation in addition %additionally 
 to their edge detection output.
 
 Therefore, the field is limited by lack of research on the problem of edge-based hierarchical segmentation. We investigate an alternative way % possibility 
@@ -50,7 +51,8 @@ the negative of \protect\subref{fig:sub:edge_detection-edge-map} and \protect\su
 \end{figure}
 
 \subsubsection{Edge, edge map, probability of boundary}
-\textbf{Image edge:} Image edge detection deals with the problem of finding pixels which belong to object boundaries within a digital image. The pixels belonging to object boundaries in an image are often locations where a sharp change of image brightness occurs. Those locations of image intensity discontinuities are called \textit{image edges}. In photographs edge pixels are grouped together due to the properties of natural images.
+\textbf{Image edge:} Image edge detection deals with the problem of finding pixels which belong to object boundaries within a digital image. Those %The pixels belonging to object boundaries in an image are often locations 
+often, but not always, coincide with image locations where a sharp change of image brightness occurs. Those locations of image intensity discontinuities are called \textit{image edges}. In photographs edge pixels are typically grouped together due to the properties of natural images.
 
 \textbf{Edge map:} We will call an \textit{edge map} a binary image $M$ depicting edges locations. The pixels belonging to an edge are set to 1. The rest of the pixels are not part of an edge. They have a value of 0. Therefore, for a given pixel location $(x,y)$, the corresponding edge map value is $M_{(x,y)} \in \{0,1\}$ (see \fref{fig:sub:edge_detection-edge-map}).
 
@@ -66,7 +68,7 @@ $Pb(x,y)>t$. Obviously, a lower threshold allows to discover more edges, while a
 
 The last two images visualise the detector output - a {\it Probability of boundary} ({\bf Pb}). For improved viewing in case of probabilistic output we will utilise a visualisation with black as background and heatmap-coloured boundaries according to their strength. This visualisation of probabilistic output facilitates the qualitative comparison of the results of different algorithms. 
 
-The edge map \fref{fig:sub:edge_detection-edge-map} was obtained by thresholding at $t=0.3$ the {\it Pb} \fref{fig:sub:edge_detection-pb}.
+The edge map \fref{fig:sub:edge_detection-edge-map} was obtained by thresholding at $t=0.3$ the {\it Pb} from \fref{fig:sub:edge_detection-pb}.
 
 %- TODO general consensus in the community that edge detection is somewhat ill defined in that it is not quiteclear what defines a correct output \cite{martin2004learning}
 
@@ -85,7 +87,7 @@ Segmentation is the task of partitioning a digital image into meaningful parts. 
  \subfigure[Input image]{%
   \includegraphics[width=0.1\textwidth]{images/examples/koala/koala.jpg}
  }
- \subfigure[Segmentation - labelling]{ % (implicit boundary)]{%
+ \subfigure[Segmentation - {\bf labelling}]{ % (implicit boundary)]{%
   \includegraphics[width=0.2\textwidth]{images/examples/koala/koala_segm_labelling.png}
   \label{fig:sub:segmentation-segm-labelling}
  }
@@ -101,7 +103,7 @@ Segmentation is the task of partitioning a digital image into meaningful parts. 
   \includegraphics[width=0.2\textwidth,frame]{images/examples/koala/koala_gPb_region_bdry.png}
   \label{fig:sub:segmentation-region-contour}
  }
-  \subfigure[Segmentation - explicit boundary]{%
+  \subfigure[Segmentation - {\bf explicit boundary}]{%
   \includegraphics[width=0.2\textwidth]{images/examples/koala/koala_segm_explicit.png}
   \label{fig:sub:segmentation-segm-explicit}
  }
@@ -126,23 +128,31 @@ of a region fulfils the definition for an {\it image edge}. What is more, it con
 \textbf{Segmentation contours:} Note that it is {\it sufficiently easy} (further explanation to be given shortly) to obtain an {\bf edge map} from a segmentation - one just has to consider all the outlines of all the regions % superpixels
 (the boundaries between the segments). The resulting edge map (\fref{fig:sub:segmentation-segm-bdry}) has the added benefit that all edges are in fact closed - they are {\it contours}.
 
-\textbf{Segmentation represented with explicit contours:} So it is plain to see that there exists a {\bf duality between segmentation regions and contours}, in that the superpixels enclosed by the contours do %would 
-form segmentation regions. If we think of the task of manually annotating a segmentation of an image, we will notice that hand-drawing the contours delineating the objects is easier than hand-labelling each pixel based on its region membership. It is more natural, therefore, to first mark %have 
-the segmentation countours, and have them determine the regions - see \fref{fig:sub:segmentation-segm-explicit} for an example. In this case obtaining the segmentation contours is trivial - we just take the explicit region boundaries (and mark the pixels internal to the regions as ``background'', with an edge map value of 0), see \fref{fig:sub:segmentation-segm-bdry}.
+\textbf{Segmentation represented with explicit contours:} So it is plain to see that there exists a {\bf duality between segmentation regions and contours}, in that the superpixels enclosed by the contours constitute % do %would form 
+the segmentation regions. 
+If we think of the task of {\bf manually annotating a segmentation} of an image, we will notice that hand-drawing the contours delineating the objects is easier than hand-labelling each pixel according to %based on 
+its region membership. It is more natural, therefore, to first mark %have 
+the segmentation countours, and have them determine the regions - see \fref{fig:sub:segmentation-segm-explicit} for an example. In this case obtaining the segmentation contours is trivial - we just take the explicit region boundaries (and mark the pixels internal to the regions as ``background'', with an edge map value of 0). Thus we have obtained an {\bf edge map}, as in \fref{fig:sub:segmentation-segm-bdry}.
 
-\textbf{Segmentation contours from segmentation labelling:} In case of segmentation represented by labelling, \ie implicit boundary between regions, care must be taken in order to obtain the contours. The trouble lies in the fact that there is an ambiguity as to the correct placement of the boundaries (for a contours image with the same resolution). A possible solution is the use of {\it super-resolution}, which means doubling the resolution of the image and placing the boundaries in between the segment labels. Other solutions that don't change the image %stay on the same 
-resolution should be consistent in the how exactly they place the %placement of 
+\textbf{Segmentation contours from segmentation labelling:} In case of segmentation represented by labelling (\fref{fig:sub:segmentation-segm-labelling}), \ie  {\bf implicit boundary} between the regions, care must be taken in order to obtain the contours. The trouble lies in the fact that there is an ambiguity as to the correct placement of the boundaries (if the resulting edge map image should be with the same resolution). A possible solution is the use of {\it super-resolution}, which means doubling the resolution of the image and placing the boundaries in between the segment labels. Other solutions that don't change the image %stay on the same 
+resolution should be consistent in how exactly they place the %placement of 
 boundaries when converting between the two representations.
 
 In the rest of this report we will make use of both representations for segmentation - labelling and explicit boundaries.
 
-\textbf{Hierarchical segmentation:} It is convenient to have a means, that in a similar way to the {\it Pb} for the task of edge detection, allows to express a degree of (un)certainty for the problem of image segmentation. Additionally, we would like to be able to obtain segmentations at different level of detail - on the full scale from an oversegmentation to an undersegmentation. That is easily possible by using a datastructure called {\it Ultrametric contour map} (UCM)~\cite{Arbelaez2006boundary}. While details will be given in \sref{sec:ch3-UCM}, for now it is sufficient to know that it encapsulates a hierarchy of segmentations. 
+\textbf{Hierarchical segmentation:} 
+For the problem of edge detection {\it Pb} allows to encode the {\bf degree of confidence} as to the presence of an edge. It would be convenient to have a similar means for the task of image segmentation. 
+%It is convenient to have a means, that in a similar way to the {\it Pb} for the task of edge detection, allows to express a degree of (un)certainty for the problem of image segmentation. 
+
+Additionally, we would like to be able to obtain segmentations at {\bf different level of detail} - on the full scale from an oversegmentation to an undersegmentation. 
+
+Both are %That is 
+easily possible by using a datastructure called {\it Ultrametric contour map} ({\bf UCM})~\cite{Arbelaez2006boundary}. While details will be given in \sref{sec:ch3-UCM}, for now it is sufficient to know that it encapsulates a hierarchy of segmentations. 
 Like with {\it Pb}, thresholding the UCM allows to obtain a segmentation.
 
 \textbf{Example:} In \fref{fig:segmentation} we show the result of the algorithm gPb-OWT-UCM~\cite{Arbelaez11}. The output is a UCM - see \fref{fig:sub:segmentation-ucm} for an example of UCM output and \fref{fig:sub:segmentation-ucm-cc} for its jet colour-coded visualisation.
 
-The segmentations in % TODO
-were obtained by thresholding the UCM at $t=0.4$.
+The segmentation in \fref{fig:sub:segmentation-segm-labelling} and \fref{fig:sub:segmentation-segm-explicit} was obtained by thresholding the UCM at $t=0.4$.
 
 \section{Related work}
 %\subsection{From edges to contours}
@@ -167,13 +177,14 @@ In Table~\ref{fig:related_work_table} you can see the state-of-the-art methods c
 
 \begin{figure}[ht!]
 \centering
-  \includegraphics[width=0.7\textwidth]{images/related_work_table.png}
-\caption[Related work: state of the art]{Review of the state-of-the-art methods for edge detection and segmentation.}
+\includegraphics[width=0.8\textwidth]{images/related_work_table.pdf} % OMG, that looks so much better and compiles faster; if possible, export as pdf from now on
+%\includegraphics[width=0.7\textwidth]{images/related_work_table.png}
+\caption[Related work: state of the art]{Where do state-of-the-art methods for edge detection and segmentation innovate.} %focus there efforts.}
 \label{fig:related_work_table}
 \end{figure}
 
 \section{Goal}
-Our objectives are  twofold:  first to provide a principled way of obtaining hierarchical image segmentation based on probabilistic edge detection results, and second, to explore ways to improve the quality of the so %thus 
+Our objectives are  twofold:  first to provide a principled way of obtaining hierarchical image segmentation based on probabilistic edge detection results ({\it Pb}), and second, to explore ways to improve the quality of the so %thus 
 obtained segmentation.
 
 % a more principled approach to boundary-guided image segmentation. % analysis?
