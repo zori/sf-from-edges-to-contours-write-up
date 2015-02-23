@@ -73,7 +73,7 @@ The edge map \fref{fig:sub:edge_detection-edge-map} was obtained by thresholding
 %- TODO general consensus in the community that edge detection is somewhat ill defined in that it is not quiteclear what defines a correct output \cite{martin2004learning}
 
 \subsection{Image segmentation}
-Segmentation is the task of partitioning a digital image into meaningful parts. Those parts, called segments, should unify homogenous regions. The purpose of this decomposition is to ease further analysis by substituting reasoning on the \textit{\textbf{superpixels}} (another term for the segments) {\it graph} for reasoning on the {\it pixels grid}. % substitute sth for sth: ``Industry must reduce fuel consumption by substituting alternative fuels for fossil fuels.''
+Segmentation is the task of partitioning a digital image into meaningful parts. Those parts, called segments, should unify homogeneous regions. The purpose of this decomposition is to ease further analysis by substituting reasoning on the \textit{\textbf{superpixels}} (another term for the segments) {\it graph} for reasoning on the {\it pixels grid}. % substitute _ for _: ``Industry must reduce fuel consumption by substituting alternative fuels for fossil fuels.''
 
 
 % TODO: for image segmentation 
@@ -115,12 +115,13 @@ Segmentation is the task of partitioning a digital image into meaningful parts. 
   \includegraphics[width=0.35\textwidth]{images/examples/koala/koala_ucm_cc.png}
   \label{fig:sub:segmentation-ucm-cc}
  }
-\caption[Image segmentation - segmentaton, contour, region, hierarchical segmentation]{{\bf Image segmentaton}. As in \fref{fig:edge_detection}, we show the negative of the probabilistic output. For segmentations we use the mean colour of the image to represent a segment. The UCMs are given larger to allow to see details.}
+\caption[Image segmentation - segmentation, contour, region, hierarchical segmentation]{{\bf Image segmentation}. As in \fref{fig:edge_detection}, we show the negative of the probabilistic output. For segmentations we use the mean colour of the image to represent a segment. The UCMs are given larger to allow to see details.}
 \label{fig:segmentation}
 \end{figure}
 
 \subsubsection{Contour, segmentation, region boundary, hierarchical segmentation}
-\textbf{Image segmentation:} As already mentioned, a {\it segmentation} of a digital image is a partition of it into a set of distinct {\it segments} (also known as {\it regions}, or {\it superpixels}). In practice, we will call {\it segmentation labelling} a labelling of each pixel in the image, such that two pixels have the same label iff they belong to the same region. No two regions should have the same label. Uniqueness of segmentations is defined up to a permutation of the labels. In a segmentation we will visualise each region by its {\bf mean colour} (from the original image), as in \fref{fig:sub:segmentation-segm-labelling}.
+\textbf{Image segmentation:} As already mentioned, a {\it segmentation} of a digital image is a partition of it into a set of distinct {\it segments} (also known as {\it regions}, or {\it superpixels}). In practice, we will call {\it segmentation labelling} a labelling of each pixel in the image, such that two pixels have the same label if and only if %iff 
+they belong to the same region. No two regions should have the same label. Uniqueness of segmentations is defined up to a permutation of the labels. In a segmentation we will visualise each region by its {\bf mean colour} (from the original image), as in \fref{fig:sub:segmentation-segm-labelling}.
 
 \textbf{Region:} Regions (also {\it segments}, or {\it superpixels}) are the building blocks of a segmentation. The outline %boundary 
 of a region fulfils the definition for an {\it image edge}. What is more, it constitutes a {\bf closed boundary}, which we will call {\bf contour}. See \fref{fig:sub:segmentation-region} and \fref{fig:sub:segmentation-region-contour}.
@@ -132,7 +133,7 @@ of a region fulfils the definition for an {\it image edge}. What is more, it con
 the segmentation regions. 
 If we think of the task of {\bf manually annotating a segmentation} of an image, we will notice that hand-drawing the contours delineating the objects is easier than hand-labelling each pixel according to %based on 
 its region membership. It is more natural, therefore, to first mark %have 
-the segmentation countours, and have them determine the regions - see \fref{fig:sub:segmentation-segm-explicit} for an example. In this case obtaining the segmentation contours is trivial - we just take the explicit region boundaries (and mark the pixels internal to the regions as ``background'', with an edge map value of 0). Thus we have obtained an {\bf edge map}, as in \fref{fig:sub:segmentation-segm-bdry}.
+the segmentation contours, and have them determine the regions - see \fref{fig:sub:segmentation-segm-explicit} for an example. In this case obtaining the segmentation contours is trivial - we just take the explicit region boundaries (and mark the pixels internal to the regions as ``background'', with an edge map value of 0). Thus we have obtained an {\bf edge map}, as in \fref{fig:sub:segmentation-segm-bdry}.
 
 \textbf{Segmentation contours from segmentation labelling:} In case of segmentation represented by labelling (\fref{fig:sub:segmentation-segm-labelling}), \ie  {\bf implicit boundary} between the regions, care must be taken in order to obtain the contours. The trouble lies in the fact that there is an ambiguity as to the correct placement of the boundaries (if the resulting edge map image should be with the same resolution). A possible solution is the use of {\it super-resolution}, which means doubling the resolution of the image and placing the boundaries in between the segment labels. Other solutions that don't change the image %stay on the same 
 resolution should be consistent in how exactly they place the %placement of 
@@ -147,7 +148,8 @@ For the problem of edge detection {\it Pb} allows to encode the {\bf degree of c
 Additionally, we would like to be able to obtain segmentations at {\bf different level of detail} - on the full scale from an oversegmentation to an undersegmentation. 
 
 Both are %That is 
-easily possible by using a datastructure called {\it Ultrametric contour map} ({\bf UCM})~\cite{Arbelaez2006boundary}. While details will be given in \sref{sec:ch3-UCM}, for now it is sufficient to know that it encapsulates a hierarchy of segmentations. 
+easily possible by using a data structure called {\it Ultrametric contour map} ({\bf UCM})~\cite{Arbelaez2006boundary}. While details will be given in \sref{sec:ch3-UCM}, for now it is sufficient to know that it represents %encapsulates 
+a hierarchy of segmentations. 
 Like with {\it Pb}, thresholding the UCM allows to obtain a segmentation.
 
 \textbf{Example:} In \fref{fig:segmentation} we show the result of the algorithm gPb-OWT-UCM~\cite{Arbelaez11}. The output is a UCM - see \fref{fig:sub:segmentation-ucm} for an example of UCM output and \fref{fig:sub:segmentation-ucm-cc} for its jet colour-coded visualisation.
@@ -158,18 +160,21 @@ The segmentation in \fref{fig:sub:segmentation-segm-labelling} and \fref{fig:sub
 %\subsection{From edges to contours}
 \subsection{Edge detection}
 Early edge detection approaches solely rely on local cues. Low-level detectors define edges as sharp discontinuities in image brightness. First results were achieved using digital image processing techniques. The Roberts cross~\cite{roberts1963machine}, Sobel filter~\cite{sobel19683x3}, and Prewitt operator~\cite{prewitt1970object} all are discrete differentiation operators. % can say 'differential operator'
-They view an images as a 2-dimensional signal which they convolve with pre-defined filters with local support. In the same line of work is the Marr-Hildreth algorithm~\cite{marr1980theory}, which finds zero-crossings of the Laplacian of the image intensity. Later still, the Canny detector~\cite{canny1986computational} shows better-quality edges. It searches for peak gradient magnitude in the image intensity. It adds some improvements, like non-maximum suppression (also known as ``edge thinning''), which improves edge localisation. A practically relevant extensions of it is the Canny-Deriche detector~\cite{deriche1987using}, which addresses the filter implementation.
+They view an images as a 2-dimensional signal which they convolve with pre-defined filters with local support. In the same line of work is the Marr-Hildreth algorithm~\cite{marr1980theory}, which finds zero-crossings of the Laplacian of the image intensity. Later still, the Canny detector~\cite{canny1986computational} shows better-quality edges. It searches for peak gradient magnitude in the image intensity. It introduces %adds some 
+improvements, like {\bf non-maximum suppression} (also known as ``edge thinning''), which improves edge localisation. A practically relevant extensions of it is the Canny-Deriche detector~\cite{deriche1987using}, which addresses the filter implementation of the Canny operator.
 
 More higher-level detectors incorporate colour and texture~\cite{rubner1996coalescing,will2000learning} information, as well as multiple scales and orientations.
 
-Globalisation-based methods.
+Globalisation could be added~\cite{Arbelaez11,Xiaofeng2012discriminatively} to improve accuracy by focusing on the most salient edges.
 
-Higher quality edge detection is desirable. Texture edges and illusory contours are ellusive to % escape from
+Higher quality edge detection is desirable. Texture edges and illusory contours are elusive to % escape from
 traditional edge-detection approaches. Recent approaches therefore rely on learning to incorporate context and object knowledge. They address more challenging scenarios which arise in natural images. As Martin \etal argue in~\cite{martin2004learning}, those methods solve the so-called ``boundary detection'' problem. A boundary delineates the pixels that belong to one object, material, or surface from those that belong to another. One possible approach to boundary detection would be to use edges as low-level cues to judge for the presence of object boundaries (a bottom-up approach). Another solution is to go top-down and use higher-level object knowledge to infer the object boundaries.
 
 In such more challenging situations a \textit{general} edge detector would not be adequate, since the desired output is application-specific.
 
 \subsection{Image segmentation}
+%- Among these schemes,three methods have proven to be quite popular in practiceowing to their performance and/or their running time.  TheMean Shift method of Comaniciu and Meer [6],  the Nor-malized Cuts method developed by Shi and Malik [14] andthe graph based method of Felzenswalb and Huttenloche
+%- More  Recently  Arbelaez,  Maire,  Fowlkes  and  Malik[3, 2] have proposed an impressive segmentation algorithmthat achieves state of the art results on commonly availabledata  sets.   TheirgPbmethod  starts  with  a  local  edge  ex-traction procedure which has been optimized using learn-ing techniques.  The results of this edge extraction step arethen used as input to a spectral partitioning procedure whichglobalizes  the  results  using  Normalized  Cuts
 
 SoA: Multiscale combinatorial grouping~\cite{Arbelaez2014multiscale}.
 
@@ -177,8 +182,8 @@ In Table~\ref{fig:related_work_table} you can see the state-of-the-art methods c
 
 \begin{figure}[ht!]
 \centering
-\includegraphics[width=0.8\textwidth]{images/related_work_table.pdf} % OMG, that looks so much better and compiles faster; if possible, export as pdf from now on
-%\includegraphics[width=0.7\textwidth]{images/related_work_table.png}
+\includegraphics[width=0.8\textwidth]{images/related_work_table.pdf} % OMG, that looks so much better and compiles faster; if possible, export Google drawings as pdf from now on
+% images/related_work_table.png
 \caption[Related work: state of the art]{Where do state-of-the-art methods for edge detection and segmentation innovate.} %focus there efforts.}
 \label{fig:related_work_table}
 \end{figure}

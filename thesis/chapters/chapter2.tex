@@ -146,7 +146,7 @@ This is referred to in the paper~\cite{DollarICCV13edges} as ``custom ensemble m
 At the time it was published, SE algorithm showed state-of-the-art performance on the now standard benchmark for the task of boundary detection - BPR on BSDS500~\cite{Arbelaez11}. The algorithm is tested on other datasets and the models learnt are capable of successfully finding edges in images from datasets that they were not specifically trained for. This is reassuring - it means that the detector is able to generalise - its knowledge is universal, instead of overly adapted to %fit for 
 the contents of a specific dataset.
 
-\settocdepth{subsection}
+\settocdepth{section}
 \subsection{Alternative way of capturing context}
 A different approach is taken by Hallman and Fowlkes in their \textbf{Oriented edge forests (OEF)} paper~\cite{Hallman2014} which was published towards the end of the current research work. They use a decision forest classifier to learn to distinguish between straight-line edges of different position and orientation within an image patch, see \fref{fig:OEF-oriented-patch-space}. Although they use a set of pre-defined edge classes, local sharpening of the edges helps them capture fine variations in edge shape. They currently (Feb 2015) achieve best results on the BSDS500 benchmark.
 
