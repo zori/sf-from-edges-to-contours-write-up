@@ -5,7 +5,7 @@ The majority of our experiments focuses on weighting the watershed locations. Th
 
 \textbf{Dataset:} For the evaluation of our segmentation results we work on the Berkeley Segmentation Data Set (BSDS500)~\cite{Arbelaez11}. Since its introduction in 2001, it has by now become a standard dataset for both the task of edge detection as well as that of image segmentation.
 
-\textbf{Benchmark:} We report results on the benchmark~\cite{Galasso13Benchmark} introduced in~\cite{Galasso13} which can evaluate segmentation hierarchies against given ground-truth segmentations. It demonstrates the tradeoff between an oversegmentation and a more accurate object-centric segmentation.
+\textbf{Benchmark:} We report results on the benchmark~\cite{Galasso13Benchmark} introduced in~\cite{Galasso13} which can evaluate segmentation hierarchies against given ground-truth segmentations. It demonstrates the trade-off between an oversegmentation and a more accurate object-centric segmentation.
 
 \textbf{Watershed weighting strategy:} The Structured voting requires a choice of a watershed weighting strategy. The purpose of the weighting is associating a \textbf{score} with each of the watershed locations pixels. That score must faithfully reflect the strength of the underlying boundary. So we want to evaluate how good is the boundary evidence presented by the most likely segmentation determined by the structured forest. 
 
@@ -15,10 +15,13 @@ The second particular to a watershed weighting strategy is the choice of a scori
 
 In the rest of the chapter we briefly describe the dataset and evaluation metrics used, in order to help understand the experiments. Afterwards, we give a detailed account of our most important experiments and the conclusions we draw based on them.
 
-\section{Evaluation setup}
+\section{Evaluation setup} % framework, organisation
 \subsection{Dataset}
 \label{sec:ch5-BSDS500-dataset}
-The Berkeley Segmentation Data Set (BSDS), introduced in~\cite{Martin01}, is a large dataset of natural images that have been manually segmented by multiple participants. It, therefore, provides the ground truth label for each pixel as being on- or off-boundary. Initially the dataset featured 300 images (BSDS300). It was later extended - in the new dataset BSDS500~\cite{Arbelaez11} the original 300 images are used for training (200) and validation (100), and 200 new human-annotated images are added for testing. Again, each image is segmented by different subjects. See \fref{fig:BSDS-annotations} for an example image and two of its annotations by different people.
+\subsubsection{BSDS500}
+The Berkeley Segmentation Data Set (BSDS), introduced in \cite{Martin01}, is a large dataset that covers a variety of complex scenarios in natural images. The photographs have been manually segmented by multiple participants. It, therefore, provides the ground truth label for each pixel as being on- or off-boundary. Initially the dataset featured 300 images (BSDS300). It was later extended - in the new dataset BSDS500 \cite{Arbelaez11} the original 300 images are used for training (200) and validation (100), and 200 new human-annotated images are added for testing. Again, each image has 5 to 10 hand-drawn annotations by different subjects. See \fref{fig:BSDS-annotations} for an example image and two of its ground-truth segmentations. %annotations by different people.
+
+BSDS is a widely used benchmark for both boundary detection and general image segmentation.
 
 \begin{figure}[ht!]
 \begin{center}
@@ -36,7 +39,31 @@ The Berkeley Segmentation Data Set (BSDS), introduced in~\cite{Martin01}, is a l
 \label{fig:BSDS-annotations}
 \end{figure}
 
-\subsection{Metrics}
+\subsubsection{Difficulty of the dataset}
+It is worth, perhaps, pointing attention to the challenge that this dataset presents.
+
+According to Gestalt psychologists \cite{Wertheimer1923untersuchungen,Kohler1929task,Koffka1935principles,Wertheimer1938laws}, human visual grouping is influenced by several common factor (\eg similarity, continuity, parallelism, closure, familiarity). Nevertheless, as we discussed in \sref{sec:ch1-problem-challenges}, different people have different understanding as to the relevant degree of detail for an image. 
+
+In an attempt to capture this variability in what people perceive as a ``natural'' segmentation, Martin \etal \cite{Martin01} only gave vague instructions to the BSDS annotators: \begin{quote}Divide each image into pieces, where each piece represents a distinguished thing in the image. It is important that all of the pieces have approximately equal importance. The number of things in each image is up to you. Something between 2 and 20 should be reasonable for any of our images.\end{quote}
+
+Consequently, annotations sometimes greatly differ in the level of granularity, see \fref{fig:sub:BSDS-perceptual-different} (but still {\it mostly} agree on boundary localisation). Also, they are typically more fine-grained than the basic %simplest 
+figure vs. ground assignment (see the blue nodes of the tree on \fref{fig:sub:BSDS-perceptual-perceptual-organisation-tree}) that some tasks require \cite{Ren2006figure,Sundberg2011occlusion}.
+
+\begin{figure}[ht!]
+\centering
+ \subfigure[BSDS images each alongside 2 annotations - a coarse and a detailed one]{%
+  \includegraphics[width=0.4\textwidth]{images/BSDS/Li2013SemanticBenchmark-different-annotations-examples.png}
+  \label{fig:sub:BSDS-perceptual-different}
+ }
+ \subfigure[Perceptual organisation of an image]{%
+  \includegraphics[width=0.57\textwidth]{images/BSDS/Li2013SemanticBenchmark-perceptual-organisation-tree.png}
+  \label{fig:sub:BSDS-perceptual-perceptual-organisation-tree}
+ }
+\caption[Difficulty of BSDS - differences in the perceptual organisation of a scene]{Difficulty of BSDS - differences in the perceptual organisation of a scene. Images courtesy of \cite{Li2013SemanticBenchmark}.}
+\label{fig:BSDS-perceptual}
+\end{figure}
+
+\subsection{Evaluation metrics}
 The benchmark that we use provides, among others, two precision-recall metrics - a boundary and a region oriented one.
 
 \subsubsection{BPR}
@@ -51,13 +78,6 @@ to merge the two regions. In the hierarchical image segmentation framework, that
 To address the above issue, the other metric that we report is the Volume Precision-Recall (VPR) introduced by Galasso \etal~\cite{Galasso13} to evaluate the accuracy of video segmentation algorithms. For images (or video still frames) the metric is a region-based metric, operating % applied
 into a precision-recall framework. It is measuring the size of the regions and the overlap between the ground truth segmentation regions and the segmentation regions produced by the algorithm under test. 
 See Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-VPR-maths} for the formulae and discussion on the need for normalisation when evaluating segmentations.
-
-% \section{Weighting strategies} % Exploration of the Space of Weighting Strategies}
-% \section{Oracle} %  - Experiments with Ground Truth}
-% \subsection{Oracle definition} % description}
-% \subsection{Ranking of oracles}
-% % \subsubsection{Confirms Correct Weighting Strategies}
-% % \subsubsection{Failure Cases}
 
 \subsubsection{Reported numbers}
 \paragraph{For the precision-recall metrics BPR and VPR}\mbox{}\\\mbox{}\\
@@ -90,7 +110,7 @@ their average conditional entropy and mutual information. This is the only metri
 \paragraph{Example comparison of SE and gPb-OWT-UCM}\mbox{}\\\mbox{}\\
 \tref{tab:SE_vs_gPb_OWT_UCM} has all the scores we just described, and \fref{fig:SE_vs_gPb_OWT_UCM} - the BPR and VPR plots for the two methods that we previously dissected - Structured edge~\cite{DollarICCV13edges} in \cref{Chapter2}, and gPb-OWT-UCM~\cite{Arbelaez11} in \cref{Chapter3}. 
 
-Note that as SE is an edge detection algorithm, none of the region metrics or the VPR are applicable to its output. Since gPb-OWT-UCM is an image segmentation algorithm, the boundaries of the segments in a segmentation constitute closed contours, so boundary-based metrics, such as BPR, are applicable.
+Note that as SE is an edge detection algorithm, none of the region metrics or the VPR are applicable to its output. Since gPb-OWT-UCM is a segmenter, the boundaries of the segments in a segmentation constitute closed contours, so boundary-based metrics, such as BPR, are applicable.
 
 \begin{figure}[ht!]
 \centering
@@ -100,7 +120,7 @@ Note that as SE is an edge detection algorithm, none of the region metrics or th
  \subfigure[VPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/SE_vs_gPb_OWT_UCM_VPR.png}
  }
-\caption[SE and gPb-OWT-UCM plots]{We demonstrate the boundary precision recall metric (BPR) and the volume precision recall metric (VPR). Given are the edge detection algorithm that we utilise {\bf Structured edge}~\cite{DollarICCV13edges}, and the image segmentation algorithm {\bf gPb-OWT-UCM}~\cite{Arbelaez11}.}
+\caption[SE and gPb-OWT-UCM comparison - plots]{We demonstrate the boundary precision recall metric (BPR) and the volume precision recall metric (VPR). Given are the edge detection algorithm that we utilise {\bf Structured edge}~\cite{DollarICCV13edges}, and the image segmentation algorithm {\bf gPb-OWT-UCM}~\cite{Arbelaez11}.}
 \label{fig:SE_vs_gPb_OWT_UCM}
 \end{figure}
 
@@ -131,12 +151,12 @@ Note that as SE is an edge detection algorithm, none of the region metrics or th
 \end{table}
 
 \subsubsection{Benchmark}
-We use the benchmark MATLAB code from~\cite{Galasso13Benchmark}. %, the metric was introduced in this work~\cite{Galasso13}.
+We use the benchmark MATLAB code from \cite{Galasso13Benchmark}. %, the metric was introduced in this work~\cite{Galasso13}.
 It unifies benchmarks for boundary detection (BPR) and image segmentation (VPR, SC, %ground truth segmentation covering, 
-PRI, VoI) and allows the testing of coarse-to-fine methods. %, capturing the tradeoff in a precision-recall framework.
+PRI, VoI) and allows the testing of coarse-to-fine methods. %, capturing the trade-off in a precision-recall framework.
 
 \section{From edges to contours - a proof of concept}
-We apply a {\bf vanilla watershed} algorithm~\cite{beucher1992morphological,najman1996geodesic,PINKlibrary} to the SE output, as described in \sref{sec:ch3-watershed}. The result is a single segmentation. 
+We apply a {\bf vanilla watershed} algorithm \cite{Beucher1992morphological,Najman1996geodesic,PINKlibrary} to the SE output, as described in \sref{sec:ch3-watershed}. The result is a single segmentation. 
 
 In our benchmark plots (\fref{fig:SE-watershed}) the outcome of the experiment is not a Precision-Recall curve, but a single point, %dot, 
 indicative of the model error. Since the watershed transformation provides an oversegmentation of the image, the dot is located in the high-recall, low-precision range on the BPR plot (lower right). In contrast, oversegmentations occupy the low-recall, high-precision part of the VPR domain (upper left). 
@@ -154,10 +174,10 @@ indicative of the model error. Since the watershed transformation provides an ov
 \end{figure}
 
 \textbf{A point at issue % problem, trouble 
-with non-maximum suppressed edges:} Note that the SE algorithm implements non-maximum suppression on the edge detection output to provide thinned edges. Non-maximum suppression is a method first introduced as a means of reducing thick edge responses to thin lines for the task of edge detection in greyscale images~\cite{rosenfeld1976digital}. Non-maximum suppression considers only the maxima in the gradient direction. As a consequence, the final output of the SE often has only single regional minimum. In the presence of a unique lake, the watershed is empty. To circumvent this problem, we use the SE detector \textit{before non-maxima suppression} as a topographic surface for the flooding.
+with non-maximum suppressed edges:} Note that the SE algorithm implements non-maximum suppression on the edge detection output to provide thinned edges. Non-maximum suppression is a method first introduced as a means of reducing thick edge responses to thin lines for the task of edge detection in greyscale images \cite{Rosenfeld1976digital}. Non-maximum suppression considers only the maxima in the gradient direction. As a consequence, the final output of the SE often has only single regional minimum. In the presence of a unique lake, the watershed is empty. To circumvent this problem, we use the SE detector \textit{before non-maxima suppression} as a topographic surface for the flooding.
 
 \section{Baseline: SE-UCM}
-As a baseline, we create a hierarchy of segmentations on top of the SE detector result. This is in the spirit of~\cite{Arbelaez2006boundary} who, however, use the edge detector of Martin, Fowlkes, and Malik (MFM)~\cite{martin2004learning}. What we do for this baseline could also be thought as our pipeline SE-SV-UCM without structured voting. Instead, the values from the probability of boundary, which is the output of the edge detector are directly transfered as values for the watershed pixels. Benchmark plots are on \fref{fig:SE-watershed}.
+As a baseline, we create a hierarchy of segmentations on top of the SE detector result. This is in the spirit of \cite{Arbelaez2006boundary} who, however, use the edge detector of Martin, Fowlkes, and Malik (MFM) \cite{Martin2004learning}. What we do for this baseline could also be thought as our pipeline SE-SV-UCM without structured voting. Instead, the values from the probability of boundary, which is the output of the edge detector are directly transferred as values for the watershed pixels. Benchmark plots are on \fref{fig:SE-watershed}.
 
 We observe the problem of strong edges ``bleeding'' into non-salient ones, despite lack of good local boundary evidence, as on the tikis examples (see \fref{fig:SE-UCM-tikis-bleeding-sub2}) between the heads of the middle and right statues. This issue is one of the motivations for the Structured voting (SV) described in \sref{sec:ch4-SE-SV-UCM_SV_details}.% Similarly
 
@@ -171,7 +191,7 @@ We observe the problem of strong edges ``bleeding'' into non-salient ones, despi
  \includegraphics[width=0.3\textwidth,frame]{images/examples/tikis/SE-UCM-tikis-ucm-problem.png}
  \label{fig:SE-UCM-tikis-bleeding-sub2}
 }
-\caption[SE-UCM drawback - ``bleeding'' of strong edges towards unimportant ones]{{\bf SE-UCM} result. \protect\subref{fig:SE-UCM-tikis-bleeding-sub1} - an image from the validation subset of~\cite{BSDS500resources}. Notice how in the SE-UCM output \protect\subref{fig:SE-UCM-tikis-bleeding-sub2} unimportant horizontal edges between the statues' heads are {\it incorrectly %wrongly 
+\caption[SE-UCM drawback - ``bleeding'' of strong edges towards unimportant ones]{{\bf SE-UCM} result. \protect\subref{fig:SE-UCM-tikis-bleeding-sub1} - an image from the validation subset of \cite{BSDS500resources}. Notice how in the SE-UCM output \protect\subref{fig:SE-UCM-tikis-bleeding-sub2} unimportant horizontal edges between the statues' heads are {\it incorrectly %wrongly 
 up-voted} due to strong vertical boundary in their vicinity (the outline of the statues).}
 \label{fig:SE-UCM-tikis-bleeding}
 \end{figure}
@@ -179,7 +199,11 @@ up-voted} due to strong vertical boundary in their vicinity (the outline of the 
 % SE-UCM 0.69 (0.70)
 
 \section{SE+sPb-UCM}
-This experiment shows us that globalisation could easily be introduced to our method. Here we use the same affinity matrix as the spectral Pb of Arbel\'aez \etal~\cite{Arbelaez11}. Extending our algorithm to adopt a globalisation step could be beneficial, since it could pick up on improvements in the realm of spectral clustering, as for example spectral reduction~\cite{Galasso14}. % check the plots, check MCG paper - they did exactly this
+% TODO describe algorithm, use a pipeline
+This experiment shows us that globalisation could easily be introduced to our method. Here we use the same affinity matrix as the spectral Pb of Arbel\'aez \etal \cite{Arbelaez11}. Extending our algorithm to adopt a globalisation step could be beneficial, since it could pick up on improvements in the realm of spectral partitioning, as for example spectral reduction \cite{Galasso14}. % check the plots, check MCG paper - they did exactly this
+
+Edge detection methods employing spectral clustering % partitioning have been reported to do 
+perform well in the high-precision, low-recall regime of BPR and are comparatively weaker in the low-precision, high-recall regime \cite{Fowlkes04,Yu2005segmentation}. Hence is not surprising to see in \fref{fig:SE_nnms_sPb-UCM} the shift of the SE+sPb-UCM curve towards better precision at the expense of recall.
 
 \begin{figure}[ht!]
 \centering
@@ -196,12 +220,10 @@ This experiment shows us that globalisation could easily be introduced to our me
 % TODO here is a table of all results we will show. What to do with it, can't just dump all the data without proper analysis / conclusion?
 \input{chapters/chapter5-all-results.tex}
 
-\section[Structured voting]{Structured voting - experimental study of watershed weighting strategies}
+\section[Structured voting]{Structured voting - experimental study of watershed weighting strategies} % Weighting strategies % Exploration of the Space of Weighting Strategies
 \label{sec:ch5-structured-voting}
 All experiments presented here are instances of the general algorithm described in \sref{sec:ch4-SE-SV-UCM_SV_details}.
 
-% \settocdepth{section}
-% \settocdepth{subsection}
 \settocdepth{section}
 \subsection{Superpixels and Rand index}
 We leave the watershed patch to be an oversegmentation, which in fact it is. The output of the watershed transform that we use has explicit the boundaries between segments, which would hinder a region-based metric. Therefore, we transform a watershed patch to have implicit segment boundaries - the locations of transition between differently labelled segments. 
@@ -308,9 +330,13 @@ Conic sections - parabola, hyperbola and ellipse that fit the data. Too complex 
 \end{figure}
 
 \settocdepth{subsection}
-\section[Oracle for Structured voting]{Oracle for SV - experiments using ground truth}
+\section[Oracle for Structured voting]{Oracle for Structured voting - experiments using ground truth}
 \label{sec:ch5-oracle}
-To evaluate the correctness of our weighting strategies, we've implemented an oracle for our pipeline. The question we wanted to answer is ``how well could we perform segmentation in the presence of perfect information?'' Our Structured voting lends itself easily to such an experiment using the ground truth segmentation. 
+% TODO
+% Oracle definition % description}
+% Ranking of oracles confirms Correct Weighting Strategies
+
+To evaluate the correctness of our weighting strategies, we've implemented an oracle for our pipeline. The question we wanted to answer is ``how well could we perform segmentation in the presence of perfect information?'' Our Structured voting (SV) lends itself easily to such an experiment using the ground truth segmentation. 
 When scoring a given pixel on the watershed regions boundary, we use a ground truth segmentation patch, rather than the most likely segmentation learnt by the structured forest. The second patch, as in the regular experiments, is taken from the same pixel location in the watershed locations image.
 
 \section{Hardest negative mining}
@@ -321,7 +347,7 @@ Help determine where the voting fails the most. Conclusion: with so few votes pe
 % TODO two types of voting scope experiments - reducing and expanding; two plots
   \begin{itemize}
     \item{\bf Degraded baseline SE-UCM:} Have the SF output a pixel, or a $2\times2$, $4\times4$, $8\times8$ patch.
-    \item{\bf Reduced vote scope:} This series of experiments aims at proving that casting a vote on a larger area is desireable, by doing exactly the opposite. We cast just $T$ votes ($T$ - number of trees in the decision forest) on a single pixel of the watershed location. As expected, that severely diminishes performance (\wrt averaging on the region boundary) since the voting scope is decreased to 1 pixel. Excessive localisation therefore hinders performance.
+    \item{\bf Reduced vote scope:} This series of experiments aims at proving that casting a vote on a larger area is desirable, by doing exactly the opposite. We cast just $T$ votes ($T$ - number of trees in the decision forest) on a single pixel of the watershed location. As expected, that severely diminishes performance (\wrt averaging on the region boundary) since the voting scope is decreased to 1 pixel. Excessive localisation therefore hinders performance.
   \end{itemize}
 Discussion: It would be useful to see the effect of a ``mixed'' scope of voting - cast vote on the whole region boundary, but use subdivided region boundary - the watershed arc in order to do the patch transformation.
 
@@ -333,7 +359,7 @@ Discussion: It would be useful to see the effect of a ``mixed'' scope of voting 
  \subfigure[VPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/scope_of_voting_oracle_disagreement__line_centre_VPR_ws_VPR.png}
  }
-\caption[Voting scope experiments.]{Voting scope experiments. The three segmentation methods and their oracles are variants of our best performing weighting strategy - central line fitting, cobined with VPR normalised on the side of the watershed. A description of VPR is given in Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-VPR-maths}).}
+\caption[Voting scope experiments.]{Voting scope experiments. The three segmentation methods and their oracles are variants of our best performing weighting strategy - central line fitting, combined with VPR normalised on the side of the watershed. A description of VPR is given in Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-VPR-maths}).}
 \label{fig:voting-scope-line-centre-VPR-ws}
 \end{figure}
 

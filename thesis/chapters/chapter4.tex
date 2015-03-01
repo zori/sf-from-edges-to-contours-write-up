@@ -36,7 +36,7 @@ The chief reason for using SE for us, however, is that this edge detector can pr
 
 \section{Second stage of the pipeline - Structured voting}
 \label{sec:ch4-SE-SV-UCM_SV_details}
-The goal of SV is to propose a suitable way of associating a score with each of the {\it watershed pixels} (the computed possible locations of boundary). Inspired by the ``local patch as a means of capturing context'' philosophy of previous works~\cite{dollar2006supervised,LimZD13,DollarICCV13edges}, we take a patch comparison approach.
+The goal of SV is to propose a suitable way of associating a score with each of the {\it watershed pixels} (the computed possible locations of boundary). Inspired by the ``local patch as a means of capturing context'' philosophy of previous works~\cite{Dollar2006supervised,LimZD13,DollarICCV13edges}, we take a patch comparison approach.
 
 \subsection{Weighting the watershed contours} %locations}
 The SE provides us ``for free'' with the best segmentation patches - local decisions that the trees of the decision forest have made {\bf on all locations} of the image. The size of those medoid tree leaf patches (as well as of all structured forest segmentation patches) is $16\times 16$ pixels.
@@ -53,7 +53,7 @@ That we do by comparing the two - the watershed pixels patch and a tree leaf pat
 \subsubsection{Votes averaging}
 \settocdepth{paragraph}
 A total number of $T=4$ votes are cast per watershed pixel, and we take the mean of those. To further denoise the voting and give our votes a larger platform, % stage, dais, rostrum, podium
-we average all votes per \textit{watershed arc}. The watershed arcs, as discussed in~\ref{sec:ch3-OWT}, are edges of the watershed contours, which are fairly consistent in their orientation. They are obtained by recursively subdividing the region boundaries of the watershed until the approximation given by the straight line through the end of the watershed arc is a sufficiently good one. % TODO artifact from the OWT
+we average all votes per \textit{watershed arc}. The watershed arcs, as discussed in \sref{sec:ch3-OWT}, are edges of the watershed contours, which are fairly consistent in their orientation. They are obtained by recursively subdividing the region boundaries of the watershed until the approximation given by the straight line through the end of the watershed arc is a sufficiently good one. % TODO artefact from the OWT
 
 \subsection{Comparing a structured forest patch to a watershed patch}
 \begin{figure}[ht!]
@@ -174,14 +174,20 @@ aims for an optimal superpixels merge into segments, according to the structured
 \paragraph{Watershed arc}\mbox{}\\\mbox{}\\ % previously called ``just contour'' % region boundary
 See \fref{fig:ws-just-contour} for an example. Here we take into account only the underlying region boundary, on which the central pixel of the watershed patch is.
 
+\textbf{Watershed arc:} We recursively subdivide this boundary until a \textbf{watershed arc} is obtained, \fref{fig:sub:ws-just-contour-watershed-just-contour}, whose shape could be sufficiently accurately approximated by the straight line through the arc's end points. We described this subdivision in Section~\ref*{sec:ch3-OWT}~\ref{par:ch3-watershed-arc}. See also \fref{fig:Arbelaez09-watershed-arcs}.
+
 \begin{figure}[ht!]
  \centering
- \includegraphics[width=1\textwidth]{images/SE-SV-UCM/Arbelaez11-contour-subdivision.png}
- \caption[Region boundary subdivision]{{\bf Region boundary subdivision} (courtesy of~\cite{Arbelaez11}). {\bf Left:} Colour-coded are given the initial watershed arcs - the full region boundaries. Magenta solid line denotes the line approximation to the arc. A subdivision (to the farthest point on the arc) is indicated with two magenta dashed lines. {\bf Middle:} The final set of watershed arcs. A region boundary consists therefore of one or more arcs. {\bf Right:} The middle image, with the arc-approximating lines (magenta solid) overlaid.}
- \label{fig:Arbelaez11-contour-subdivision}
+ \subfigure[Input image]{%
+  \includegraphics[width=0.25\textwidth]{images/examples/hawaii/hawaii.jpg}
+ }
+ \subfigure[Detail of the watershed image - region boundaries and their straight-line approximations]{%
+  \includegraphics[width=0.71\textwidth]{images/SE-SV-UCM/Arbelaez09-hawaii-watershed-arcs.png}
+ }
+ \caption[Region boundary subdivision into watershed arcs]{{\bf Region boundary subdivision into {\bf watershed arcs}} (courtesy of \cite{Arbelaez09}). {\bf Middle:} Colour-coded are given the full region boundaries (these are the initial watershed arcs before subdivision is performed). {\bf Right:} The final set of watershed arcs is confined by % enclosed between 
+ the end vertices of the approximating line fragments (shown in magenta).}
+ \label{fig:Arbelaez09-watershed-arcs}
 \end{figure}
-
-\textbf{Watershed arc:} We recursively subdivide this boundary until a \textbf{watershed arc} is obtained, \fref{fig:sub:ws-just-contour-watershed-just-contour}, whose shape could be sufficiently accurately approximated by the straight line through the arc's end points. See \fref{fig:Arbelaez11-contour-subdivision}. The procedure is as first described in ``Contour Detection and Hierarchical Image Segmentation''~\cite{Arbelaez11}.
 
 \textbf{Tree leaf segmentation transformation:} As the resulting watershed patch is not a segmentation - often it would contain just an edge, and not a contour, we cannot keep the tree leaf as segmentation labelling (see \fref{fig:sub:tree-leaf-segments}. Instead we transform it, making the boundaries between the regions explicit, as in \fref{fig:sub:tree-leaf-boundaries}.
 
@@ -395,7 +401,16 @@ In the following we will use $S$ to denote machine boundary map, $\mathbb{S}$ fo
 
 \paragraph{Boundary Precision-Recall (BPR)}\mbox{}\\\mbox{}\\
 \label{par:ch4-BPR-maths}
-The metric was proposed by~\cite{Arbelaez11} to evaluate the quality of edge detection algorithms in a precision-recall framework. Precision measures the fraction of true positive edge pixels. Recall evaluates the amount of real (\eg ground-truth-annotated) edge pixels detected by the algorithm under test. The reported measure is the \textbf{F-score}, which is the harmonic mean of the precision and recall.
+The BPR metric was proposed by \cite{Martin2004learning} % by~\cite{Arbelaez11} 
+to evaluate the quality of edge detection algorithms in a precision-recall framework. 
+It is based on {\bf boundary matching} - it matches the edges detected by the algorithm under test to those in the ground truth. For evaluation of segmentation, the matching is performed on the segmentation contours. The boundary matching problem is cast as a minimum cost bipartite assignment problem. A fixed threshold for the localisation error has to be chosen in advance. A threshold of 1 pixel distance would require exact match, and is therefore too stringent. Pixels that are farther from the ground truth than a threshold are not matched. In our experiments we found that setting this parameter to 3 or 4 pixels works fine (for the BSDS500 dataset \cite{BSDS500resources}).
+
+After the matching problem is solved, edge pixels are either {\it hits} (true positives), {\it misses} (false negatives), or false positives. Those numbers are subsequently used to compute precision and recall. 
+{\bf Precision} measures the fraction of true positive edge pixels. {\bf Recall} evaluates the amount of real (\eg ground-truth-annotated) edge pixels detected by the algorithm under test. 
+In Bayesian terms, precision is the probability that the detector's signal is valid, and recall is the probability that the ground truth data was detected. 
+The reported measure is the \textbf{F-score}, which is the harmonic mean of the precision and recall - a summary of the edge detection quality.
+
+% TODO mention that in implementation it is an approximation, otherwise - n^3 cubic in the number of pixels in the image (or in the boundaries)
 
 \[
 P=\frac{\left|S\cap\left(\bigcup\limits _{i=1}^{M}G_{i}\right)\right|}{|S|}
@@ -409,6 +424,9 @@ F=\frac{2PR}{P+R}
 
 where $S$ and $\{G_{i}\}_{i=1}^{M}$ are boundary maps and $\cap$
 computes a bipartite graph assignment between them.
+
+An advantage of this  metric is that it is sensitive to the complexity of the boundary. In addition, it is applicable to evaluate both the task of edge detection as well as image segmentation. A further asset of BPR, when applied as a segmentation benchmark, is that it does not need to match interior pixels.
+
 \settocdepth{paragraph}
 \paragraph{Rand index (RI)}\mbox{}\\\mbox{}\\
 \settocdepth{section}
@@ -489,7 +507,7 @@ For visualisation, see \fref{fig:overlap-IoU}.
 
 \subparagraph{Intersection over union (IoU)}\mbox{}\\
 The Intersection over union score (or utility) %also loss
-is popular in the computer vision community through its use in the PASCAL VOC challenge~\cite{pascal-voc-2012}. It is applied for the benchmark of pixel-level semantic segmentation. There, the measure is applied per object class, counting the pixels - true positives (\textit{tp}), false positives (\textit{fp}), and false negatives (\textit{fn}) \wrt a human-annotated ground truth. Segmentation accuracy is then computed as
+is popular in the computer vision community through its use in the PASCAL VOC challenge \cite{PASCAL-voc-2012}. It is applied for the benchmark of pixel-level semantic segmentation. There, the measure is applied per object class, counting the pixels - true positives (\textit{tp}), false positives (\textit{fp}), and false negatives (\textit{fn}) \wrt a human-annotated ground truth. Segmentation accuracy is then computed as
 \[
  \text{accuracy} = \frac{\textit{tp}}{\textit{tp} + \textit{fp} + \textit{fn}}
 \]
@@ -631,7 +649,7 @@ By thresholding the UCM we can obtain segmentations at different level of detail
 \section{Discussion}
 \subsection{Giving output a probabilistic interpretation}
 This section remarks on an implementation aspect of edge detection and image segmentation, namely the format of the output. We found it relevant, since in practice it influences the correct running of the benchmark code and the intercomparability %interpretability 
-of results across detectors and segmentation algorithms.
+of results across detectors and segmenters.
 
 It is beneficial %desirable 
 for the benchmark task to have the output values of both edge detector and image segmentation into $[0,1]$. That additionally lends itself to probabilistic interpretation, which could potentially allow to easily combine different models.
@@ -644,7 +662,7 @@ a probabilistic interpretation - only the strongest edges do have a value above 
 Arbel\'aez \etal~\cite{Arbelaez11} learn a sigmoid on the BSDS500 training subset, and finish their segmentation algorithm by rescaling with a the learn sigmoid. The learnt values, of course, are exclusively suitable for their approach. For consistency we also apply the sigmoid transformation, before finally rescaling (see next paragraph).
 
 \subsubsection{Our approach - scale the UCM output} %The missing recall comes from UCM values not being scaled in [0,1]. Here, I believe, the non-zero values are in [0.0015, 0,5964].  On a different experiment I get the non zeros in [0.93, 0.99].  Bad results certainly can't be remedied by rescaling the ucm output.
-We apply rescaling of the non-zero UCM values into $[0.01, 0.99]$ as post-processing step of out SE-SV-UCM pipeline. Thereby the relative order of the image edges delimiting the regions is preserved. Note that rescaling doesn't change the shape of the curve, just extends it to cover as much of the recall range as possible. So the boundary- and region-based benchmark values are unaffected. The curve of the method being evaluated, however, better reflects its quality on the full operational range of BPR and VPR.
+We apply rescaling of the non-zero UCM values into $[0.01, 0.99]$ as post-processing step of out SE-SV-UCM pipeline. The procedure is a modification of the simple image enhancement technique (applicable to greyscale images) known as {\it contrast stretching}, or {\it normalisation}. Thereby the relative order of the image edges delimiting the regions is preserved. Note that rescaling doesn't change the shape of the evaluation curve, just extends it to cover as much of the recall range as possible. So the boundary- and region-based benchmark values are unaffected. The curve of the method being evaluated, however, better reflects its quality on the full operational range of BPR and VPR.
 
 In their recent paper~\cite{Hallman2014} Hallman and Fowlkes also remark on the histogram of UCM values, as they would like to be able to visually compare the UCM output of different algorithms. Their main goal is the meaningful visualisation of output results of different algorithms and qualitative comparison by visual inspection of outputs - hierarchical segmentations. In Appendix A they discuss the computation of a monotonic transformation to approximate the histogram of values \wrt a ``reference'' algorithm.
 

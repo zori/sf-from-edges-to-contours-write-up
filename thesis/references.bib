@@ -1,9 +1,27 @@
 %% chapter 5 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+@inproceedings{Sundberg2011occlusion,
+  title={Occlusion boundary detection and figure/ground assignment from optical flow},
+  author={Sundberg, Patrik and Brox, Thomas and Maire, Michael and Arbel{\'a}ez, Pablo and Malik, Jitendra},
+  booktitle={Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year={2011},
+}
 @misc{Galasso13Benchmark,
   author = {Galasso, F. and Nagaraja, N. S. and Cardenas, T. Z. and Brox, T. and Schiele, B.},
   title = {A Unified Video Segmentation Benchmark - Code},
   howpublished = {\url{http://www.mpi-inf.mpg.de/~galasso/files/Benchmark.zip}}, 
   year={2013}
+}
+@inproceedings{Galasso13,
+  title = {A Unified Video Segmentation Benchmark: Annotation, Metrics and Analysis},
+  booktitle = {International Conference on Computer Vision (ICCV)},
+  year = {2013},
+  author = {Galasso, F. and Nagaraja, N. S. and Cardenas, T. Z. and Brox, T. and Schiele, B.}
+}
+@inproceedings {Galasso14,
+  author = {Galasso, F. and Keuper, M. and Brox, T. and Schiele, B.},
+  title = {Spectral Graph Reduction for Efficient Image and Streaming Video Segmentation},
+  booktitle = {Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year = {2014}
 }
 @inproceedings{Meila05,
   author = {Meila, M.},
@@ -11,14 +29,44 @@
   title = {Comparing clusterings: an axiomatic view.}, 
   year = 2005
 }
+@inproceedings{Martin01,
+  author = {Martin, D. R. and Fowlkes, C. and Tal, D. and Malik, J.},
+  booktitle = {International Conference on Computer Vision (ICCV)},  
+  title = {A Database of Human Segmented Natural Images and its Application to Evaluating Segmentation Algorithms and Measuring Ecological Statistics.},
+  year = 2001
+} %pages = {416-425},
+@techreport{Fowlkes04,
+  title={How much does globalization help segmentation?},
+  author={Fowlkes, Charless Christopher and Malik, Jitendra},
+  year={2004},
+  publisher={Computer Science Division, University of California}
+}
+@inproceedings{Yu2005segmentation,
+  title={Segmentation induced by scale invariance},
+  author={Yu, Stella X},
+  booktitle={Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year={2005}
+}
+@InProceedings{Li2013SemanticBenchmark,
+  author = {Li, H. and Cai, J. and Nguyen, T.  and Zheng, J.},
+  title = {A benchmark for semantic image segmentation},
+  booktitle = {International Conference on Multimedia and Expo (ICME)},
+  year = {2013}
+}
 %% chapter 4 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-@misc{pascal-voc-2012,
+@misc{PASCAL-voc-2012,
   author = {Everingham, M. and Van~Gool, L. and Williams, C. K. I. and Winn, J. and Zisserman, A.},
   title = {The {PASCAL} {V}isual {O}bject {C}lasses {C}hallenge 2012 {(VOC2012)} {R}esults},
   howpublished = {\url{http://www.pascal-network.org/challenges/VOC/voc2012/workshop/index.html}},
   year={2012}
 }
-@article{rand1971objective,
+@misc{VisualLearningTutorial2013,
+  author = {Matthew Blaschko and M. Pawan Kumar and Ben Taskar},
+  title = {Visual Learning with Weak Supervision - Tutorial},
+  howpublished = {\url{http://cvn.ecp.fr/tutorials/cvpr2013/}},
+  year={2013}
+}
+@article{Rand1971objective,
   title={Objective criteria for the evaluation of clustering methods},
   author={Rand, William M},
   journal={Journal of the American Statistical association},
@@ -26,12 +74,29 @@
 }
 @inproceedings{UnnikrishnanPH07,
   author = {Unnikrishnan, R. and Pantofaru, C. and Hebert, M.},
-  booktitle = {Transaction on Pattern Analysis and Machine Intelligence (PAMI)}, 
-  title = {Toward Objective Evaluation of Image Segmentation Algorithms.},  
-  year = 2007
+  booktitle = {Transaction on Pattern Analysis and Machine Intelligence (PAMI)},
+  title = {Toward Objective Evaluation of Image Segmentation Algorithms.},
+  year = {2007}
 }  %pages = {929-944},%volume = 29,
 %% chapter 3 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-@article{adams1994seeded,
+@incollection{Ren2008multi,
+  title={Multi-scale improves boundary detection in natural images},
+  author={Ren, Xiaofeng},
+  booktitle={European Conference on Computer Vision (ECCV)},
+  year={2008}
+}
+@article{Kisilev2013Learning,
+  title={Learning to detect lesion boundaries in breast ultrasound images},
+  author={Kisilev, Pavel and Barkan, Ella and Shakhnarovich, Greg and Tzadok, Asaf},
+  year={2013}
+} % TODO year not certain
+@misc{MarcoBlog2007Watershed,
+  author = {Marco Gallotta and Keri Woods},
+  title = {Watershed transfromation},
+  howpublished = {\url{http://people.cs.uct.ac.za/~mgallott/honsproj/watershed.html}},
+  year={2007}
+}
+@article{Adams1994seeded,
   title={Seeded region growing},
   author={Adams, Rolf and Bischof, Leanne},
   journal={Transaction on Pattern Analysis and Machine Intelligence (PAMI)},
@@ -57,9 +122,9 @@
   Howpublished={\url{http://vision.ucsd.edu/~pdollar/files/papers/DollarICCV13edgesTalk.pptx}},
   year={2013}
 }
-@inproceedings{dollar2006supervised,
+@inproceedings{Dollar2006supervised,
   title={Supervised learning of edges and object boundaries},
-  author={Dollar, Piotr and Tu, Zhuowen and Belongie, Serge},
+  author={Doll{\'a}r, Piotr and Tu, Zhuowen and Belongie, Serge},
   booktitle={Conference on Computer Vision and Pattern Recognition (CVPR)},
   year={2006}
 }
@@ -69,7 +134,8 @@
   booktitle={European Conference on Computer Vision (ECCV)},
   year={2006}
 }
-% article{Dollar2014fast, title={Fast edge detection using structured forests}, author={Doll{\'a}r, P. and Zitnick,  C. L.}, journal={arXivpreprint arXiv:1406.5549}, year={2014}} % out of arXiv, published on PAMI
+% article{Dollar2014fast, title={Fast edge detection using structured forests}, author={Doll{\'a}r, P. and Zitnick,  C. L.}, journal={arXivpreprint arXiv:1406.5549}, year={2014}}
+% out of arXiv, published on PAMI
 @article{Dollar2015PAMI,
   author={Doll{\'a}r, P. and Zitnick,  C. L.},
   title = {Fast Edge Detection using Structured Forests},
@@ -112,7 +178,7 @@
   title = {Random Forests}, 
   year = 2001
 } % pages = {5-32},% volume = 45,
-@book{breiman1984classification,
+@book{Breiman1984classification,
   title={Classification and regression trees},
   author={Breiman, Leo and Friedman, Jerome and Stone, Charles J and Olshen, Richard A},
   year={1984},
@@ -130,67 +196,199 @@
   booktitle = {International Conference on Machine Learning (ICML)},
   year = {2012}
 }
-@misc{nowozin2014decision,
+@misc{Nowozin2014decision,
   title={Decision tree training in machine learning},
   author={Nowozin, S.},
   url={http://www.google.com/patents/US20140122381},
   year={2014}
 } %,month=may # "~1", publisher={Google Patents}, note={US Patent App. 13/660,692}
 %% chapter 1 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-@article{prewitt1970object,
+% TODO
+@incollection{Jiang2014fast,
+  title={Fast and Effective Image Segmentation via Superpixels and Adaptive Thresholding},
+  author={Jiang, Yunsheng and Ma, Jinwen},
+  booktitle={Advances in Neural Networks--ISNN 2014},
+  year={2014}
+} % publisher={Springer}
+@article{Fukushima1980neocognitron,
+  title={Neocognitron: A self-organizing neural network model for a mechanism of pattern recognition unaffected by shift in position},
+  author={Fukushima, Kunihiko},
+  journal={Biological cybernetics},
+  year={1980}
+}
+@article{Lecun1998gradient,
+  title={Gradient-based learning applied to document recognition},
+  author={LeCun, Yann and Bottou, L{\'e}on and Bengio, Yoshua and Haffner, Patrick},
+  journal={Proceedings of the IEEE},
+  year={1998}
+}
+@article{Comaniciu2002mean,
+  title={Mean shift: A robust approach toward feature space analysis},
+  author={Comaniciu, Dorin and Meer, Peter},
+  journal={Transaction on Pattern Analysis and Machine Intelligence (PAMI)},
+  year={2002}
+}
+@article{Wertheimer1923untersuchungen,
+  title={Untersuchungen zur Lehre von der Gestalt. II},
+  author={Wertheimer, Max},
+  journal={Psychological Research},
+  year={1923}
+}
+@article{Wertheimer1938laws,
+  title={Laws of organization in perceptual forms.},
+  author={Wertheimer, Max},
+  year={1938},
+  publisher={Kegan Paul, Trench, Trubner \& Company}
+}
+@book{Kohler1929task,
+  title={The task of Gestalt psychology},
+  author={Kohler, Wolfgang},
+  year={1929}
+} % publisher={Princeton University Press}
+@article{Koffka1935principles,
+  title={Principles of Gestalt psychology.},
+  author={Koffka, K},
+  year={1935},
+  publisher={Harcourt, Brace}
+}
+@article{Shi2000normalized,
+  title={Normalized cuts and image segmentation},
+  author={Shi, Jianbo and Malik, Jitendra},
+  journal={Transaction on Pattern Analysis and Machine Intelligence (PAMI)},
+  year={2000}
+}
+@inproceedings{Sharon2000fast,
+  title={Fast multiscale image segmentation},
+  author={Sharon, Eitan and Brandt, Achi and Basri, Ronen},
+  booktitle={Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year={2000}
+}
+@inproceedings{Sharon2001segmentation,
+  title={Segmentation and boundary detection using multiscale intensity measurements},
+  author={Sharon, Eitan and Brandt, Achi and Basri, Ronen},
+  booktitle={Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year={2001}
+}
+@inproceedings{Galun2003texture,
+  title={Texture segmentation by multiscale aggregation of filter responses and shape elements},
+  author={Galun, Meirav and Sharon, Eitan and Basri, Ronen and Brandt, Achi},
+  booktitle={International Conference on Computer Vision (ICCV)},
+  year={2003}
+}
+@article{Nock2004statistical,
+  title={Statistical region merging},
+  author={Nock, Richard and Nielsen, Frank},
+  journal={Transaction on Pattern Analysis and Machine Intelligence (PAMI)},
+  year={2004}
+}
+@inproceedings{Felzenszwalb1998image,
+  title={Image segmentation using local variation},
+  author={Felzenszwalb, Pedro F and Huttenlocher, Daniel P},
+  booktitle={Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year={1998}
+}
+@inproceedings{Felzenszwalb1998ciently,
+  title={Efficiently Computing a Good Segmentation},
+  author={Felzenszwalb, Pedro F and Huttenlocher, Daniel P},
+  year={1998},
+  organization={Citeseer}
+}
+@inproceedings{Felzenszwalb04,
+  author = {P. F. Felzenszwalb and D. P. Huttenlocher},
+  title = {Efficient Graph-Based Image Segmentation},
+  booktitle = {International Journal of Computer Vision (IJCV)},
+  year = {2004}
+}
+@inproceedings{Lin2000unseeded,
+  title={Unseeded region growing for 3D image segmentation},
+  author={Lin, Zheng and Jin, Jesse and Talbot, Hugues},
+  booktitle={Selected papers from the Pan-Sydney workshop on Visualisation-Volume 2},
+  year={2000}
+}
+@article{Perona1990scale,
+  title={Scale-space and edge detection using anisotropic diffusion},
+  author={Perona, Pietro and Malik, Jitendra},
+  journal={Transaction on Pattern Analysis and Machine Intelligence (PAMI)},
+  year={1990}
+}
+@inproceedings{Lowe1999object,
+  title={Object recognition from local scale-invariant features},
+  author={Lowe, David G},
+  booktitle={International Conference on Computer Vision (ICCV)},
+  year={1999}
+}
+@article{Lowe2004distinctive,
+  title={Distinctive image features from scale-invariant keypoints},
+  author={Lowe, David G},
+  journal={International Journal of Computer Vision (IJCV)},
+  year={2004}
+}
+@incollection{Belongie2006matching,
+  title={Matching with shape contexts},
+  author={Belongie, Serge and Mori, Greg and Malik, Jitendra},
+  booktitle={Statistics and Analysis of Shapes},
+  year={2006}
+}
+@inproceedings{Dalal2005histograms,
+  title={Histograms of oriented gradients for human detection},
+  author={Dalal, Navneet and Triggs, Bill},
+  booktitle={Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year={2005}
+}
+@article{Prewitt1970object,
   title={Object enhancement and extraction},
   author={Prewitt, Judith MS},
   journal={Picture processing and Psychopictorics},
   year={1970}
 }
-@article{sobel19683x3,
+@article{Sobel19683x3,
   title={A 3x3 isotropic gradient operator for image processing},
   author={Sobel, I. and Feldman, G.},
   year={1968}
 }
-@phdthesis{roberts1963machine,
+@phdthesis{Roberts1963machine,
   title={Machine perception of three-dimensional soups},
   author={Roberts, Lawrence Gilman},
   year={1963},
   school={Massachusetts Institute of Technology}
 }
-@article{canny1986computational,
+@article{Canny1986computational,
   title={A computational approach to edge detection},
   author={Canny, J.},
   journal={Transaction on Pattern Analysis and Machine Intelligence (PAMI)},
   year={1986}
 }
-@article{marr1980theory,
+@article{Marr1980theory,
   title={Theory of edge detection},
   author={Marr, D. and Hildreth, E.},
   journal={Proceedings of the Royal Society of London. Biological Sciences},
   year={1980}
 } 
-@article{deriche1987using,
+@article{Deriche1987using,
   title={Using {C}anny's criteria to derive a recursively implemented optimal edge detector},
   author={Deriche, R.},
   booktitle={International Journal of Computer Vision (IJCV)},
   year={1987}
 }
-@inproceedings{rubner1996coalescing,
+@inproceedings{Rubner1996coalescing,
   title={Coalescing texture descriptors},
   author={Rubner, Yossi and Tomasi, Carlo},
   booktitle={ARPA Image Understanding Workshop},
   year={1996}
 }
-@inproceedings{will2000learning,
+@inproceedings{Will2000learning,
   title={On learning texture edge detectors},
   author={Will, Stefan and Hermes, Lothar and Buhmann, Joachim M and Puzicha, Jan},
   booktitle={International Conference on Image Processing (ICIP)},
   year={2000}
 }
-@article{beucher1992morphological,
+@article{Beucher1992morphological,
   title={The morphological approach to segmentation: the watershed transformation},
   author={Beucher, S. and Meyer, F.},
   journal={Optical Engineering - Marcel Dekker},
   year={1992}
 }
-@article{najman1996geodesic,
+@article{Najman1996geodesic,
   title={Geodesic saliency of watershed contours and hierarchical segmentation},
   author={Najman, L. and Schmitt, M.},
   journal={Transaction on Pattern Analysis and Machine Intelligence (PAMI)},
@@ -201,7 +399,7 @@
   author={Couprie M.},
   Howpublished={\url{https://pinkhq.com/jhome/}},
 }
-@article{rosenfeld1976digital,
+@article{Rosenfeld1976digital,
   title={Digital picture processing},
   author={Rosenfeld, A and Kak, AC},
   journal={Computer science},
@@ -237,43 +435,23 @@
   booktitle={Advances in neural information processing systems (NIPS)},
   year={2012}
 }
-%%%%%%%%%%%%%%%%%%%%%%
-@inproceedings{Maire2008using,
-  title={Using contours to detect and localize junctions in natural images},
-  author={Maire, M. and Arbel{\'a}ez, P. and Fowlkes, C. and Malik, J.},
-  booktitle={Conference on Computer Vision and Pattern Recognition (CVPR)},
-  year={2008}
+@article{Malik2001contour,
+  title={Contour and texture analysis for image segmentation},
+  author={Malik, Jitendra and Belongie, Serge and Leung, Thomas and Shi, Jianbo},
+  journal={International Journal of Computer Vision (IJCV)},
+  year={2001}
 }
-@article{martin2004learning,
+@article{Martin2004learning,
   title={Learning to detect natural image boundaries using local brightness, color, and texture cues},
   author={Martin, D. R. and Fowlkes, C. and Malik, J.},
   journal={Transaction on Pattern Analysis and Machine Intelligence (PAMI)},
   year={2004}
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-@inproceedings{Felzenszwalb04,
-  author = {P. F. Felzenszwalb and D. P. Huttenlocher},
-  title = {Efficient Graph-Based Image Segmentation},
-  booktitle = {International Journal of Computer Vision (IJCV)},
-  year = {2004}
-} %volume = {59}, %number = {2},
-@inproceedings {Galasso14,
-  author = {Galasso, F. and Keuper, M. and Brox, T. and Schiele, B.},
-  title = {Spectral Graph Reduction for Efficient Image and Streaming Video Segmentation},
-  booktitle = {Conference on Computer Vision and Pattern Recognition (CVPR)},
-  year = {2014}
-}
-@inproceedings {Galasso11,
-  author = {Galasso, F. and Iwasaki, M. and Nobori, K. and Cipolla, R.},
-  title = {Spatio-Temporal Clustering of Probabilistic Region Trajectories},
-  booktitle = {International Conference on Computer Vision (ICCV)},
-  year = {2011}
-}
-@techreport{Fowlkes04,
-  Author = {Fowlkes, C. and Malik, J.},
-  Title = {How Much Does Globalization Help Segmentation?},
-  Institution = {EECS -- UC Berkeley},
-  Year = {2004},
+@inproceedings{Maire2008using,
+  title={Using contours to detect and localize junctions in natural images},
+  author={Maire, M. and Arbel{\'a}ez, P. and Fowlkes, C. and Malik, J.},
+  booktitle={Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year={2008}
 }
 @inproceedings{Arbelaez09,
   author = {Arbel\'aez, P. and Maire, M. and Fowlkes, C. and Malik, J.},
@@ -293,27 +471,22 @@
   Howpublished={\url{http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/resources.html}},
   year={2011}
   }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @inproceedings{Brox10,
   author = {Brox, T. and Malik, J.},
   booktitle = {European Conference on Computer Vision (ECCV)}, 
   title = {Object segmentation by long term analysis of point trajectories},
   year = 2010
 } %pages = {282-295},
+@inproceedings {Galasso11,
+  author = {Galasso, F. and Iwasaki, M. and Nobori, K. and Cipolla, R.},
+  title = {Spatio-Temporal Clustering of Probabilistic Region Trajectories},
+  booktitle = {International Conference on Computer Vision (ICCV)},
+  year = {2011}
+}
 @inproceedings{GalassoCS12,
   author = {Galasso, F. and Cipolla, R. and Schiele, B.},
   booktitle = {Asian Conference on Computer Vision (ACCV)},
   title = {Video Segmentation with Superpixels.}, 
   year = 2012
 }  %pages = {760-774}, %volume = 7724,
-@inproceedings{Galasso13,
-  title = {A Unified Video Segmentation Benchmark: Annotation, Metrics and Analysis},
-  booktitle = {International Conference on Computer Vision (ICCV)},
-  year = {2013},
-  author = {Galasso, F. and Nagaraja, N. S. and Cardenas, T. Z. and Brox, T. and Schiele, B.}
-}
-@inproceedings{Martin01,
-  author = {Martin, D. R. and Fowlkes, C. and Tal, D. and Malik, J.},
-  booktitle = {International Conference on Computer Vision (ICCV)},  
-  title = {A Database of Human Segmented Natural Images and its Application to Evaluating Segmentation Algorithms and Measuring Ecological Statistics.},
-  year = 2001
-} %pages = {416-425},
