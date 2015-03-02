@@ -66,6 +66,7 @@ we average all votes per \textit{watershed arc}. The watershed arcs, as discusse
 For a specific location one tree of the structured forest predicts a segmentation. From the watershed we have a corresponding patch, see \fref{fig:weighting-the-watershed-contours}. As mentioned already, there are two aspects to scoring their similarity: 1) making them suitable (\ie sufficiently similar) for comparison, and 2) choosing a function that can assess the agreement between the two patches as to the presence or absence of an edge.
 
 \subsubsection{Patch transformations}
+\label{sec:ch4-patch-transformations}
 To appreciate the necessity of making the two types of segmentation patches comparable, look at \fref{fig:watershed-and-leaf-patches} which features a selection of watershed and tree leaf patches.
 
 \textbf{Watershed patch:} The watershed patch is an oversegmentation with an \textbf{explicit boundary of size 1 pixel} between the segments.
@@ -172,6 +173,7 @@ aims for an optimal superpixels merge into segments, according to the structured
 \end{figure}
 
 \paragraph{Watershed arc}\mbox{}\\\mbox{}\\ % previously called ``just contour'' % region boundary
+\label{par:ch4-watershed-arc}
 See \fref{fig:ws-just-contour} for an example. Here we take into account only the underlying region boundary, on which the central pixel of the watershed patch is.
 
 \textbf{Watershed arc:} We recursively subdivide this boundary until a \textbf{watershed arc} is obtained, \fref{fig:sub:ws-just-contour-watershed-just-contour}, whose shape could be sufficiently accurately approximated by the straight line through the arc's end points. We described this subdivision in Section~\ref*{sec:ch3-OWT}~\ref{par:ch3-watershed-arc}. See also \fref{fig:Arbelaez09-watershed-arcs}.
@@ -241,14 +243,23 @@ Note that, unlike with \textit{greedy merge}, none of the transformations given 
 \end{figure}
 
 \paragraph{Line fitting}\mbox{}\\\mbox{}\\
-We utilise 3 types of line fitting, shown on \fref{fig:ws-line-fitting} and \fref{fig:ws-line-fitting2}.
+\label{par:ch4-line-fitting}
+We utilise 3 types of line fitting, shown in Figures \ref{fig:ws-line-fitting} and \ref{fig:ws-line-fitting2}.
 
-\subparagraph{Line fitted through arc {\bf end points}:} a parametric fit, based on the derivative direction of the end-pixels of the watershed edge we vote on; this is shown in \fref{fig:sub:ws-line-fitting-ends} and \fref{fig:sub:ws-line-fitting-ends2} in our examples.
+\subparagraph{Line fitted through arc {\bf end points}:} a parametric fit, based on the derivative direction of the end-pixels of the watershed edge we vote on; this is shown in Figures \ref{fig:sub:ws-line-fitting-ends} and \ref{fig:sub:ws-line-fitting-ends2} in our examples.
 
-\subparagraph{Line fitting through {\bf centre} of the patch, based on arc end points:} as above, but enforcing adherence to the centre of the image patch; the examples are \fref{fig:sub:ws-line-fitting-centre} and \fref{fig:sub:ws-line-fitting-centre2}.
+\subparagraph{Line fitting through {\bf centre} of the patch, based on arc end points:} 
+\label{par:ch4-line-centre}
+as above, but enforcing adherence to the centre of the image patch; the examples are Figures  \ref{fig:sub:ws-line-fitting-centre} and \ref{fig:sub:ws-line-fitting-centre2}.
 
-\subparagraph{Line estimated with {\bf linear least squares (LLS)}:} least squares minimisation, taking into account \textbf{all} the watershed arc pixels; see the examples in \fref{fig:sub:ws-line-fitting-lls} and \fref{fig:sub:ws-line-fitting-lls2}. Also notice how in the second example  %(\fref{fig:ws-line-fitting2}) 
-the LLS line fitting (\fref{fig:sub:ws-line-fitting-lls2}) disagrees with the direction of the line determined by the parametric methods (\fref{fig:sub:ws-line-fitting-ends2} and \fref{fig:sub:ws-line-fitting-centre2}).
+\subparagraph{Line estimated with {\bf linear least squares (LLS)}:} 
+\label{par:ch4-line-fitting-lls}
+least squares minimisation, taking into account \textbf{all} the watershed arc pixels. By linear least squares minimisation we find the parameters of the linear form ($(x,y)$ are the coordinates of the pixel position):
+\[
+ Dx+Ey+F=0
+\]
+See the examples in Figures \ref{fig:sub:ws-line-fitting-lls} and \ref{fig:sub:ws-line-fitting-lls2}. Also notice how in the second example  %(\fref{fig:ws-line-fitting2}) 
+the LLS line fitting (\fref{fig:sub:ws-line-fitting-lls2}) disagrees with the direction of the line determined by the parametric methods (Figures \ref{fig:sub:ws-line-fitting-ends2} and \ref{fig:sub:ws-line-fitting-centre2}).
 
 % \begin{enumerate}
 %   \item{Line fitted through arc {\bf end points}:} a parametric fit, based on the derivative direction of the end-pixels of the watershed edge we vote on; this is shown in sub-figures~\ref{fig:sub:ws-line-fitting-ends} and~\ref{fig:sub:ws-line-fitting-ends2} in our examples,
@@ -296,7 +307,7 @@ the LLS line fitting (\fref{fig:sub:ws-line-fitting-lls2}) disagrees with the di
   \label{fig:sub:ws-line-fitting-lls}
   }
 \end{center}
-\caption[First example of watershed {\bf line fitting}]{First example of watershed line fitting. The comparison is between a watershed patch (in green \protect\subref{fig:sub:ws-line-fitting-ends},\protect\subref{fig:sub:ws-line-fitting-centre},\protect\subref{fig:sub:ws-line-fitting-lls}) and a tree leaf segmentation patch (not given, since no transformation is applied; hence, they would be similar to the greyscale patches on the right of \fref{fig:watershed-and-leaf-patches}).}
+\caption[First example of watershed {\bf line fitting}]{First example of watershed line fitting. The comparison is between a watershed patch (in green \protect\subref{fig:sub:ws-line-fitting-ends},\protect\subref{fig:sub:ws-line-fitting-centre},\protect\subref{fig:sub:ws-line-fitting-lls}) and a tree leaf segmentation patch (not given, since no transformation is applied; hence, the leaves patches would be similar to the greyscale patches on the right of \fref{fig:watershed-and-leaf-patches}).}
 \label{fig:ws-line-fitting}
 \end{figure}
 
@@ -339,12 +350,15 @@ the LLS line fitting (\fref{fig:sub:ws-line-fitting-lls2}) disagrees with the di
 \end{figure}
 
 \paragraph{Quadratic fitting}\mbox{}\\\mbox{}\\
-We extend the idea of linear least squares fit to the data from the previous section. We enrich %augment, boost
-the model with higher-order - quadratic, terms to allow for polynomial (of degree up to 2) solutions. We find by linear least squares minimisation the parameters of the quadratic form: % a quadratic form is a homogeneous polynomial of degree two in a number of variables
+\label{par:ch4-quadratic-lls-fitting}
+We extend the idea from the previous Section~\ref*{sec:ch4-patch-transformations}~\ref{par:ch4-line-fitting-lls} of applying linear least squares to fit the edge (a {\it watershed arc} intervening two regions, or a {\it boundary between regions}) data. The model takes into account each of the pixels $(x,y)$ that form the edge. We enrich %augment, boost
+the model by adding {\bf quadratic terms}. The higher-order terms allow for polynomial solutions of degree up to 2. By {\bf linear least squares minimisation} we find the parameters of the quadratic form (the higher-order terms are given in bold): % a quadratic form is a homogeneous polynomial of degree two in a number of variables
 \[
- Ax^2+Bxy+Cy^2+Dx+Ey+F=0
+ \mathbf{Ax^2+Bxy+Cy^2}+Dx+Ey+F=0
 \]
-When $A + B + C \ne 0$ the graph of the solutions is a \textbf{conic section} - an ellipse, parabola or hyperbola. In the case of hyperbola, whenever both branches of the hyperbola are present in the patch, we choose the one minimising the distance to the watershed arc edge (according to which the fit is made).
+
+When $A + B + C \ne 0$, the graph of the solutions is a \textbf{conic section} - an ellipse, a parabola, or a hyperbola. In the case of a hyperbola, whenever both branches of the hyperbola are present in the patch, we choose the one minimising the Euclidean distance (\ie, the {\it $L^2$ norm}) to the watershed arc edge (according to which the fit is made).
+% TODO add an image of that - two branches, and then only the one with the minimising branch
 
 In \fref{fig:ws-quadratic-fitting} we show 6 examples of quadratic fitting. We have omitted the source image % leopard and hawaii
 and local patch and adhere to % stick to
@@ -371,8 +385,8 @@ the relevant for the fit information, namely the watershed contour whose pixels 
   \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-bdry2.png} &
   \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-bdry3.png} &
   \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-bdry4.png} &
-  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-bdry5.png} &
-  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-bdry6.png} \\
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-bdry6.png} &
+  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-bdry5.png} \\
   
   {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.11\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg1.png}}} &
   {\fboxrule=2pt \fcolorbox{green}{white}{\fboxrule=0.5pt \includegraphics[width=0.11\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/quadr-lls-seg2.png}}} &
@@ -384,12 +398,13 @@ the relevant for the fit information, namely the watershed contour whose pixels 
   ex. 1 & ex. 2 & ex. 3 & ex. 4 & ex. 5 & ex. 6 \\
   \end{tabular}
 \end{center}
-\caption[Watershed quadratic fitting]{Watershed quadratic fitting. For each of the 6 examples, the {\bf first} row features the cropped watershed patch. The {\bf second} row has the relevant watershed arc. The {\bf third} row has the result from the {\bf quadratic fitting} (boundary is explicit). On the {\bf fourth} row is the segmentation labelling - the final transformed watershed patch (in green) which we use to compare to the structured forest segmentations (not given, since no transformation is applied; hence, they would be similar to the greyscale patches on the right of \fref{fig:watershed-and-leaf-patches}).}
+\caption[Watershed quadratic fitting]{Watershed quadratic fitting. For each of the 6 examples, the {\bf first} row features the cropped watershed patch. The {\bf second} row shows the relevant watershed arc. The {\bf third} row contains the result from the {\bf quadratic fitting} (boundary is explicit). On the {\bf fourth} row is the segmentation labelling - the final transformed watershed patch (in green) which we use to compare to the structured forest segmentations (not given, since no transformation is applied; hence, the patches from the leaves would be similar to the greyscale patches on the right of \fref{fig:watershed-and-leaf-patches}). Notice in ex. 2 that the model is also capable of fitting a line to ``explain'' the data, \ie, conic sections are not enforced as a solution.}
 \label{fig:ws-quadratic-fitting}
 \end{figure}
 
-Unfortunately, this method is often thwarted by the imprecision of continuous function values being discretised on a $16\times 16$ pixels patch. %Those result in inability to localise the graph of the quadratic functions on the patch.
-As a result the graph of the quadratic function falls outside the patch. In practice, this patch transformation still performs well enough, albeit not as well as expected.
+\textbf{Poor performance in practice:} Unfortunately, this method is often thwarted by the imprecision of continuous function values being discretised on a $16\times 16$ pixels patch. %Those result in inability to localise the graph of the quadratic functions on the patch.
+As a result the graph of the quadratic function falls outside the patch. In practice, this patch transformation still performs tolerably, % modestly % well enough, 
+albeit not as well as expected.
 
 \subsection{Scoring functions for patch similarity}
 Now that we have made the watershed and the structured tree leaf patch comparable, how to quantify their similarity? 
@@ -433,6 +448,7 @@ An advantage of this  metric is that it is sensitive to the complexity of the bo
 Rand index, or Rand measure~\cite{rand1971objective} is a statistical measure of the similarity between two data clusters.
 
 \subparagraph{Rand index (RI)}\mbox{}\\
+\label{par:ch4-RI-maths}
 Here is how the RI between two segmentations could be defined.
 
 \begin{align*}
@@ -628,17 +644,19 @@ Further, we define the following normalisation with the lower bound being comput
 \]
 
 \subsection{Symmetric and asymmetric metrics}
-Of the above metrics, BPR, RI, and not-normalised VPR are symmetric \wrt the segmentation under test and the ground truth segmentation. SC as well as the two normalised versions of VPR are asymmetric. VPR incorporates and develops the idea present in SC about a maximal \textit{Overlap}, but additionally provides normalisation. Therefore in our experiments in \cref{Chapter5} we don't consider SC.
+Of the above metrics, BPR, RI, and not-normalised VPR are symmetric \wrt the segmentation under test and the ground truth segmentation. SC as well as the two normalised versions of VPR are asymmetric. VPR incorporates and develops the idea present in SC about a maximal \textit{Overlap}, but additionally provides normalisation. Therefore in our experiments in \cref{Chapter5} we do not consider SC.
 
-% for the normalisation:
+% NOTE for the normalisation:
 % G - ground truth = trees
 % S - segmentation under test = ws
 
 \subsubsection{Assigning patches to \texorpdfstring{$\mathbb{S}$}{S} and \texorpdfstring{$\mathbb{G}_i$}{G}}
+\label{sec:ch4-asymmetry-VPR-assigning-patches-S-G}
 It bears mentioning %is worth pointing out
 that for normalised VPR we have considered the transformed \textbf{watershed patch} to be the \textbf{segmentation under test ($\mathbb{S}$)} and the other patch to be a ground truth ($\mathbb{G}_i$). 
-In most experiments (to be comprehensively % systematically detailedly 
-review in \sref{sec:ch5-structured-voting}) the ``other patch'' is a segmentation patch from a decision tree leaf - one predicted as most likely segmentation for the location. In another series of experiments (detailed in \sref{sec:ch5-oracle}) the ``other patch'' being compared is a crop from the ground truth annotated segmentations.
+
+In most experiments (our {\it structured voting}; to be comprehensively % systematically detailedly 
+reviewed in \sref{sec:ch5-structured-voting}) the ``other patch'' is a segmentation patch from a decision tree leaf - one predicted as most likely segmentation for the location. In another series of experiments (termed {\it oracle experiments}, as we use the ground truth; detailed in \sref{sec:ch5-oracle}) the ``other patch'' being compared is a crop from the ground truth annotated segmentations.
 It is then clear that the watershed patch, since it is always one, as the machine segmentation, receives this allocation. Also, it is only natural in the context of the VPR benchmark to assign the $T$ tree leaf patches, or the ground truth cropped patches to the set of ground truth segmentations $\{\mathbb{G}_i\}_{i=1}^M$.
 
 \section[Third stage of the pipeline - UCM]{Third stage of the pipeline - hierarchical segmentation - UCM}
@@ -652,22 +670,23 @@ This section remarks on an implementation aspect of edge detection and image seg
 of results across detectors and segmenters.
 
 It is beneficial %desirable 
-for the benchmark task to have the output values of both edge detector and image segmentation into $[0,1]$. That additionally lends itself to probabilistic interpretation, which could potentially allow to easily combine different models.
+for the benchmark task to have the output values of both edge detector and image segmentation into $[0,1]$. That additionally lends itself to a probabilistic interpretation, which could potentially facilitate the combination of outputs of different models. %allow to easily combine different models.
 
 \subsubsection{Structured edge}
-In the SE algorithm~\cite{DollarICCV13edges,Dollar2015PAMI} every pixels receives between 0 and 256 votes. The decisions are ensembled by superposing patches of edge masks. Rather than averaging, however, the number of votes is divided by 128, which leaves an output that would theoretically fall into the $[0, 2]$ range. As a post-processing a triangular filter is applied, which has a smoothing and denoising effect. The resulting output indeed is used to %could match 
-a probabilistic interpretation - only the strongest edges do have a value above 1, and those values are practically cut-off when benchmarking using BPR (the implementation of Arbel\'aez\etal).
+In the SE algorithm~\cite{DollarICCV13edges,Dollar2015PAMI} every pixels receives between 0 and 256 votes. The decisions are ensembled by superposing patches of edge masks. Rather than averaging, however, the number of votes is divided by 128, which leaves an output that would theoretically fall into the $[0, 2]$ range. As a post-processing, a triangular filter is applied, which has a smoothing and denoising effect. The resulting output indeed is used to %could match 
+a probabilistic interpretation - only the strongest edges do have a value above 1, and those values are practically cut-off when benchmarking using BPR (the implementation of Arbel\'aez \etal).
 
 \subsubsection{gPb-OWT-UCM}
-Arbel\'aez \etal~\cite{Arbelaez11} learn a sigmoid on the BSDS500 training subset, and finish their segmentation algorithm by rescaling with a the learn sigmoid. The learnt values, of course, are exclusively suitable for their approach. For consistency we also apply the sigmoid transformation, before finally rescaling (see next paragraph).
+Arbel\'aez \etal~\cite{Arbelaez11} learn a sigmoid on the BSDS500 training subset, and finish their segmentation algorithm by rescaling with the learn sigmoid. The learnt values, of course, are exclusively suitable for their approach. For consistency we also first apply the sigmoid transformation, before finally rescaling (see next paragraph).
 
 \subsubsection{Our approach - scale the UCM output} %The missing recall comes from UCM values not being scaled in [0,1]. Here, I believe, the non-zero values are in [0.0015, 0,5964].  On a different experiment I get the non zeros in [0.93, 0.99].  Bad results certainly can't be remedied by rescaling the ucm output.
-We apply rescaling of the non-zero UCM values into $[0.01, 0.99]$ as post-processing step of out SE-SV-UCM pipeline. The procedure is a modification of the simple image enhancement technique (applicable to greyscale images) known as {\it contrast stretching}, or {\it normalisation}. Thereby the relative order of the image edges delimiting the regions is preserved. Note that rescaling doesn't change the shape of the evaluation curve, just extends it to cover as much of the recall range as possible. So the boundary- and region-based benchmark values are unaffected. The curve of the method being evaluated, however, better reflects its quality on the full operational range of BPR and VPR.
+We apply rescaling of the {\bf non-zero UCM values} into $[0.01, 0.99]$ as post-processing step of out SE-SV-UCM pipeline. The procedure is a modification of the simple image enhancement technique (applicable to greyscale images) known as {\bf contrast stretching}, or {\bf normalisation}. Thereby the relative order of the image edges delimiting the regions is preserved. Note that rescaling doesn't change the shape of the evaluation curve, just extends it to cover as much of the recall range as possible. So the boundary- and region-based benchmark values are unaffected. The curve of the method being evaluated, however, better reflects its quality on the full operational range of BPR and VPR.
 
+\subsubsection{Histogram equalisation of UCM for the benefit of visual comparison}
 In their recent paper~\cite{Hallman2014} Hallman and Fowlkes also remark on the histogram of UCM values, as they would like to be able to visually compare the UCM output of different algorithms. Their main goal is the meaningful visualisation of output results of different algorithms and qualitative comparison by visual inspection of outputs - hierarchical segmentations. In Appendix A they discuss the computation of a monotonic transformation to approximate the histogram of values \wrt a ``reference'' algorithm.
 
 \subsection{Using Pb values for segmentation} % TODO how to name it?
-Our current approach discards edge saliency information - the probability of boundary values obtained by the Structured edge~\cite{DollarICCV13edges}, and uses just the watershed contours locations. We relies only on the structured information contained in the trained Structured forest to weight the watershed.
+Our current approach discards edge saliency information - the probability of boundary values obtained by the Structured edge~\cite{DollarICCV13edges}, and uses just the watershed contours locations. We rely only on the structured information contained in the trained Structured forest to weight the watershed.
 
-Both the output of our algorithm and structured edge lend themselves to % TODO
+Both the outputs of our algorithm and of structured edge lend themselves to % TODO
 a probabilistic interpretation. As a future work, it would perhaps be beneficial to combine those differently designed submodels into one.
