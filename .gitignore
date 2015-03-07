@@ -3,6 +3,8 @@
 
 *.bbl
 *.blg
+" list of figures temporary file
+*.lof
 *.toc
 
 *.aux
