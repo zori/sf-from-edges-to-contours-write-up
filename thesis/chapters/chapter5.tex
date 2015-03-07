@@ -496,7 +496,7 @@ in \sref{sec:ch4-asymmetry-VPR-assigning-patches-S-G} when discussing argument a
 % (d). line (ends) + RI
 
 \subsection{Compared weighting strategies}
-We have chosen to compare here 4 methods and their corresponding oracles. \fref{fig:oracle} contains their precision-recall quantitative results. Each method uses a different {\bf patch transformation} and a different {\bf scoring function} than the others: 
+We have chosen to compare here four methods and their corresponding oracles. \fref{fig:oracle} contains their precision-recall quantitative results and \tref{tab:oracle} all the measures that we report. Each method uses a different {\bf patch transformation} and a different {\bf scoring function} than the others: 
 \begin{enumerate}
  \item[(a)] quadratic LLS fitting (Section~\ref*{sec:ch4-patch-transformations}~\ref{par:ch4-quadratic-lls-fitting}) + VPR normalised on the side of the watershed (Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-VPR-maths}),
  \item[(b)] fairer greedy merge (Section~\ref*{sec:ch4-patch-transformations}~\ref{par:ch4-fair-greedy-merge}) + VPR normalised on the side of the trees (Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-VPR-maths}),
@@ -516,6 +516,42 @@ We have chosen to compare here 4 methods and their corresponding oracles. \fref{
 \caption[Oracle experiments using the ground truth - plots]{Oracle experiments using the ground truth. See the text for the details on the methods and analysis.}
 \label{fig:oracle}
 \end{figure}
+
+
+\begin{table}[htbp]
+\renewcommand{\arraystretch}{1.3}
+\centering
+\scriptsize
+\begin{tabular}{l|c|c|c||c|c|c||c|c|c|}
+\cline{2-10} % ZZ
+\multirow{2}{*}{} & \multicolumn{3}{c||}{\textbf{BPR}} & \multicolumn{3}{c||}{\textbf{VPR}}& \multicolumn{3}{c|}{\textbf{Region}}\\
+\cline{2-10}
+& \textbf{ODS}  & \textbf{OIS} & \textbf{AP} % <- BPR
+& \textbf{ODS} & \textbf{OSS} & \textbf{AP} % <- VPR
+& \textbf{SC} & \textbf{PRI} & \textbf{VoI} \\
+\hline
+\multicolumn{1}{|l|}{Human} & .79 & .79 & - & - & - & - & .72 & .88 & 1.17 \\ % actually, we had .80 for humans on BPR from \cite{Arbelaez11}; % TODO for VPR - we don't know ODS = OIS for humans
+\hline
+% oracle:
+% (a). quadratic LLS + VPR normalised on the side of the watershed
+% (b). fairer greedy merge + VPR normalised on the side of the trees
+% (c). watershed arc + BPR 3
+% (d). line (ends) + RI
+\multicolumn{1}{|r|}{(a)} & .54 & .56 & .40 & .40 & .40 & .25 & .34 & .55 & 2.45 \\
+\multicolumn{1}{|r|}{oracle: (a)} & .67 & .68 & .57 & .31 & .31 & .18 & .33 & .49 & 2.43 \\
+\multicolumn{1}{|r|}{(b)} & .65 & .67 & .66 & .69 & .71 & .71 & .54 & .80 & 1.96 \\
+\multicolumn{1}{|r|}{oracle: (b)} & .74 & .76 & .76 & .80 & .81 & .83 & .69 & .87 & 1.53 \\
+\multicolumn{1}{|r|}{(c)} & .63 & .65 & .60 & .66 & .67 & .62 & .51 & .78 & 2.13 \\
+\multicolumn{1}{|r|}{oracle: (c)} & .84 & .85 & .86 & .76 & .77 & .74 & .64 & .84 & 1.60 \\
+\multicolumn{1}{|r|}{(d)} & .67 & .69 & .70 & .67 & .69 & .71 & .52 & .80 & 1.99 \\
+\multicolumn{1}{|r|}{oracle: (d)} & .85 & .86 & .91 & .80 & .82 & .85 & .70 & .87 & 1.31 \\
+\hline
+\end{tabular}
+\caption[4 of our methods compared to their oracle versions]{4 of our methods compared to their {\bf oracle} versions - benchmark scores on the validation subset of BSDS500~\cite{BSDS500resources}. See the text for details.}
+%The table shows aggregate measures (ODS, OSS, AP) for boundary precision-recall (BPR), volume precision-recall (VPR) and 
+%includes region statistics (SC, PRI, VoI).}
+\label{tab:oracle}
+\end{table}
 
 % Ranking of oracles confirms Correct Weighting Strategies % NOTE not quite :)
 \subsection{Conclusions of the oracle experiments}

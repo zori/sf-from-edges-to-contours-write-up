@@ -57,6 +57,20 @@
 \multicolumn{1}{|l|}{quadratic LLS} & .54 & .56 & .40 & .40 & .40 & .25 & .37 & .55 & 2.45 \\
 \hline
 \hline
+% oracle:
+% (a). quadratic LLS + VPR normalised on the side of the watershed
+% (b). fairer greedy merge + VPR normalised on the side of the trees
+% (c). watershed arc + BPR 3
+% (d). line (ends) + RI
+\multicolumn{1}{|r|}{(a)} & .54 & .56 & .40 & .40 & .40 & .25 & .34 & .55 & 2.45 \\
+\multicolumn{1}{|r|}{(b)} & .65 & .67 & .66 & .69 & .71 & .71 & .54 & .80 & 1.96 \\
+\multicolumn{1}{|r|}{(c)} & .63 & .65 & .60 & .66 & .67 & .62 & .51 & .78 & 2.13 \\
+\multicolumn{1}{|r|}{(d)} & .67 & .69 & .70 & .67 & .69 & .71 & .52 & .80 & 1.99 \\
+\multicolumn{1}{|r|}{oracle: (a)} & .67 & .68 & .57 & .31 & .31 & .18 & .33 & .49 & 2.43 \\
+\multicolumn{1}{|r|}{oracle: (b)} & .74 & .76 & .76 & .80 & .81 & .83 & .69 & .87 & 1.53 \\
+\multicolumn{1}{|r|}{oracle: (c)} & .84 & .85 & .86 & .76 & .77 & .74 & .64 & .84 & 1.60 \\
+\multicolumn{1}{|r|}{oracle: (d)} & .85 & .86 & .91 & .80 & .82 & .85 & .70 & .87 & 1.31 \\
+\hline
 \end{tabular}
 \caption[Benchmark scores for SoA and ours]{State-of-the-art edge detection and segmentation methods, and all our experiments - benchmark scores on BSDS500~\cite{BSDS500resources}.}
 %The table shows aggregate measures (ODS, OSS, AP) for boundary precision-recall (BPR), volume precision-recall (VPR) and 
