@@ -2,10 +2,14 @@
 \label{Chapter4}
 \settocdepth{paragraph}
 Given an edge detection result, various methods could be employed to obtain image segmentation.  One approach is to try and identify all possible boundaries of segmentation regions, based on the probability of boundary score produced by the edge detector. Those boundaries %, called \textit{watershed pixels}, 
-finely partition the image pixel graph (see \sref{sec:ch3-watershed} for a description of the \textit{watershed transform} which we will use). The regions closed by them constitute an oversegmentation of the image. Different tasks require segmentation at different level of detail. It is useful, therefore, to be able to obtain coarser segmentations as well. 
-By reasoning about the salience of region boundaries, one could construct a \textit{hierarchy of segmentations} (see \sref{sec:ch3-UCM} for details on the UCM). Going up the hierarchy corresponds to coarsening the segmentation by merging neighbouring regions which are separated by a weak boundary. To establish the order in which to merge the regions, we must be able to tell weak from strong boundaries. We want to associate a \textit{score} with every possible region boundary, which score should reflect the strength of that intervening boundary.
+finely partition the image pixel graph (see \sref{sec:ch3-watershed} for a description of the \textit{watershed transform} which we will use). The regions closed by them constitute an oversegmentation of the image. 
 
-\textbf{Structured voting:} To score the region boundaries we take a patch comparison approach. The edge detector which we employ, Structured edge (SE) by Doll\'ar~\etal~\cite{DollarICCV13edges}, associates a segmentation to every patch centred around a pixel location in the image - its most likely segmentation. The possible region boundaries locations are obtained by a watershed transformation on the output of this detector. For the same location we attain a patch from the watershed locations image. We then explore strategies to compare those two patches and score the similarity between them, a higher score meaning higher local evidence for boundary. We call those \textbf{watershed weighting strategies}. The choice of such an approach defines how we conduct our \textbf{Structured voting (SV)}.
+Different tasks require segmentation at different level of detail. It is useful, therefore, to be able to obtain coarser segmentations as well. 
+By reasoning about the salience of region boundaries, one could construct a \textit{hierarchy of segmentations} (see \sref{sec:ch3-UCM} for details on the {\tt UCM}). Going up the hierarchy corresponds to coarsening the segmentation by merging neighbouring regions which are separated by a weak boundary. To establish the order in which to merge the regions, we must be able to tell weak from strong boundaries. We want to associate a \textit{score} with every possible region boundary, which score should reflect the strength of that intervening boundary.
+
+The {\tt OWT} reviewed in \sref{sec:ch3-OWT} provided one possible way to obtain such a score, by using oriented edge information. In the following we propose a different methodology which relies on patch comparison and local edge structure.
+
+\textbf{Structured voting:} To score the region boundaries we take a patch comparison approach. The edge detector which we employ, Structured edge ({\tt SE}) by Doll\'ar~\etal~\cite{DollarICCV13edges}, associates a segmentation to every patch centred around a pixel location in the image - its most likely segmentation. The possible region boundaries locations are obtained by a {\bf watershed transformation} on the output of this detector. For the same location we attain a patch from the watershed locations image. We then explore strategies to compare those two patches and score the similarity between them, a higher score meaning higher local evidence for boundary. We call those {\bf watershed weighting strategies}. The choice of such an approach defines how we conduct our \textbf{Structured voting ({\tt SV})}.
 
 \textbf{How to vote? Two essentials:} We identify two important points in order to be able to score the two patches just described. 
 Firstly, one being a local segmentation, and the other - a local oversegmentation, they are quite dissimilar. Therefore, one patch needs to be sensibly \textbf{transformed}, so that the two patches are comparable. 
@@ -13,33 +17,33 @@ Secondly, given that the two patches are comparable, what \textbf{scoring functi
 subset of them in our practical experiments. 
 So a watershed weighting strategy has two aspects - making the patches sufficiently similar to compare, and choosing a scoring function to compare them.
 
-\textbf{Pipeline:} In the terms of the framework of Arbel\'aez~\etal~\cite{Arbelaez11} - gPb-OWT-UCM, we propose to use SE instead of gPb as an edge detector. Further, we replace the Oriented watershed transform (OWT) by SV to obtain scored region boundary locations. Our image segmentation pipeline could then be titled \textbf{SE-SV-UCM}, see \fref{fig:SE-SV-UCM-pipeline}.
+\textbf{Pipeline:} In the terms of the framework of Arbel\'aez~\etal~\cite{Arbelaez11} - {\tt gPb-OWT-UCM}, we propose to use {\tt SE} instead of gPb as an edge detector. Further, we replace the Oriented watershed transform ({\tt OWT}) by {\tt SV} to obtain scored region boundary locations. Our image segmentation pipeline could then be titled {\tt SE-SV-UCM}, see \fref{fig:SE-SV-UCM-pipeline}.
 
 \begin{figure}[ht!]
 \centering
  \includegraphics[width=1\textwidth]{images/SE-SV-UCM/SE-SV-UCM_pipeline.png}
-\caption{Our SE-SV-UCM algorithm in the context of gPb-OWT-UCM pipeline, see \fref{fig:gPb-OWT-UCM-pipeline}.}
+\caption[Our {\tt SE-SV-UCM} algorithm in the context of the {\tt gPb-OWT-UCM} pipeline]{Our {\tt SE-SV-UCM} algorithm in the context of the {\tt gPb-OWT-UCM} pipeline, see \fref{fig:gPb-OWT-UCM-pipeline}.}
 \label{fig:SE-SV-UCM-pipeline}
 \end{figure}
 
 In the rest of the chapter we describe our algorithm's pipeline. We finish with a discussion on practical issues concerning edge detection and image segmentation output format.
 
 \section[First stage of the pipeline - Structured edge]{First stage of the pipeline - edge detection - Structured edge}
-We employ the edge detector SE of~\cite{DollarICCV13edges,Dollar2015PAMI}.
+We employ the edge detector {\tt SE} of~\cite{DollarICCV13edges,Dollar2015PAMI}.
 
-\subsection{gPb vs. SE}
-The gPb algorithm uses a combination of carefully designed features - the gradients, each at 3 scales of: 1) texture, 2) brightness, and 3) colour (a total of 9 channels). As Doll\'ar reports in~\cite{DollarICCV13edges}, despite a high score on the BSDS500 dataset, gPb performs poorly when tested on other datasets. This is potentially a symptom of over-tuning of the algorithm to the dataset.
+\subsection{{\tt gPb} vs. {\tt SE}}
+The {\tt gPb} algorithm uses a combination of carefully designed features - the gradients, each at 3 scales of: 1) texture, 2) {\it brightness (L)} 3) {\it colour a}, and 4) {\it colour b} (a total of 12 channels). As Doll\'ar reports in~\cite{DollarICCV13edges}, despite a high score on the BSDS500 dataset, {\tt gPb} performs poorly when tested on other datasets. This is potentially a symptom of over-tuning of the algorithm to the dataset.
 
-Beside being heavily-engineered, in terms of detection speed it does not come close to the real-time performance of SE.
+Beside being heavily-engineered, leveraging such hand-crafted cues, in terms of detection speed it does not come close to the real-time performance of {\tt SE}.
 
-The chief reason for using SE for us, however, is that this edge detector can provide as a by-product the intermediate most likely-segmentations that it has predicted per location in the image. This is important information about the local edge structure that we will build on when developing our Structured voting (SV).
+The chief reason for using {\tt SE} for us, however, is that this edge detector can provide as a by-product the intermediate most likely-segmentations that it has predicted per location in the image. This is important information about the local edge structure that we will build on when developing our Structured voting (SV).
 
 \section{Second stage of the pipeline - Structured voting}
 \label{sec:ch4-SE-SV-UCM_SV_details}
 The goal of SV is to propose a suitable way of associating a score with each of the {\it watershed pixels} (the computed possible locations of boundary). Inspired by the ``local patch as a means of capturing context'' philosophy of previous works~\cite{Dollar2006supervised,LimZD13,DollarICCV13edges}, we take a patch comparison approach.
 
 \subsection{Weighting the watershed contours} %locations}
-The SE provides us ``for free'' with the best segmentation patches - local decisions that the trees of the decision forest have made {\bf on all locations} of the image. The size of those medoid tree leaf patches (as well as of all structured forest segmentation patches) is $16\times 16$ pixels.
+The {\tt SE} provides us ``for free'' with the best segmentation patches - local decisions that the trees of the decision forest have made {\bf on all locations} of the image. The size of those medoid tree leaf patches (as well as of all structured forest segmentation patches) is $16\times 16$ pixels.
 
 \settocdepth{subsection}
 \subsubsection{Casting a single vote}
@@ -71,7 +75,7 @@ To appreciate the necessity of making the two types of segmentation patches comp
 
 \textbf{Watershed patch:} The watershed patch is an oversegmentation with an \textbf{explicit boundary of size 1 pixel} between the segments.
 
-\textbf{Tree leaf patch:} The segmentation patches from the Structured forest are the learnt best segmentation for the given location in the image (based on the features computed from a cropped image patch). They are patches ``seen'' by the forest during the training phase. Since the SE algorithm uses \textbf{supervised learning}, the patches are cropped from the ground truth annotated segmentations. 
+\textbf{Tree leaf patch:} The segmentation patches from the Structured forest are the learnt best segmentation for the given location in the image (based on the features computed from a cropped image patch). They are patches ``seen'' by the forest during the training phase. Since the {\tt SE} algorithm uses \textbf{supervised learning}, the patches are cropped from the ground truth annotated segmentations. 
 For the BSDS500 dataset, which we use, the segmentation labels  are assigned by humans, and they are never oversegmentations. In \textsection~\ref{sec:ch5-BSDS500-dataset} we give details about this dataset, and \fref{fig:BSDS-annotations} has an example image and its annotations.
 
 For a $16\times 16$ pixels local segmentation patch there rarely are more than \textbf{2 or 3 segments}. 
@@ -123,7 +127,7 @@ they present local evidence of lack of boundary.
   %                      leaf-patch-3-segms 4 5 6 7 
   % leaf-patch-_maybe_problematic - two separate segments with the same label % do we handle that? hmmm....
 \end{center}
-\caption{Examples of {\bf watershed} patch segmentations (colour-coded on the {\bf left}; white pixels mark the explicit boundary) and structured decision {\bf tree leaf} patch segmentations (greyscale on the {\bf right}).}
+\caption[Patches examples - watershed and structured decision tree]{Examples of {\bf watershed} patch segmentations (colour-coded on the {\bf left}; white pixels mark the explicit boundary) and structured decision {\bf tree leaf} patch segmentations (greyscale on the {\bf right}).}
 \label{fig:watershed-and-leaf-patches}
 \end{figure}
 
@@ -133,7 +137,9 @@ For this paragraph, please first have a look at \fref{fig:ws-greedy-merge}. Evid
 \subparagraph{Na\"{\i}ve greedy merge:} Our first attempt, which we call na\"{\i}ve greedy merge, suffered from the limitation of being overly 
 greedy. The transformed watershed patch (see \fref{fig:sub:ws-greedy-merge-ws-naive-greedy-merge}) adapts itself excessively to the tree leaf segmentation which we use to guide the merging. As a consequence, it does not respect the fact that the watershed patch has a \textbf{boundary pixel in the middle}, hence, there must have been no less than two segments abutting its centre pixel.
 
-\subparagraph{Fair greedy merge:} As a remedy, we propose a ``fairer'' greedy merge. It %uses heuristic to
+\subparagraph{Fair greedy merge:}
+\label{par:ch4-fair-greedy-merge}
+As a remedy, we propose a ``fairer'' greedy merge. It %uses heuristic to
 aims for an optimal superpixels merge into segments, according to the structured tree patch (\fref{fig:sub:ws-greedy-merge-tree-leaf}). At the same time it still respects the condition that the central watershed pixel lies on a boundary between two regions. \fref{fig:sub:ws-greedy-merge-ws-fairer-greedy-merge} shows an example.
 
 \begin{figure}[ht!]
@@ -246,7 +252,9 @@ Note that, unlike with \textit{greedy merge}, none of the transformations given 
 \label{par:ch4-line-fitting}
 We utilise 3 types of line fitting, shown in Figures \ref{fig:ws-line-fitting} and \ref{fig:ws-line-fitting2}.
 
-\subparagraph{Line fitted through arc {\bf end points}:} a parametric fit, based on the derivative direction of the end-pixels of the watershed edge we vote on; this is shown in Figures \ref{fig:sub:ws-line-fitting-ends} and \ref{fig:sub:ws-line-fitting-ends2} in our examples.
+\subparagraph{Line fitted through arc {\bf end points}:}
+\label{par:ch4-line-ends}
+a parametric fit, based on the derivative direction of the end-pixels of the watershed edge we vote on; this is shown in Figures \ref{fig:sub:ws-line-fitting-ends} and \ref{fig:sub:ws-line-fitting-ends2} in our examples.
 
 \subparagraph{Line fitting through {\bf centre} of the patch, based on arc end points:} 
 \label{par:ch4-line-centre}
@@ -425,8 +433,6 @@ After the matching problem is solved, edge pixels are either {\it hits} (true po
 In Bayesian terms, precision is the probability that the detector's signal is valid, and recall is the probability that the ground truth data was detected. 
 The reported measure is the \textbf{F-score}, which is the harmonic mean of the precision and recall - a summary of the edge detection quality.
 
-% TODO mention that in implementation it is an approximation, otherwise - n^3 cubic in the number of pixels in the image (or in the boundaries)
-
 \[
 P=\frac{\left|S\cap\left(\bigcup\limits _{i=1}^{M}G_{i}\right)\right|}{|S|}
 \]
@@ -439,6 +445,10 @@ F=\frac{2PR}{P+R}
 
 where $S$ and $\{G_{i}\}_{i=1}^{M}$ are boundary maps and $\cap$
 computes a bipartite graph assignment between them.
+
+% mention that in implementation it is an approximation, otherwise - n^3 cubic in the number of pixels in the image (or in the boundaries)
+For the purposes of benchmarking, this metric is implemented as an approximation. Otherwise the cubic in the number of pixels %in the image
+theoretical complexity would prove to be prohibitive for computation.
 
 An advantage of this  metric is that it is sensitive to the complexity of the boundary. In addition, it is applicable to evaluate both the task of edge detection as well as image segmentation. A further asset of BPR, when applied as a segmentation benchmark, is that it does not need to match interior pixels.
 
@@ -495,9 +505,10 @@ labelling between a machine generated segmentation on one hand, and \textbf{mult
 PRI(S,\{G_{i}\}_{i=1}^{M})=\frac{1}{T}\sum\limits _{j<k}\left[c_{jk}p_{jk}+\left(1-c_{jk}\right)\left(1-p_{jk}\right)\right]
 \]
 
-
 where $p_{jk}$ - probability of $c_{jk}$; possible estimator of
 $p_{jk}$ is the sample mean of the corresponding Bernoulli distribution.
+
+In practice, unfortunately, the metric suffers from low dynamic range, meaning that it produces similar values across images and algorithms.
 
 \settocdepth{paragraph}
 \paragraph{Segmentation covering (SC)}\mbox{}\\\mbox{}\\
@@ -517,7 +528,7 @@ For visualisation, see \fref{fig:overlap-IoU}.
 \begin{figure}[ht!]
 \centering
 \includegraphics[width=0.3\textwidth]{images/scoring_fcns/intersection-over-union_score_illustrated.png}
-\caption{Illustration of the \textit{Overlap} of two segments. The score is computed as their intersection (\textit{tp}) divided by their union (\textit{tp} + \textit{fp} + \textit{fn}).}
+\caption[Illustration of the \textit{Overlap} of two segments]{Illustration of the \textit{Overlap} of two segments. The score is computed as their intersection (\textit{tp}) divided by their union (\textit{tp} + \textit{fp} + \textit{fn}).}
 \label{fig:overlap-IoU}
 \end{figure}
 
@@ -673,14 +684,14 @@ It is beneficial %desirable
 for the benchmark task to have the output values of both edge detector and image segmentation into $[0,1]$. That additionally lends itself to a probabilistic interpretation, which could potentially facilitate the combination of outputs of different models. %allow to easily combine different models.
 
 \subsubsection{Structured edge}
-In the SE algorithm~\cite{DollarICCV13edges,Dollar2015PAMI} every pixels receives between 0 and 256 votes. The decisions are ensembled by superposing patches of edge masks. Rather than averaging, however, the number of votes is divided by 128, which leaves an output that would theoretically fall into the $[0, 2]$ range. As a post-processing, a triangular filter is applied, which has a smoothing and denoising effect. The resulting output indeed is used to %could match 
+In the {\tt SE} algorithm~\cite{DollarICCV13edges,Dollar2015PAMI} every pixels receives between 0 and 256 votes. The decisions are ensembled by superposing patches of edge masks. Rather than averaging, however, the number of votes is divided by 128, which leaves an output that would theoretically fall into the $[0, 2]$ range. As a post-processing, a triangular filter is applied, which has a smoothing and denoising effect. The resulting output indeed is used to %could match 
 a probabilistic interpretation - only the strongest edges do have a value above 1, and those values are practically cut-off when benchmarking using BPR (the implementation of Arbel\'aez \etal).
 
-\subsubsection{gPb-OWT-UCM}
+\subsubsection{{\tt gPb-OWT-UCM}}
 Arbel\'aez \etal~\cite{Arbelaez11} learn a sigmoid on the BSDS500 training subset, and finish their segmentation algorithm by rescaling with the learn sigmoid. The learnt values, of course, are exclusively suitable for their approach. For consistency we also first apply the sigmoid transformation, before finally rescaling (see next paragraph).
 
 \subsubsection{Our approach - scale the UCM output} %The missing recall comes from UCM values not being scaled in [0,1]. Here, I believe, the non-zero values are in [0.0015, 0,5964].  On a different experiment I get the non zeros in [0.93, 0.99].  Bad results certainly can't be remedied by rescaling the ucm output.
-We apply rescaling of the {\bf non-zero UCM values} into $[0.01, 0.99]$ as post-processing step of out SE-SV-UCM pipeline. The procedure is a modification of the simple image enhancement technique (applicable to greyscale images) known as {\bf contrast stretching}, or {\bf normalisation}. Thereby the relative order of the image edges delimiting the regions is preserved. Note that rescaling doesn't change the shape of the evaluation curve, just extends it to cover as much of the recall range as possible. So the boundary- and region-based benchmark values are unaffected. The curve of the method being evaluated, however, better reflects its quality on the full operational range of BPR and VPR.
+We apply rescaling of the {\bf non-zero UCM values} into $[0.01, 0.99]$ as post-processing step of out {\tt SE-SV-UCM} pipeline. The procedure is a modification of the simple image enhancement technique (applicable to greyscale images) known as {\bf contrast stretching}, or {\bf normalisation}. Thereby the relative order of the image edges delimiting the regions is preserved. Note that rescaling doesn't change the shape of the evaluation curve, just extends it to cover as much of the recall range as possible. So the boundary- and region-based benchmark values are unaffected. The curve of the method being evaluated, however, better reflects its quality on the full operational range of BPR and VPR.
 
 \subsubsection{Histogram equalisation of UCM for the benefit of visual comparison}
 In their recent paper~\cite{Hallman2014} Hallman and Fowlkes also remark on the histogram of UCM values, as they would like to be able to visually compare the UCM output of different algorithms. Their main goal is the meaningful visualisation of output results of different algorithms and qualitative comparison by visual inspection of outputs - hierarchical segmentations. In Appendix A they discuss the computation of a monotonic transformation to approximate the histogram of values \wrt a ``reference'' algorithm.

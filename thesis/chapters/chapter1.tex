@@ -52,7 +52,7 @@ object detection and recognition, segmentation, structure from motion, and track
   \includegraphics[width=0.35\textwidth]{images/examples/koala/koala_gPb_cc.png} % koala_SE_cc % hawaii/Pb_arbelaez2011-039.png}
   \label{fig:sub:edge_detection-pb-cc}
  }
-\caption[Edge detection - edge map and probability of boundary]{{\bf Edge detection}. Note that for ease of view, %illustration
+\caption[Edge detection - edge map and probability of boundary]{{\bf Edge detection}. Note that for ease of view, % for illustrative purposes % illustration
 the negative of \protect\subref{fig:sub:edge_detection-edge-map} and \protect\subref{fig:sub:edge_detection-pb} are shown, \ie the darker the pixel, the higher the probability of an edge. Visualisation code for \protect\subref{fig:sub:edge_detection-pb-cc} courtesy of Hallman and Fowlkes~\cite{Hallman2014}.}
 \label{fig:edge_detection}
 \end{figure}
@@ -73,17 +73,17 @@ To allow to express a level of (un)certainty as to the presence of an edge in an
 
 The Bayesian view of edge detection as a posterior probability given prior world knowledge is not new. %The notion of probability of a location being a boundary %an edge 
 % pixel was first introduced in \cite{Martin2004learning}. % TODO really?
-This particular definition of {\it Pb} was, to our knowledge, first introduced in \cite{Martin2004learning}. It has ever since been used as an output for %to 
-many edge detection algorithms \cite{Maire2008using,LimZD13,DollarICCV13edges,Isola2014crisp,Ganin2014n4fields,Hallman2014} as it combines nicely with the boundary evaluation methodology, also proposed in \cite{Martin2004learning}.
+This particular definition of {\it Pb} was, to our knowledge, first introduced in \cite{Martin2004learning} with the development of the detector with the same name {\tt Pb} ({\it MFM (Martin-Fowlkes-Malik)} in the paper). It has ever since been used as an output for %to 
+many edge detection algorithms \cite{Arbelaez2006boundary,Dollar2006supervised,Maire2008using,LimZD13,DollarICCV13edges,Isola2014crisp,Ganin2014n4fields,Hallman2014} as it combines nicely with the boundary evaluation methodology, also proposed in \cite{Martin2004learning}.
 
 \paragraph{Thresholding}\mbox{}\\\mbox{}\\
 Given a {\it Pb}, we can obtain edge maps at different levels of detail by {\it thresholding}. We choose a threshold $t\in(0,1)$ and consider as detected edge pixels those locations $(x,y)$ for which it holds %such that 
 $Pb(x,y)>t$. Obviously, a lower threshold allows to discover more edges, while a higher threshold is more conservative and would only honour the most salient of edges.
 
 \paragraph{Example}\mbox{}\\\mbox{}\\
-In \fref{fig:edge_detection} we show the result of the edge detection algorithm gPb \cite{Arbelaez11}, which we will describe in more detail in \cref{Chapter3}.
+In \fref{fig:edge_detection} we show the result of the edge detection algorithm {\tt gPb} \cite{Arbelaez11}, which we will describe in more detail in \cref{Chapter3}.
 
-The last two images visualise the detector output - a {\it Pb}. For improved viewing in case of probabilistic output we will utilise a visualisation with black as background and heatmap-coloured boundaries according to their strength. This visualisation of probabilistic output facilitates the qualitative comparison of the results of different algorithms. 
+The last two images display the detector output - a {\it Pb}. For improved viewing in case of probabilistic output we will utilise a visualisation with black as background and heatmap-coloured boundaries according to their strength. This visualisation of probabilistic output facilitates the qualitative comparison of the results of different algorithms. 
 
 The {\it edge map} in \fref{fig:sub:edge_detection-edge-map} was obtained by thresholding at $t=0.3$ the {\it Pb} from \fref{fig:sub:edge_detection-pb}.
 
@@ -174,16 +174,16 @@ boundaries when converting between the two representations.
 we would like to be able to obtain segmentations at {\bf different level of detail} - on the full scale from an oversegmentation to an undersegmentation. 
 
 Both requirements are %That is 
-easily satisfiable by using a data structure called an {\it Ultra metric contour map} ({\bf UCM}) \cite{Arbelaez2006boundary}. While details will be given in \sref{sec:ch3-UCM}, for now it is sufficient to know that it represents %encapsulates 
+easily satisfiable by using a data structure called an {\it Ultra metric contour map} ({\tt UCM}) \cite{Arbelaez2006boundary}. While details will be given in \sref{sec:ch3-UCM}, for now it is sufficient to know that it represents %encapsulates 
 a hierarchy of segmentations. 
-Like with {\it Pb}, {\bf thresholding} the UCM allows to obtain a segmentation.
+Like with {\it Pb}, {\bf thresholding} the {\tt UCM} allows to obtain a segmentation.
 
 Note that the idea of controlling the coarseness of a segmentation by using a multiscale segmentation is not new \cite{Sharon2000fast,Sharon2001segmentation,Galun2003texture}. %, and get at each scale a level of details compatible with the perceptual organisation of the image at this scale. 
-UCM is just one means of encompassing a hierarchy of segmentations at different scales. 
+{\tt UCM} is just one means of encompassing a hierarchy of segmentations at different scales. 
 As we will see in \sref{sec:ch3-UCM}, it is particularly suitable for us as a last stage of a segmentation pipeline which starts with extraction of edges.
 
 \paragraph{Example}\mbox{}\\\mbox{}\\
-In \fref{fig:segmentation} we show the result of the algorithm gPb-OWT-UCM \cite{Arbelaez11}, which we will present in \cref{Chapter3}. The output is a UCM - see \fref{fig:sub:segmentation-ucm} for an example of UCM output and \fref{fig:sub:segmentation-ucm-cc} for its colour-coded visualisation.
+In \fref{fig:segmentation} we show the result of the algorithm {\tt gPb-OWT-UCM} \cite{Arbelaez09,Arbelaez11}, which we will present in \cref{Chapter3}. The output is a {\tt UCM} - see \fref{fig:sub:segmentation-ucm} for an example of UCM output and \fref{fig:sub:segmentation-ucm-cc} for its colour-coded visualisation.
 
 The segmentation in Figures \ref{fig:sub:segmentation-segm-labelling} and \ref{fig:sub:segmentation-segm-explicit} was obtained by thresholding the UCM at $t=0.4$.
 
@@ -240,7 +240,7 @@ improvements, like {\bf non-maximum suppression} (also known as ``edge thinning'
 edge localisation. A practically relevant extensions of it is the {\bf Canny-Deriche detector} \cite{Deriche1987using}, which addresses the filter implementation of the Canny operator.
 
 The presence of noise, clutter, texture, and non-homogeneous object parts interfere with % hamper, hinder, impede 
-the effectiveness of the above detectors. More higher-level techniques incorporate colour and texture \cite{Rubner1996coalescing,Will2000learning,Malik2001contour} information, as well as multiple scales \cite{Martin2004learning} and orientations. % TODO examples
+the effectiveness of the above detectors. More higher-level techniques incorporate colour and texture \cite{Rubner1996coalescing,Will2000learning,Malik2001contour} information, as well as multiple scales \cite{Martin2004learning} and orientations \cite{Perona1990detecting,Freeman1991design}. % TODO examples
 
 Globalisation could be added \cite{Arbelaez11,Xiaofeng2012discriminatively} to improve accuracy by focusing on the most salient edges.
 
@@ -250,22 +250,22 @@ Globalisation could be added \cite{Arbelaez11,Xiaofeng2012discriminatively} to i
 Yet higher quality edge detection is desirable. Texture edges and illusory contours are elusive to % escape from
 traditional edge-detection algorithms. Recent approaches therefore rely on {\bf learning} to incorporate context and object knowledge. They address more challenging scenarios which arise in natural images. 
 
-As Martin \etal argue in \cite{Martin2004learning}, such methods solve the so-called ``boundary detection'' problem. A {\bf boundary} delineates the pixels that belong to one object, material, or surface from those that belong to another. One possible approach to boundary detection is to go top-down and use higher-level object knowledge to infer the object boundaries. Another solution would be to use edges as low-level cues to judge for the presence of object boundaries (a bottom-up approach). This is how Martin \etal tackle the problem in their {\it MFM (Martin-Fowlkes-Malik)} detector and its subsequent development - {\it gPb} (see next).
+As Martin \etal argue in \cite{Martin2004learning}, such methods solve the so-called ``boundary detection'' problem. A {\bf boundary} delineates the pixels that belong to one object, material, or surface from those that belong to another. One possible approach to boundary detection is to go top-down and use higher-level object knowledge to infer the object boundaries. Another solution would be to use edges as low-level cues to judge for the presence of object boundaries (a bottom-up approach). This is how Martin \etal tackle the problem in their {\tt Pb} detector and its subsequent development - {\tt gPb} \cite{Maire2008using} (see next).
 
 % TODO what did I mean by that? SE and gPb ARE general edge detectors and are quite adequate
 % In such more challenging situations a \textit{general} edge detector would not be adequate, since the desired output is application-specific.
 
 \subsubsection{Current state-of-the-art edge detectors}
-\paragraph{gPb:} {\it gPb} (for {\it global Probability of boundary}) \cite{Martin2004learning,Maire2008using} is a popular edge detector; we employed it earlier in the chapter for the illustration of edge-related terminology (in \fref{fig:edge_detection}). It works by extracting features from a local patch and estimating the posterior probability for an edge through the centre of the patch. Multiple scales and globalisation based on a spectral clustering framework % Normalised Cuts 
-help achieve high-quality results. We review {\it gPb} in \sref{sec:ch3-gPb}.
+\paragraph{{\tt gPb}:} {\tt gPb} (for {\it global Probability of boundary}) \cite{Martin2004learning,Maire2008using} is a popular edge detector; we employed it earlier in the chapter for the illustration of edge-related terminology (in \fref{fig:edge_detection}). It works by extracting features from a local patch and estimating the posterior probability for an edge through the centre of the patch. Multiple scales and globalisation based on a spectral clustering framework % Normalised Cuts 
+help achieve high-quality results. We review {\tt gPb} in \sref{sec:ch3-gPb}.
 
-\paragraph{Structured edge (SE):} This SE algorithm \cite{DollarICCV13edges,Dollar2015PAMI} utilises supervised learning to train a structured decision forest. The trained forest ``knows'' edge structure from local image patches, and can predict the most likely segmentation patch for an unseen patch. We dissect this work in \cref{Chapter2}.
+\paragraph{Structured edge:} The Structured edge ({\tt SE}) algorithm \cite{DollarICCV13edges,Dollar2015PAMI} utilises supervised learning to train a structured decision forest. The trained forest ``knows'' edge structure from local image patches, and can predict the most likely segmentation patch for an unseen patch. We dissect this work in \cref{Chapter2}.
 
-\paragraph{\texorpdfstring{$N^4$}{N4}-Fields:} The N4-Fields, for {\it Neural Network Nearest Neighbour} \cite{Ganin2014n4fields} presents the first state-of-the-art results for natural edge detection obtained with deep learning. It applies convolutional neural networks (CNNs, or {\it ConvNets}) \cite{Fukushima1980neocognitron,Lecun1998gradient} jointly with nearest-neighbour search.
+\paragraph{\texorpdfstring{$N^4$}{N4}-Fields:} The {\tt N4-Fields}, for {\it Neural Network Nearest Neighbour} \cite{Ganin2014n4fields} presents the first state-of-the-art results for natural edge detection obtained with deep learning. It applies convolutional neural networks (CNNs, or {\it ConvNets}) \cite{Fukushima1980neocognitron,Lecun1998gradient} jointly with nearest-neighbour search.
 
-\paragraph{Crisp boundary detection using \textit{pointwise mutual information} (PMI):} The method, due to Isola \etal \cite{Isola2014crisp}, utilises internal image statistics to model the presence of an edge. It derives an affinity measure from PMI, which is a good predictor of whether or not two pixels reside on the same object. The authors then reuse the spectral partitioning machinery which is part of the gPb algorithm (to be explained in \sref{sec:ch3-gPb}). The method produces pixel-level accurate (\ie, {\it crisp}) edges. %boundaries.
+\paragraph{Crisp boundary detection using \textit{pointwise mutual information} ({\tt PMI}):} The method, due to Isola \etal \cite{Isola2014crisp}, utilises internal image statistics to model the presence of an edge. It derives an affinity measure from {\tt PMI}, which is a good predictor of whether or not two pixels reside on the same object. The authors then reuse the spectral partitioning machinery which is part of the {\tt gPb} algorithm (to be explained in \sref{sec:ch3-gPb}). The method produces pixel-level accurate (\ie, {\it crisp}) edges. %boundaries.
 
-\paragraph{Oriented edge forests (OEF):} In their recent work \cite{Hallman2014}, Hallman and Fowlkes use a random forest classifier for edge patches. They limit the algorithm to only straight-line edges of a fixed number of positions and orientations. A post-processing sharpening of the edge masks boosts edge localisation accuracy. We briefly discuss this work as a good means of capturing local context in \sref{sec:ch2-alternative-capturing-context}.
+\paragraph{Oriented edge forests ({\tt OEF}):} In their recent work \cite{Hallman2014}, Hallman and Fowlkes use a random forest classifier for edge patches. They limit the algorithm to only straight-line edges of a fixed number of positions and orientations. A post-processing sharpening of the edge masks boosts edge localisation accuracy. We briefly discuss this work as a good means of capturing local context in \sref{sec:ch2-alternative-capturing-context}.
 
 \subsection{Image segmentation}
 Image segmentation is a difficult %complex 
@@ -273,12 +273,16 @@ problem that has received lots of research in the past. Many segmentation techni
 a universally best {\it general segmentation} method.
 %- A universal algorithm for segmenting images certainly does not exist and, on the contrary, most techniques are tailored on particular applications and may work under certain hypothesis.
 
+The following is by no means a comprehensive survey of image segmentation algorithms, as the problem is old and there exist many and varied approaches to solving it. Instead, it provides a  selection of 1) highly relevant to our proposed approach, and\slash or 2) current state-of-the art methods.
+% NOTE more: a) variational framework (Mumford and Shah) - energy minimisation; b) Chan and Vese - ``level set'' formalism; c) convex relaxation of a)
+
 \subsubsection{Watershed transformation} % TODO transformation or transform?
+\label{sec:ch1-watershed-transform}
 The watershed transformation is a basic morphological operation \cite{Beucher1992morphological} used to produce an image segmentation. We review it in detail in \sref{sec:ch3-watershed}, as it is part of the segmentation pipeline that we propose. A major problem with using it as a general segmentation algorithm is its inherent % intrinsic 
-tendency to produce oversegmentations for natural images.
+tendency to produce oversegmentations from natural images.
 
 \subsubsection{Region growing}
-The {\bf seeded} region growing algorithm \cite{Adams1994seeded} takes as input the image and a set of seeds. The seeds mark each of the objects to be segmented. The regions are iteratively grown by comparing all unallocated neighbouring pixels to the regions. Later {\bf unseeded} region growing \cite{Lin2000unseeded} was developed, which makes use of the Perona-Malik anisotropic diffusion \cite{Perona1990scale}. Although it allows to forgo the choice of seeds (only one is required), it still has problems like proper parameter choice % threshold 
+The {\bf seeded} region growing algorithm \cite{Adams1994seeded} takes as input the image and a set of seeds. The seeds mark each of the objects to be segmented. The regions are iteratively grown by comparing all unallocated neighbouring pixels to the regions. {\bf Unseeded} region growing \cite{Lin2000unseeded} was subsequently developed, which makes use of the Perona-Malik anisotropic diffusion \cite{Perona1990scale}. Although it allows to forgo the choice of seeds (only one is required), it still has problems like proper parameter choice % threshold 
 and bias towards growing earlier discovered regions.
 
 \subsubsection{Region merging}
@@ -289,19 +293,19 @@ certain criteria (\eg allowed colour ranges, minimum\slash maximum  size of a re
 % from \cite{Arbelaez09}
 %- Felzenszwalb and Huttenlocher[15] is typically used in high recall settings to create a gross oversegmentation into thousands of superpixels
 A prominent example of region merging is the method developed %invented 
-by Felzenszwalb and Huttenlocher ({\it Felz-Hutt}) \cite{Felzenszwalb1998ciently,Felzenszwalb1998image,Felzenszwalb04}. This graph-based segmentation algorithm is a {\bf greedy region merge} whereby the notion of an {\bf image edge} evidence is encoded implicitly - as a pairwise pixel constraint.
+by Felzenszwalb and Huttenlocher ({\tt Felz-Hutt}) \cite{Felzenszwalb1998ciently,Felzenszwalb1998image,Felzenszwalb04}. This graph-based segmentation algorithm is a {\bf greedy region merge} whereby the notion of an {\bf image edge} evidence is encoded implicitly - as a pairwise pixel constraint.
 
 \paragraph{Statistical region merging}\mbox{}\\\mbox{}\\
-Another well-known implementation is {\it Statistical region merging} \cite{Nock2004statistical}.
+Another well-known region merging implementation is {\tt Statistical region merging} \cite{Nock2004statistical}.
 
 \subsubsection{Normalized cuts}
 %- from \cite{Arbelaez09}
 % Mean Shift and Normalized Cuts provide better precision, but often produce artefacts by breaking large uniform regions (e.g.sky) into chunks.
-The Normalized cuts ({\it N-Cuts})
+The Normalized cuts ({\tt N-Cuts})
 algorithm \cite{Shi2000normalized} casts the segmentation problem as a partitioning problem on the image pixels graph. This is further reduced to a spectral clustering (generalised eigenvalue problem), effectively allowing the method to make decisions based on global properties of the input.
 
 \subsubsection{Mean shift}
-The Mean Shift method of Comaniciu and Meer \cite{Comaniciu2002mean} is a non-parametric mode-finding technique that is applied on clusters in feature space. The algorithm, along with N-Cuts, is remarked \cite{Arbelaez09} to produce artefacts by breaking large uniform regions (\eg sky, grass), due to a normalisation for the size of the segments.
+The {\tt Mean Shift} method of Comaniciu and Meer \cite{Comaniciu2002mean} is a non-parametric mode-finding technique that is applied on clusters in feature space. The algorithm, along with {\tt N-Cuts}, is remarked \cite{Arbelaez09} to produce artefacts by breaking large uniform regions (\eg sky, grass), due to a normalisation for the size of the segments. % TODO check if this is really the reason
 
 % from \cite{Nock2004statistical}
 %-  A prominent trend in grouping focuses on graph cuts, mapping image pixels onto graph vertices, and the spatial relationships between pixels onto weighted graph edges. The objective is to minimize a cut criterion, given that any cut on this graph yields a partition of the image into(hopefully) coherent visual patterns. Cut criteria range from conventional [2] to more sophisticated criteria, tailored to grouping [3], [4], [5]. These are basically global criteria;however, the strategies adopted for their minimization range through a broad spectrum, from local [6] to global optimisation [5], through intermediate choices [7], [3]. Global optimization strategies have the advantage to directly tackle the problem as a whole, and may offer good approximations[5], at possible algorithmic expenses though [3], [5].
@@ -315,15 +319,20 @@ The Mean Shift method of Comaniciu and Meer \cite{Comaniciu2002mean} is a non-pa
 
 \subsubsection{Current state-of-the-art segmenters}
 
-\paragraph{gPb-OWT-UCM}\mbox{}\\\mbox{}\\
-The algorithm gPb-OWT-UCM \cite{Arbelaez09,Arbelaez11} is an elaborate pipeline that starts with edge extraction (gPb) to obtain in the end a set of segmentations at hierarchical scales, represented by the UCM. We used it to illustrate segmentation-related terminology in \fref{fig:segmentation} and we will describe it in detail in \cref{Chapter3}.
+\paragraph{{\tt gPb-OWT-UCM}}\mbox{}\\\mbox{}\\
+The algorithm {\tt gPb-OWT-UCM} \cite{Arbelaez09,Arbelaez11} is an elaborate pipeline that starts with edge extraction ({\tt gPb}) to obtain in the end a set of segmentations at hierarchical scales, represented by a {\tt UCM}. We used it to illustrate segmentation-related terminology in \fref{fig:segmentation} and we will describe it in detail in \cref{Chapter3}.
 
 \paragraph{Multiscale combinatorial grouping}\mbox{}\\\mbox{}\\
-Multiscale combinatorial grouping (MCG) \cite{Arbelaez2014multiscale} is a high-performance segmentation method, which makes effective use of multiscale information. While it reuses the strong edge detections of SE \cite{DollarICCV13edges}, it innovates on the construction of the hierarchical segmentation (OWT-UCM) from \cite{Maire2008using,Arbelaez11}. It starts by independently performing a hierarchical segmentation at each scale of a multiresolution image pyramid. Afterwards, the algorithm aligns and combines the multiple hierarchies into a single multiscale segmentation hierarchy.
+Multiscale combinatorial grouping ({\tt MCG}) \cite{Arbelaez2014multiscale} is a high-performance segmentation method, which makes effective use of multiscale information. It reuses the strong edge detections of {\tt SE} \cite{DollarICCV13edges} and the oriented contour weighting technique {\tt OWT} (see \sref{sec:ch3-watershed}) of {\tt gPb-OWT-UCM}. It innovates on the construction of the hierarchical segmentation ({\tt UCM}) from \cite{Maire2008using,Arbelaez11} by combining information from different levels of the hierarchy. 
+
+It begins by independently performing a hierarchical segmentation at each scale of a multiresolution image pyramid. Afterwards, the multiple hierarchies are aligned and combined into a single multiscale segmentation hierarchy.
 
 \settocdepth{section}
 \subsection{Focus of state-of-the-art methods}
-In Table~\ref{fig:related_work_table} you can see the state-of-the-art methods classified based on whether they focus their efforts on the edge detection or segmentation part of the algorithm. Notice how the most recent algorithms (2013 and later) innovate mostly on the edge-detection part (MCG being the exception). If they at all provide segmentation, they reuse the OWT-UCM pipeline \cite{Maire2008using,Arbelaez11}.
+\label{sec:ch1-focus-SoA-methods}
+In Table~\ref{fig:related_work_table} you can see the state-of-the-art methods classified based on whether they focus their efforts on the edge detection or segmentation part of the algorithm. 
+
+Notice how the most recent (since the year 2013) algorithms - \cite{DollarICCV13edges,Ganin2014n4fields,Isola2014crisp,Hallman2014} {\bf innovate mostly on the edge-detection} part ({\tt MCG} being the exception). The few of them which do provide segmentation, simply \textbf{reuse the \texttt{OWT-UCM} pipeline} \cite{Maire2008using,Arbelaez11}.
 
 \begin{figure}[ht!]
 \centering
@@ -337,40 +346,6 @@ Our objectives are  twofold:  first to provide a principled way of obtaining hie
 obtained segmentation.
 % a more principled approach to boundary-guided image segmentation. % analysis?
 
-% TODO
-% \section{Outline}
-% The rest of this work is structured as follows:
+\section{Outline}
+The rest of this work is structured as follows: Chapters \ref{Chapter2} and \ref{Chapter3} review 2 related methods that are highly relevant to our current work. \cref{Chapter2} describes the {\tt SE} edge detector which trains a decision forest to model the relationship between a local image patch and its segmentation. \cref{Chapter3} highlights the edge detector and segmentation machinery {\tt gPb-OWT-UCM}. Despite the segmentation pipeline {\tt OWT-UCM} demanding an oriented boundary signal, it is currently a widely applied post-processing step to allow edge detectors to ``close'' contours and provide segmentation. In \cref{Chapter4} we describe our proposed algorithm for obtaining a hierarchical segmentation from extracted edges by using only local information. Our experiments and evaluation are in \cref{Chapter5}. We finish by summarising our findings and highlighting open questions that might be a basis for future investigation. %searchings.
 
-
-
-% \begin{itemize}
-% \item Chapter~\ref{SpectRelax} starts the thesis with a brief introduction to balanced graph cuts and spectral relaxation techniques.
-% Section~\ref{sec:ch2_clgrpart} shows that clustering can be seen as a graph partitioning problem. The minimum cut approach often yields useless results where clusters are highly unbalanced, hence
-% the balanced graph cut criteria are described in Section~\ref{sec:ch2_balgrcut}.  To solve the NP-hard balanced graph cut problem
-% the relaxation methods are applied. Section~\ref{sec:ch2_spectclus} presents the standard spectral clustering approach, which is known to be loose.
-% The tight relaxation, called 1-spectral clustering, is described in Section~\ref{sec:ch2_1spectclus}. 
-% Section~\ref{ch2:disc} concludes the chapter and discusses the relevance of proposed methods to video segmentation.
-% \item Chapter~\ref{chapter3} gives an overview of the video segmentation framework and provides the analysis of low-level features.
-% Section~\ref{sec:ch3_framework} introduces the proposed video segmentation model, which employs a two-step approach:
-% a graph is constructed on pre-computed superpixels and then a spectral clustering technique is applied. 
-% %In graph-based algorithms, in order to produce high-quality segmentation results powerful superpixel similarity measures must be defined.
-% Section~\ref{sec:ch3_affinities} gives a description of the graph affinities used in this work.
-% To evaluate video segmentation performance and analyze the features of the proposed model we chose the Berkeley motion segmentation dataset, which is presented in Section~\ref{sec:ch3_dataset}.  
-% The examination of the quality of the low-level video features is reported in Section~\ref{sec:ch3_aff} and the results are discussed in Section~\ref{ch3:disc}.
-% \item Chapter~\ref{Chapter4} provides an experimental comparison of spectral relaxations and analyzes the effects of different balanced graph cuts applied to video segmentation. 
-% We start with a brief recap of the main theoretical aspects of 1-norm and 2-norm relaxations in Section~\ref{ch4:recap}.
-% Section~\ref{ch4:bench} presents the evaluation benchmark for video segmentation.
-% Section~\ref{sec:ch4_1sc_vs_sc} shows the comparison of the performance of spectral clustering and 1-spectral clustering with different balanced graph cut objectives in the task of video segmentation. 
-% In order to explore further the balanced cut criteria and the quality of the solutions obtained from the relaxation techniques, we tried to find a better partition by a trivial greedy search optimizing different balanced graph cut functions and see if the ground truth corresponds
-% with the minimum cut criterion. The results of the experiments are reported in Section~\ref{sec:ch4_GTexp}.
-% Section~\ref{ch4:disc} gives the discussion of the obtained results.
-% \item In Chapter~\ref{Chapter5} a methodology for discriminative learning of must-link constraints and their incorporation in the video segmentation framework are proposed.
-% Section~\ref{sec:ch5_cosc} shows a way of integrating prior information in the form of must-link constraints into spectral clustering while preserving all the
-% balanced graph cuts.
-% Section~\ref{sec:llf} presents evaluation of the low-level features as must-link constraints and the connections in the graph based on the ground truth.
-% In Section~\ref{sec:ch4_ML} we propose to learn must-links with Random Forest from the affinities.
-% We show that even a naive learning approach on the restricted feature space improves video segmentation performance for both relaxations: spectral clustering and 1 spectral clustering. 
-% The proposed model is compared to state-of-the-art methods.
-% Section~\ref{ch5:disc} discusses the achieved results.
-% \item Chapter~\ref{Chapter6} concludes the thesis summarizing all the results of our work and proposing directions for possible improvements.
-% \end{itemize}

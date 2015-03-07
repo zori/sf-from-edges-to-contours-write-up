@@ -1,3 +1,5 @@
+% TODO mention validation set and test set results
+% TODO in discussion comparison to SoA
 \chapter{Experiments}
 \label{Chapter5}
 \settocdepth{subsection}
@@ -68,7 +70,11 @@ figure vs. ground assignment (see the blue nodes of the tree on \fref{fig:sub:BS
 \settocdepth{section}
 The benchmark that we use provides, among others, two precision-recall metrics - a boundary and a region oriented one.
 
+% from \cite{Arbelaez11}
+%- One option is to regard the segment boundaries as contours and evaluate them as such. However, a methodology that directly measures the quality of the segments is also desirable. Some types of errors, e.g., a missing pixel in the boundary between two regions, may not be reflected in the boundary benchmark,but can have substantial consequences for segmentation quality, e.g., incorrectly merging large regions. One might argue that the boundary benchmark favours contour detectors over segmentation methods since the  former  are  not  burdened  with  the  constraint  of producing  closed  curves.  We  therefore  also  consider various region-based metrics.
+
 \subsubsection{BPR}
+\label{sec:ch5-BPR-evaluation-metric}
 The Boundary Precision-Recall (BPR)~\cite{Arbelaez11} is a boundary-based metric and emphasises the correct placement of image edges. Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-BPR-maths} % avoid having both links by using ref*
 gives mathematical account on the metric and its properties. In case of segmentation, BPR is a good indicator of the {\bf localisation of the region boundaries}.
 
@@ -103,23 +109,26 @@ is a function of the FPR (or {\it fall-out}).
 
 \paragraph{Further region metrics}\mbox{}\\\mbox{}\\
 Beside the aggregate measures for BPR and VPR, for the segmentation algorithms we also occasionally report the following complementary % supportive, interdependent
-region statistics. %(SC, PRI, VI)
+region statistics. %(SC, PRI, VoI)
 \subparagraph{Segmentation covering of ground truth (SC):} This metric is an estimation of the best covering {\it of the ground truth} by the machine segments. We reviewed the metric in Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-SC-maths}.
 
-\subparagraph{Probabilistic Rand index (PRI):} The PRI~\cite{UnnikrishnanPH07}, due to Unnikrishnan \etal, is an extension of Rand index (RI)~\cite{rand1971objective}. It allows to assess the consistency of the labelling of pixel pairs between the segmentation algorithm under test on one hand, and {\it multiple} ground truth segmentations on the other hand. Further, PRI partially addresses the issue of small dynamic range that RI displays. See Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-PRI-maths} for the formulae.
+\subparagraph{Probabilistic Rand index (PRI):} The PRI~\cite{UnnikrishnanPH07}, due to Unnikrishnan \etal, is an extension of Rand index (RI)~\cite{rand1971objective}. It allows to assess the consistency of the labelling of pixel pairs between the segmentation algorithm under test on one hand, and {\it multiple} ground truth segmentations on the other hand. 
+%It is an attempt to address the small dynamic range exhibited by the RI by normalising with an empirical estimation ($p_{jk})$) of its expected value - different work
+As we mentioned in the formulae Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-PRI-maths}, PRI has the issue % drawback 
+of small dynamic range.
 
-\subparagraph{Variation of information (VoI):} The Variation of information (VoI), introduced in~\cite{Meila05} measures the distance between two clusters of data - in our case, the human annotated and the machine-generated segmentation. The distance is measured \wrt %, in terms of 
+\subparagraph{Variation of information (VoI):} The Variation of information (VoI), introduced in \cite{Meila05} measures the distance between two clusters of data - in our case, the human annotated and the machine-generated segmentation. The distance is measured \wrt %, in terms of 
 their average conditional entropy and mutual information. This is the only metric that we report which has a preference for lower score, 0 being the theoretical best in case of equivalent segmentations.
 
 \textbf{General preference:} For all metrics but VoI the general preference is ``higher is better''.
 
-\paragraph{Example comparison of SE and gPb-OWT-UCM}\mbox{}\\\mbox{}\\
-\tref{tab:SE_vs_gPb_OWT_UCM} has all the scores we just described, and \fref{fig:SE_vs_gPb_OWT_UCM} - the BPR and VPR plots for the two methods that we previously dissected - Structured edge \cite{DollarICCV13edges} in \cref{Chapter2}, and gPb-OWT-UCM~\cite{Arbelaez11} in \cref{Chapter3}. 
+\paragraph{Example comparison of {\tt SE} and {\tt gPb-OWT-UCM}}\mbox{}\\\mbox{}\\
+\tref{tab:SE_vs_gPb_OWT_UCM} has all the scores we just described, and \fref{fig:SE_vs_gPb_OWT_UCM} - the BPR and VPR plots for the two methods that we previously dissected - Structured edge \cite{DollarICCV13edges} in \cref{Chapter2}, and {\tt gPb-OWT-UCM}~\cite{Arbelaez11} in \cref{Chapter3}. 
 
 While Doll{\'a}r and Zitnick \cite{DollarICCV13edges} make use of multiscale information, and apply non-maximum suppression as a post-processing step to achieve even higher results than the one we give in the table and figure, we show SE applied on a single scale (the native resolution of the input image), and avoid the edge thinning. This is the setup that is a fair comparison to our pipeline, as: 1) we only utilise one scale, and 2) as we will see in the upcoming \sref{sec:ch5-nms-issue}, non-maximum-suppressed edges are unsuitable % inapt, unfitting
 to apply the watershed transformation to.
 
-Note that as SE is an edge detection algorithm, none of the region metrics or the VPR are applicable to its output. Since gPb-OWT-UCM is a segmenter, the boundaries of the segments in a segmentation constitute closed contours, so boundary-based metrics, such as BPR, are applicable.
+Note that as SE is an edge detection algorithm, none of the region metrics or the VPR are applicable to its output. Since {\tt gPb-OWT-UCM} is a segmenter, the boundaries of the segments in a segmentation constitute closed contours, so boundary-based metrics, such as BPR, are applicable.
 
 \begin{figure}[ht!]
 \centering
@@ -129,7 +138,7 @@ Note that as SE is an edge detection algorithm, none of the region metrics or th
  \subfigure[VPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/SE_vs_gPb_OWT_UCM_VPR.png}
  }
-\caption[SE and gPb-OWT-UCM comparison - plots]{We demonstrate the boundary precision recall metric (BPR) and the volume precision recall metric (VPR). Given are the edge detection algorithm that we utilise {\bf Structured edge}~\cite{DollarICCV13edges} (see the text for parameter details), and the image segmentation algorithm {\bf gPb-OWT-UCM}~\cite{Arbelaez11}.}
+\caption[{\tt SE} and {\tt gPb-OWT-UCM} comparison - plots]{We demonstrate the boundary precision recall metric (BPR) and the volume precision recall metric (VPR). Given are the edge detection algorithm that we utilise \textbf{\texttt{SE}}~\cite{DollarICCV13edges} (see the text for parameter details), and the image segmentation algorithm \textbf{\texttt{gPb-OWT-UCM}}~\cite{Arbelaez11}.}
 \label{fig:SE_vs_gPb_OWT_UCM}
 \end{figure}
 
@@ -148,12 +157,12 @@ Note that as SE is an edge detection algorithm, none of the region metrics or th
 \multicolumn{1}{|l|}{Human} & .79 & .79 & - & - & - & - & .72 & .88 & 1.17 \\ % actually, we had .80 for humans on BPR from \cite{Arbelaez11}; % TODO for VPR - we don't know ODS = OIS for humans
 \hline
 \hline
-\multicolumn{1}{|l|}{\cite{DollarICCV13edges} Structured edge (SE)-single} & .70 & .72 & .63 & - & - & - & - & - & - \\
+\multicolumn{1}{|l|}{\cite{DollarICCV13edges} SE-single} & .70 & .72 & .63 & - & - & - & - & - & - \\
 \hline
 \multicolumn{1}{|l|}{\cite{Arbelaez11} gPb-OWT-UCM} & .73 & .76 & .77 & .73 & .76 & .78 & .59 & .83 & 1.69 \\
 \hline
 \end{tabular}
-\caption[SE and gPb-OWT-UCM boundary and region comparison]{SE and gPb-OWT-UCM boundary and region comparison.}
+\caption[{\tt SE} and {\tt gPb-OWT-UCM} boundary and region comparison]{{\tt SE} and {\tt gPb-OWT-UCM} boundary and region comparison.}
 %The table shows aggregate measures (ODS, OSS, AP) for boundary precision-recall (BPR), volume precision-recall (VPR) and 
 %includes region statistics (SC, PRI, VoI).}
 \label{tab:SE_vs_gPb_OWT_UCM}
@@ -166,7 +175,7 @@ PRI, VoI) and allows the testing of coarse-to-fine methods. %, capturing the tra
 
 \section{From edges to contours - a proof of concept}
 \label{sec:ch5-watershed-proof-of-concept}
-We apply a {\bf vanilla watershed} algorithm \cite{Beucher1992morphological,Najman1996geodesic,PINKlibrary} to the SE output, as described in \sref{sec:ch3-watershed}. The result is a single segmentation. 
+We apply a {\bf vanilla watershed} algorithm \cite{Beucher1992morphological,Najman1996geodesic,PINKlibrary} to the {\tt SE} output, as described in \sref{sec:ch3-watershed}. The result is a single segmentation. 
 
 In our benchmark plots (\fref{fig:SE-watershed}) the outcome of the experiment is not a Precision-Recall curve, but a single point, %dot, 
 indicative of the model error. Since the watershed transformation provides an oversegmentation of the image, the dot is located in the high-recall, low-precision range on the BPR plot (lower right). In contrast, oversegmentations occupy the low-recall, high-precision part of the VPR domain (upper left). 
@@ -179,21 +188,21 @@ indicative of the model error. Since the watershed transformation provides an ov
  \subfigure[VPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/SE-watershed_VPR.png}
  }
-\caption[SE-watershed and baseline: SE-UCM plots]{{\bf SE-watershed} (\sref{sec:ch5-watershed-proof-of-concept}) provides a single oversegmentation. Our {\bf baseline - SE-UCM} (\sref{sec:ch5-SE-UCM-baseline}) is a UCM hierarchy built on top of the probability of boundary output of the SE edge detector.}
+\caption[{\tt SE}-watershed and baseline: {\tt SE-UCM} plots]{\textbf{\texttt{SE}-watershed} (\sref{sec:ch5-watershed-proof-of-concept}) provides a single oversegmentation. Our \textbf{ baseline - \texttt{SE-UCM}} (\sref{sec:ch5-SE-UCM-baseline}) is a {\tt UCM} hierarchy built on top of the probability of boundary output of the {\tt SE} edge detector.}
 \label{fig:SE-watershed}
 \end{figure}
 
 \subsection{A point at issue % problem, trouble 
 with non-maximum suppressed edges}
 \label{sec:ch5-nms-issue}
-Note that the SE algorithm implements non-maximum suppression as a post-processing step on the edge detection output to provide thinned edges. Non-maximum suppression is a method first introduced as a means of reducing thick edge responses to thin lines for the task of edge detection in greyscale images \cite{Rosenfeld1976digital}. Non-maximum suppression considers only the maxima in the gradient direction. As a consequence, the final output of the SE often has only a {\bf single regional minimum}. 
+Note that the {\tt SE} algorithm implements non-maximum suppression as a post-processing step on the edge detection output to provide thinned edges. Non-maximum suppression is a method first introduced as a means of reducing thick edge responses to thin lines for the task of edge detection in greyscale images \cite{Rosenfeld1976digital}. Non-maximum suppression considers only the maxima in the gradient direction. As a consequence, the final output of the {\tt SE} often has only a {\bf single regional minimum}. 
 
-When applying the watershed transform in the presence of a {\bf unique lake}, the {\bf watershed is empty}. To circumvent this problem, we use the SE detector \textit{before non-maxima suppression} as a topographic surface for the flooding.
+When applying the watershed transform in the presence of a {\bf unique lake}, the {\bf watershed is empty}. To circumvent this problem, we use the {\tt SE} detector {\it before non-maxima suppression} as a topographic surface for the flooding.
 
-\section{Baseline: SE-UCM}
+\section{Baseline: {\tt SE-UCM}}
 \label{sec:ch5-SE-UCM-baseline}
-As a baseline, we create a hierarchy of segmentations on top of the SE detector result. This is in the spirit of \cite{Arbelaez2006boundary} who, however, use the edge detector of Martin, Fowlkes, and Malik (MFM) \cite{Martin2004learning}. What we do for this baseline could also be understood %thought 
-as our pipeline SE-SV-UCM without structured voting (SV) at all. Instead, the values from the probability of boundary, which is the output of the edge detector, are directly transferred as values for the watershed pixels. Benchmark plots are on \fref{fig:SE-watershed}.
+As a baseline, we create a hierarchy of segmentations on top of the {\tt SE} detector result. This is in the spirit of \cite{Arbelaez2006boundary} who, however, use the edge detector {\tt Pb} of Martin, Fowlkes and Malik \cite{Martin2004learning}. What we do for this baseline could also be understood %thought 
+as our pipeline {\tt SE-SV-UCM} without structured voting ({\tt SV}) at all. Instead, the values from the probability of boundary, which is the output of the edge detector, are directly transferred as values for the watershed contours (effectively performing a ``trivial'' watershed weighting). We then build the multiscale hierarchy - {\tt UCM}. Benchmark plots are on \fref{fig:SE-watershed}.
 
 We observe the problem of strong edges ``bleeding'' into non-salient ones, despite lack of good local boundary evidence, as on the tikis examples (see \fref{fig:SE-UCM-tikis-bleeding-sub2}) between the heads of the middle and right statues. This issue is one of the motivations for the Structured voting (SV) described in \sref{sec:ch4-SE-SV-UCM_SV_details}.% Similarly
 
@@ -207,21 +216,41 @@ We observe the problem of strong edges ``bleeding'' into non-salient ones, despi
  \includegraphics[width=0.32\textwidth,frame]{images/examples/tikis/SE-UCM-tikis-ucm-problem.png}
  \label{fig:SE-UCM-tikis-bleeding-sub2}
 }
-\caption[SE-UCM drawback - ``bleeding'' of strong edges towards unimportant ones]{{\bf SE-UCM} result. \protect\subref{fig:SE-UCM-tikis-bleeding-sub1} - an image from the validation subset of \cite{BSDS500resources}. Notice how in the SE-UCM output \protect\subref{fig:SE-UCM-tikis-bleeding-sub2} unimportant horizontal edges between the statues' heads are {\it incorrectly %wrongly 
+\caption[{\tt SE-UCM} drawback - ``bleeding'' of strong edges towards unimportant ones]{\textbf{\texttt{SE-UCM}} result. \protect\subref{fig:SE-UCM-tikis-bleeding-sub1} - an image from the validation subset of \cite{BSDS500resources}. Notice how in the {\tt SE-UCM} output \protect\subref{fig:SE-UCM-tikis-bleeding-sub2} unimportant horizontal edges between the statues' heads are {\it incorrectly %wrongly 
 up-voted} due to strong vertical boundary in their vicinity (the outline of the statues).}
 \label{fig:SE-UCM-tikis-bleeding}
 \end{figure}
-% BPR edge detector MFM 0.65, MFM-UCM 0.67 ; SE 0.70, % SE_no_nms_single_scale_repeat
+% BPR edge detector Pb (previously ``MFM'') Pb 0.65, Pb-UCM 0.67
+% SE 0.70, % SE_no_nms_single_scale_repeat
 % SE-UCM 0.69 (0.70)
 
-\section{(SE+sPb)-UCM}
-% TODO describe algorithm, use a pipeline
-(SE+sPb)-UCM is an improvement of the baseline \sref{sec:ch5-SE-UCM-baseline}, where we enhance the edge detector and again proceed to directly copy the detector values to the watershed contours (effectively performing a ``trivial'' watershed weighting). We then build the multiscale hierarchy - UCM. 
+\section{{\tt (SE+sPb)-OWT-UCM}}
+\label{sec:ch5-SE_sPb-OWT-UCM}
+{\tt (SE+sPb)-OWT-UCM} is a modification of {\tt gPb-OWT-UCM} that we described in \cref{Chapter3}, where we replace the edge detector {\tt mPb} and use {\tt SE} instead (see \fref{fig:SE_sPb-OWT-UCM-details-SE_sPb_gPb}). Unlike the original method, we don't use multiscale information.
 
-This experiment shows us that globalisation could easily be introduced to our method. Here we use the same affinity matrix as the spectral Pb of Arbel\'aez \etal \cite{Arbelaez11}. Extending our algorithm to adopt such a globalisation step could be beneficial, since it would be able to pick up on improvements in the realm of {\it spectral partitioning}, as for example spectral reduction \cite{Galasso14}. % check the plots, check MCG paper - they did exactly this
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=1\textwidth]{images/experiments/SE_sPb-OWT-UCM/SE_sPb-OWT-UCM-details-SE_sPb_gPb.pdf}
+\caption[{\tt (SE+sPb)-OWT-UCM} pipeline with focus on the edge-detection stage]{We replace the {\tt gPb} edge detector in {\tt gPb-OWT-UCM} with {\tt SE}. Compare to the detailed {\tt gPb-OWT-UCM} from \fref{fig:gPb-algorithm-details-mPb_sPb_gPb}.}
+\label{fig:SE_sPb-OWT-UCM-details-SE_sPb_gPb}
+\end{figure}
 
-Edge detection methods employing spectral clustering % partitioning have been reported to do 
-perform well in the high-precision, low-recall regime of BPR and are comparatively weaker in the low-precision, high-recall regime \cite{Fowlkes04,Yu2005segmentation}. Hence, it is not surprising to see in \fref{fig:SE_nnms_sPb-UCM_BPR} the shift of the (SE+sPb)-UCM curve towards better precision at the expense of recall. The VPR only manifests barely perceptible improvement - see \fref{fig:SE_nnms_sPb-UCM_VPR}.
+
+% NOTE the following was wrong
+% {\tt (SE+sPb)-OWT-UCM} is an improvement of the baseline \sref{sec:ch5-SE-UCM-baseline}, where we enhance the edge detector and again proceed to directly copy the detector values to the watershed contours (effectively performing a ``trivial'' watershed weighting). We then build the multiscale hierarchy - {\tt UCM}. 
+
+\textbf{Our method permits to introduce globalisation:} This experiment shows us that {\bf globalisation could easily be introduced} to our method. Here we use the same affinity matrix as the spectral detector {\tt sPb} and weighted combination to obtain {\tt gPb} of Arbel\'aez \etal \cite{Arbelaez11}. Extending our algorithm to adopt such a globalisation step could be beneficial, since it would be able to pick up on improvements in the realm of {\it spectral partitioning}, as for example spectral reduction \cite{Galasso14}. % check the plots, check MCG paper - they did exactly this
+
+\textbf{Spectral partitioning leads to higher precision:} Edge detection methods employing spectral clustering % partitioning have been reported to do 
+work well in the high-precision, low-recall regime of BPR and are comparatively weaker in the low-precision, high-recall regime \cite{Fowlkes04,Yu2005segmentation}. We already performed similar reasoning when comparing {\tt mPb} and {\tt sPb} in Section~\ref*{sec:ch3-Pb_mPb_sPb_gPb}~\ref{par:ch3-Pb_mPb_sPb_gPb}. 
+Hence, it is not surprising to see in \fref{fig:SE_nnms_sPb-UCM_BPR} the shift, compared to {\tt SE-OWT}, of the {\tt (SE+sPb)-OWT-UCM} curve towards better precision {\bf at the expense of recall}.
+
+\textbf{Multiscale techniques %allow to 
+discover more edges:} Comparing {\tt (SE+sPb)-OWT-UCM} to {\tt gPb-OWT-UCM} in \fref{fig:SE_nnms_sPb-UCM_BPR} shows us that segmentation using {\tt gPb} is superior in the high-recall regime. This is due to {\tt mPb} being employed at the edge-discovering stage, see \sref{sec:ch3-mPb}. This is also clear to see in the visual comparison of the edges extracted by the two methods in \fref{fig:SE_sPb-OWT-UCM-visual}.
+
+The VPR only manifests barely perceptible differences %improvement 
+between the three methods 
+- see \fref{fig:SE_nnms_sPb-UCM_VPR}.
 
 \begin{figure}[ht!]
 \centering
@@ -233,9 +262,30 @@ perform well in the high-precision, low-recall regime of BPR and are comparative
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/SE_nnms_sPb-UCM_VPR.png}
   \label{fig:SE_nnms_sPb-UCM_VPR}
  }
-\caption[(SE and spectralPb)-UCM plots]{SE+sPb-UCM.}
+\caption[{\tt (SE+sPb)-OWT-UCM} plots]{{\tt (SE+sPb)-OWT-UCM} results confirm that spectral methods help %mostly 
+discover more salient edges - improved precision and slight decline in recall on the BPR metric. See the text for details.}
 \label{fig:SE_nnms_sPb-UCM}
 \end{figure}
+
+\begin{figure}[ht!]
+\begin{center}
+  \begin{tabular}{ c c c }
+  \includegraphics[width=0.3\textwidth]{images/experiments/SE_sPb-OWT-UCM/eagle.png} &
+  \includegraphics[width=0.3\textwidth]{images/experiments/SE_sPb-OWT-UCM/eagle_SE-UCM_Pb_not_nms.png} &
+  \includegraphics[width=0.3\textwidth]{images/experiments/SE_sPb-OWT-UCM/eagle_SE-UCM_ucm_imageSize.png} \\
+  &
+  \includegraphics[width=0.3\textwidth]{images/experiments/SE_sPb-OWT-UCM/eagle_gPb-OWT-UCM_gPb_thin.png} &
+  \includegraphics[width=0.3\textwidth]{images/experiments/SE_sPb-OWT-UCM/eagle_gPb-OWT-UCM_ucm_imageSize.png} \\
+  &
+  \includegraphics[width=0.3\textwidth]{images/experiments/SE_sPb-OWT-UCM/eagle_(SE_sPb)-OWT-UCM_gPb_thin.png} &
+  \includegraphics[width=0.3\textwidth]{images/experiments/SE_sPb-OWT-UCM/eagle_(SE_sPb)-OWT-UCM_ucm_imageSize.png} \\
+  Input image & Pb (\ie, edges) & {\tt UCM} (\ie, segmentation) \\
+  \end{tabular}
+\end{center}
+\caption[{\tt SE-UCM}, {\tt gPb-OWT-UCM} and {\tt (SE+sPb)-OWT-UCM} - a visual comparison]{A visual comparison of the methods evaluated in \fref{fig:SE_nnms_sPb-UCM}. {\bf First row}: {\tt SE-UCM} (notice that the edges must not be thinned, as \sref{sec:ch5-nms-issue} argues), {\bf second row}: {\tt gPb-OWT-UCM} and {\bf third row}: {\tt (SE+sPb)-OWT-UCM}.}
+\label{fig:SE_sPb-OWT-UCM-visual}
+\end{figure}
+
 
 \section[Structured voting]{Structured voting - experimental study of watershed weighting strategies} % Weighting strategies % Exploration of the Space of Weighting Strategies
 \label{sec:ch5-structured-voting}
@@ -310,7 +360,7 @@ To remedy this shortcoming of the na\"{\i}ve greedy merge, we introduce what we 
  \subfigure[VPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/segs-to-greedy-merge-RIMC-VPR.png}
  }
-\caption[Greedy merge experiments]{Greedy merge experiments. In all cases the scoring function used for patches comparison was the RIMC (Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-RIMC-maths} contains a description of the RIMC metric).} % (\hyperref[par:ch4-RIMC-maths]{RIMC description in Chapter 4}).} % that looks bad on paper, still useful for .pdf, as it contains the link
+\caption[Greedy merge experiments - plots]{Greedy merge experiments. In all cases the scoring function used for patches comparison was the RIMC (Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-RIMC-maths} contains a description of the RIMC metric).} % (\hyperref[par:ch4-RIMC-maths]{RIMC description in Chapter 4}).} % that looks bad on paper, still useful for .pdf, as it contains the link
 \label{fig:segs-to-greedy-merge-RIMC}
 \end{figure}
 
@@ -435,11 +485,49 @@ Indeed, \fref{fig:quadratic-lls-fitting-visual} confirms this, additionally offe
 \label{sec:ch5-oracle}
 To evaluate the correctness of our weighting strategies, we've implemented an oracle for our pipeline. The question we wanted to answer is ``how well could we perform segmentation in the presence of perfect information?'' Our Structured voting (SV) lends itself easily to such an experiment using the ground truth segmentation. 
 
+\subsection{Oracle definition}
 For the oracle, just like in the regular experiments (in \sref{sec:ch5-structured-voting}), when scoring a given pixel on the watershed regions boundary, one of the patches is cropped centred around that same pixel location in the watershed contours image. The second patch, as we alluded %to 
 in \sref{sec:ch4-asymmetry-VPR-assigning-patches-S-G} when discussing argument assignment for asymmetric metrics, is a ground truth segmentation patch. This is different from SV (\sref{sec:ch5-structured-voting}), which uses the trained model - the inferred most likely segmentation learnt by the structured forest.
 
-% TODO
-% Ranking of oracles confirms Correct Weighting Strategies
+% oracle - experiments with the ground truth 4 methods + 4 corresponding oracles
+% (a). quadratic LLS + VPR normalised on the side of the watershed
+% (b). fairer greedy merge + VPR normalised on the side of the trees
+% (c). watershed arc + BPR 3
+% (d). line (ends) + RI
+
+\subsection{Compared weighting strategies}
+We have chosen to compare here 4 methods and their corresponding oracles. \fref{fig:oracle} contains their precision-recall quantitative results. Each method uses a different {\bf patch transformation} and a different {\bf scoring function} than the others: 
+\begin{enumerate}
+ \item[(a)] quadratic LLS fitting (Section~\ref*{sec:ch4-patch-transformations}~\ref{par:ch4-quadratic-lls-fitting}) + VPR normalised on the side of the watershed (Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-VPR-maths}),
+ \item[(b)] fairer greedy merge (Section~\ref*{sec:ch4-patch-transformations}~\ref{par:ch4-fair-greedy-merge}) + VPR normalised on the side of the trees (Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-VPR-maths}),
+ \item[(c)] watershed arc (Section~\ref*{sec:ch4-patch-transformations}~\ref{par:ch4-watershed-arc}) + BPR (Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-RI-maths}), and 
+ \item[(d)] %parametric 
+ fitted line through the end vertices of the watershed arc (Section~\ref*{sec:ch4-patch-transformations}~\ref{par:ch4-line-ends}) + RI (Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-RI-maths}).
+\end{enumerate}
+
+\begin{figure}[ht!]
+\centering
+ \subfigure[BPR]{%
+  \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/oracle_BPR.png}
+ }
+ \subfigure[VPR]{%
+  \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/oracle_VPR.png}
+ }
+\caption[Oracle experiments using the ground truth - plots]{Oracle experiments using the ground truth. See the text for the details on the methods and analysis.}
+\label{fig:oracle}
+\end{figure}
+
+% Ranking of oracles confirms Correct Weighting Strategies % NOTE not quite :)
+\subsection{Conclusions of the oracle experiments}
+\begin{enumerate}
+ \item a weak patch transformation as the quadratic LLS fitting cannot be helped even by a good scoring function {\bf (a)}. Since this SV is very conservative and only finds a few edges, there is a lot of lost recall in the BPR metric. The VPR, however, provides a more realistic evaluation. The fact that the presence of perfect leaf information does not improve the segmentation shows us that this is quite poor way of closing edge into contours.
+ \item we consider the rest of the methods - {\bf (b), (c), (d)} to be valid, successful ways of obtaining hierarchical segmentations. All of them do benefit from the improved comparison with the ground truth (and not the SF leaves). Both in BPR and VPR the improvement is of minimum 0.10.
+ \item the method that most benefits from the oracle information on the BPR metric is {\bf (c)} where the watershed transformation leaves just a watershed contour as a cue. It is therefore highly %very 
+ sensitive to fine changes (and hence, prone to err in the presence of noise and errors from the SF) in the localisation of the boundary.
+ \item the ranking of the oracles agrees with the ranking of the methods.
+ \item on BPR metric {\bf (d)} is clearly better in the high-recall regime, while {\bf (b)} and {\bf (c)} outperform it in the high-precision. Analogous conclusion may be drawn for VPR.
+ \item the oracle is a more ``impartial'' way of judging the quality of a weighting strategy, since it removes the SF factor from the evaluation (and replaces it with ``perfect information'').
+\end{enumerate}
 
 \section{Hardest negative mining}
 To help determine where the voting fails the most we have implemented a ``hardest negative mining'' tool. It would address the watershed locations in which the oracle and the machine-generated score differ the most. We also applied the tool for the comparison of the baseline (SE-UCM from \sref{sec:ch5-SE-UCM-baseline}) to the method under test. The tool facilitates a case-to-case inspection (per votes cast for a given pixel location), but does not provide a means for holistic analysis of the whole image or of the dataset.
@@ -474,7 +562,7 @@ The SE-UCM baseline we described in \sref{sec:ch5-SE-UCM-baseline} has the patch
  \subfigure[VPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/degraded-baseline_VPR.png}
  }
-\caption[Voting scope - reducing the SF patch size.]{Voting scope - reducing the SF patch size for the baseline. The original SE-UCM baseline (sref{sec:ch5-SE-UCM-baseline}) uses $16\times16$ pixels output patches. Reducing the patches size proves detrimental to %gravely %greatly diminished
+\caption[Voting scope - reducing the SF patch size - plots]{Voting scope - reducing the SF patch size for the baseline. The original SE-UCM baseline (sref{sec:ch5-SE-UCM-baseline}) uses $16\times16$ pixels output patches. Reducing the patches size proves detrimental to %gravely %greatly diminished
 the detector's performance.}
 \label{fig:degraded-baseline}
 \end{figure}
@@ -496,7 +584,7 @@ This is due to the reduction of the voting scope to 1 pixel. {\bf Excessive loca
  \subfigure[VPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/reduced-vote-scope_VPR.png}
  }
-\caption[Voting scope - dispensing with spatial averaging of votes.]{Voting scope - dispensing with spatial averaging of votes. The ablated method does not perform any spatial averaging of its votes which consequently damages its performance. See the text for details on this particular method.}
+\caption[Voting scope: dispensing with spatial averaging of votes - plots]{Voting scope - dispensing with spatial averaging of votes. The ablated method does not perform any spatial averaging of its votes which consequently damages its performance. See the text for details on this particular method.}
 \label{fig:reduced-vote-scope}
 \end{figure}
 
@@ -535,7 +623,7 @@ We extend the scope in two ways:
  \subfigure[VPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/scope_of_voting_oracle_disagreement__line_centre_VPR_ws_VPR.png}
  }
-\caption[Voting scope experiments.]{Voting scope experiments. The three segmentation methods and their oracles are variants of our best performing weighting strategy - central line fitting, combined with VPR normalised on the side of the watershed. A description of VPR is given in Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-VPR-maths}).}
+\caption[Increasing the voting scope - plots]{Results of increasing the voting scope. The three segmentation methods and their oracles are variants of our best performing weighting strategy - central line fitting, combined with VPR normalised on the side of the watershed. A description of VPR is given in Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-VPR-maths}).}
 \label{fig:voting-scope-line-centre-VPR-ws}
 \end{figure}
 
