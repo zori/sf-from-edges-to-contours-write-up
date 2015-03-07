@@ -4,7 +4,7 @@
 Given an edge detection result, various methods could be employed to obtain image segmentation.  One approach is to try and identify all possible boundaries of segmentation regions, based on the probability of boundary score produced by the edge detector. Those boundaries %, called \textit{watershed pixels}, 
 finely partition the image pixel graph (see \sref{sec:ch3-watershed} for a description of the \textit{watershed transform} which we will use). The regions closed by them constitute an oversegmentation of the image. 
 
-Different tasks require segmentation at different level of detail. It is useful, therefore, to be able to obtain coarser segmentations as well. 
+Different tasks require segmentation at different levels of detail. It is useful, therefore, to be able to obtain coarser segmentations as well. 
 By reasoning about the salience of region boundaries, one could construct a \textit{hierarchy of segmentations} (see \sref{sec:ch3-UCM} for details on the {\tt UCM}). Going up the hierarchy corresponds to coarsening the segmentation by merging neighbouring regions which are separated by a weak boundary. To establish the order in which to merge the regions, we must be able to tell weak from strong boundaries. We want to associate a \textit{score} with every possible region boundary, which score should reflect the strength of that intervening boundary.
 
 The {\tt OWT} reviewed in \sref{sec:ch3-OWT} provided one possible way to obtain such a score, by using oriented edge information. In the following we propose a different methodology which relies on patch comparison and local edge structure.
@@ -673,7 +673,7 @@ It is then clear that the watershed patch, since it is always one, as the machin
 \section[Third stage of the pipeline - UCM]{Third stage of the pipeline - hierarchical segmentation - UCM}
 The result from the SV - a weighted watershed locations image, is suitable for input to the UCM algorithm. The UCM, which stands for {\it ultrametric contour maps}, is a method introduced in~\cite{Arbelaez2006boundary}. It builds a hierarchy of segmentations by agglomerative clustering of regions based on the strength of their separating boundary. We reviewed UCM in \sref{sec:ch3-UCM}. 
 
-By thresholding the UCM we can obtain segmentations at different level of detail. The boundaries of the regions in a segmentation constitute contours, \ie, they are ``closed'' edges. This makes our algorithm suitable for evaluation by edge detector as well as image segmentation benchmarks.
+By thresholding the {\tt UCM} we can obtain segmentations at different levels of detail compatible with the perceptual organisation of the image at varied scales. The boundaries of the regions in a segmentation constitute contours, \ie, they are ``closed'' edges. This makes our algorithm suitable for evaluation by edge detector as well as image segmentation benchmarks.
 
 \section{Discussion}
 \subsection{Giving output a probabilistic interpretation}
