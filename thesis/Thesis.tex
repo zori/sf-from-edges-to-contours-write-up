@@ -30,8 +30,10 @@
 \def\eg{\emph{e.g}\onedot} \def\Eg{\emph{E.g}\onedot}
 \def\ie{\emph{i.e}\onedot} \def\Ie{\emph{I.e}\onedot}
 \def\cf{\emph{c.f}\onedot} \def\Cf{\emph{C.f}\onedot}
-\def\etc{\emph{etc}\onedot} \def\vs{\emph{vs}\onedot}
-\def\wrt{w.r.t\onedot} \def\dof{d.o.f\onedot}
+\def\etc{\emph{etc}\onedot}
+\def\vs{\emph{vs}\onedot}
+\def\wrt{w.r.t\onedot}
+\def\dof{d.o.f\onedot}
 \def\etal{\emph{et al}\onedot}
 \makeatother
 
@@ -116,12 +118,27 @@ Zornitsa Kostadinova
 % \mbox{}
 % \thispagestyle{empty}
 % \newpage
-% 
-% % The Abstract Page
-% \addtotoc{Abstract}  % Add the "Abstract" page entry to the Contents
-% \abstract{
-% \addtocontents{toc}{\vspace{1em}}  % Add a gap in the Contents, for aesthetics
-% \vspace{-0.8cm}
+
+% The Abstract Page
+\addtotoc{Abstract}  % Add the "Abstract" page entry to the Contents
+\abstract{
+\addtocontents{toc}{\vspace{1em}}  % Add a gap in the Contents, for aesthetics
+\vspace{-0.8cm}
+Recently, good edge detection results were achieved using structured forests. 
+The concept of an image edge is a critical component of all image segmentation algorithms. However, relatively few segmentation techniques base themselves off the output of an edge detector.
+
+In this project we use the strong edge detections obtained with structured forests as a basis for hierarchical image segmentation. % through structured learning
+We explore ways to leverage the information learnt by the structured forest in order to compute a hierarchical segmentation, in effect closing the extracted edges to contours.
+
+% Edge
+% detection is a critical component of many
+% image segmentation algorithms. In this project,
+% we explore ways to leverage the information in
+% the Structured Forest in order to do image
+% segmentation.
+}
+\clearpage
+
 % %Video segmentation has become one of the core areas in computer vision with a wide range of applications.
 % Despite the recent progress, video segmentation research is currently limited by the lack of study of low-level features.
 % The computational complexity of video data and variations of color, texture and motion over time introduce additional challenges to the task of video segmentation. 
@@ -201,7 +218,6 @@ Zornitsa Kostadinova
 
 % Thanks to Gaurav :-) - good idea
 % *************** List of figures ************
-% TODO work on the captions - use [] before {} to have the short version
 \listoffigures
 \clearpage
 % *************** Bibliography ***************

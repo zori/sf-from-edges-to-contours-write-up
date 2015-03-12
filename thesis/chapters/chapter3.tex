@@ -35,11 +35,12 @@ our proposal).
 
 \subsection{First stage of the pipeline - edge detection} % gPb
 \label{sec:ch3-gPb}
-The {\tt Pb} edge detector \cite{Martin2004learning} utilises local cues - colour, brightness, and texture, to judge for the presence of a boundary. 
+The {\tt Pb} edge detector of Martin, Fowlkes and Malik \cite{Martin2004learning} utilises local cues - colour, brightness, and texture, to judge for the presence of a boundary. 
 
 The {\tt gPb} algorithm \cite{Maire2008using} takes this idea further. The features built in {\tt Pb} are globalised using spectral clustering. Multiple-scale approach gives competitive edge detection results. \fref{fig:gPb-algorithm-details-mPb_sPb_gPb} gives details on the edge detection part of the {\tt gPb-OWT-UCM} pipeline - {\tt gPb}.
 
 \subsubsection{{\tt Pb} - a quantised oriented probability of boundary}
+\label{sec:ch3-Pb}
 The {\tt Pb}  algorithm computes for each pixel location in an image, local image features from gradients for {\bf 8 orientations}. 
 
 \paragraph{The features:} 4 feature channels are employed in this method. Colour is represented using the \textit{CIE L*a*b* (CIELAB)} colour space \cite{Hoffmann2003cielab}, since the distance between the points in a local neighbourhood is perceptually meaningful. % distance between points in CIELAB space is perceptually meaningful in a local neighbourhood
@@ -119,7 +120,7 @@ are learnt on the training subset of BSDS500 \cite{BSDS500resources} (similarly 
 \fref{fig:Pb_mPb_sPb_gPb} shows a performance comparison of the sub-algorithms comprising the {\tt gPb} detector. 
 
 Details on the evaluation metric are to be given in \sref{sec:ch5-BPR-evaluation-metric}. For now it suffices to know that better methods occupy the upper right corner of the plot. Humans ``fail'' to achieve %reach 
-a perfect score as the dataset contains multiple annotations. Hence, the human score represents their average agreement (calculated in an one-vs.-rest manner). 
+a perfect score as the dataset contains multiple annotations. Hence, the human score represents their average agreement (calculated in an one-\vs-rest manner). 
 
 Note how the single scale {\tt Pb} is ``missing'' high recall in comparison to {\tt mPb}, which computes each of the features at 3 different (channel-specific) scales. 
 
