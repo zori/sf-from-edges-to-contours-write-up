@@ -35,7 +35,7 @@ information about object shape. The extraction of edges from digital images has 
 object detection and recognition, segmentation, structure from motion, and tracking. Further, edges are basis for a number of local descriptors, \eg SIFT \cite{Lowe1999object,Lowe2004distinctive}, shape context \cite{Belongie2006matching}, HOG \cite{Dalal2005histograms}.
 
 % TODO use a horizontal image as example, will fit two at a line without taking so much space
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \subfigure[Input image from %the validation subset of 
  BSDS500~\cite{BSDS500resources}]{%
@@ -221,7 +221,7 @@ is expected to segment an image into a {\it small number} of significant %meanin
 regions with {\it considerable size}, see \fref{fig:semantic-segmentation}. Semantic segmentation serves the purposes of %is applied for 
 scene understanding and semantic interpretation of images.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
  \centering
  \includegraphics[width=0.51\textwidth]{images/intro/semantic-segmentation.png}
  \caption[Semantic segmentation]{Semantic segmentation requires segments to be assigned to designated %pre-defined 
@@ -355,7 +355,7 @@ In Table~\ref{fig:related_work_table} you can see the state-of-the-art methods c
 
 Notice how the most recent (since the year 2013) algorithms - \cite{DollarICCV13edges,Ganin2014n4fields,Isola2014crisp,Hallman2014} {\bf innovate mostly on the edge-detection} part ({\tt MCG} being the exception). The few which do provide segmentation, simply \textbf{reuse the \texttt{OWT-UCM} pipeline} \cite{Maire2008using,Arbelaez11}.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
 \includegraphics[width=0.8\textwidth]{images/intro/related_work_table.pdf} % OMG, that looks so much better and compiles faster (than .png); if possible, export Google drawings as pdf from now on % related_work_table.png
 \caption[Related work: state of the art]{Where do state-of-the-art methods for edge detection and segmentation innovate?} %focus there efforts.}

@@ -19,7 +19,7 @@ So a watershed weighting strategy has two aspects - making the patches sufficien
 
 \textbf{Pipeline:} In the terms of the framework of Arbel\'aez~\etal~\cite{Arbelaez11} - {\tt gPb-OWT-UCM}, we propose to use {\tt SE} instead of gPb as an edge detector. Further, we replace the Oriented watershed transform ({\tt OWT}) by {\tt SV} to obtain scored region boundary locations. Our image segmentation pipeline could then be titled {\tt SE-SV-UCM}, see \fref{fig:SE-SV-UCM-pipeline}.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \includegraphics[width=1\textwidth]{images/SE-SV-UCM/SE-SV-UCM_pipeline.png}
 \caption[Our {\tt SE-SV-UCM} algorithm in the context of the {\tt gPb-OWT-UCM} pipeline]{Our {\tt SE-SV-UCM} algorithm in the context of the {\tt gPb-OWT-UCM} pipeline, see \fref{fig:gPb-OWT-UCM-pipeline}.}
@@ -34,7 +34,8 @@ We employ the edge detector {\tt SE} of~\cite{DollarICCV13edges,Dollar2015PAMI}.
 \subsection{{\tt gPb} \emph{vs}. {\tt SE}}
 The {\tt gPb} algorithm uses a combination of carefully designed features - the gradients, each at 3 scales of: 1) texture, 2) {\it brightness (L)} 3) {\it colour a}, and 4) {\it colour b} (a total of 12 channels). As Doll\'ar reports in~\cite{DollarICCV13edges}, despite a high score on the BSDS500 dataset, {\tt gPb} performs poorly when tested on other datasets. This is potentially a symptom of over-tuning of the algorithm to the dataset.
 
-Beside being heavily-engineered, leveraging such hand-crafted cues, in terms of detection speed it does not come close to the real-time performance of {\tt SE}.
+Beside being heavily-engineered, leveraging such hand-crafted cues, in terms of detection speed it does not come close to the fast speed %real-time performance 
+of {\tt SE}.
 
 The chief reason for using {\tt SE} for us, however, is that this edge detector can provide as a by-product the intermediate most likely-segmentations that it has predicted per location in the image. This is important information about the local edge structure that we will build on when developing our Structured voting (SV).
 
@@ -60,7 +61,7 @@ A total number of $T=4$ votes are cast per watershed pixel, and we take the mean
 we average all votes per \textit{watershed arc}. The watershed arcs, as discussed in \sref{sec:ch3-OWT}, are edges of the watershed contours, which are fairly consistent in their orientation. They are obtained by recursively subdividing the region boundaries of the watershed until the approximation given by the straight line through the end of the watershed arc is a sufficiently good one. % TODO artefact from the OWT
 
 \subsection{Comparing a structured forest patch to a watershed patch}
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \includegraphics[width=1\textwidth]{images/SE-SV-UCM/weighting-the-watershed-contours-two-patches.png}
 \caption[Structured voting essence: a comparison of two patches]{We have the task of comparing and scoring the similarity of two patches - a \textbf{decision tree leaf segmentation} and a \textbf{watershed oversegmentation}.}
@@ -84,7 +85,7 @@ A ground truth segmentation in this dataset constitutes a labelling of the pixel
 \textbf{Tree leaf background patches:} Note that in~\ref{fig:watershed-and-leaf-patches} we only show examples of \textbf{non-background} patches. Background patches would contain a single region - the whole patch. Clearly, %Evidently, 
 they present local evidence of lack of boundary.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \begin{center}
   \begin{tabular}{ c c c c c c }
   \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/watershed-patches/watershed-patch1.png} &  \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/watershed-patches/watershed-patch2.png} &
@@ -142,7 +143,7 @@ greedy. The transformed watershed patch (see \fref{fig:sub:ws-greedy-merge-ws-na
 As a remedy, we propose a ``fairer'' greedy merge. It %uses heuristic to
 aims for an optimal superpixels merge into segments, according to the structured tree patch (\fref{fig:sub:ws-greedy-merge-tree-leaf}). At the same time it still respects the condition that the central watershed pixel lies on a boundary between two regions. \fref{fig:sub:ws-greedy-merge-ws-fairer-greedy-merge} shows an example.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \subfigure[Input image]{%
   \includegraphics[width=0.5\textwidth]{images/SE-SV-UCM/ws-greedy-merge/zebras2.png}
@@ -184,7 +185,7 @@ See \fref{fig:ws-just-contour} for an example. Here we take into account only th
 
 \textbf{Watershed arc:} We recursively subdivide this boundary until a \textbf{watershed arc} is obtained, \fref{fig:sub:ws-just-contour-watershed-just-contour}, whose shape could be sufficiently accurately approximated by the straight line through the arc's end points. We described this subdivision in Section~\ref*{sec:ch3-OWT}~\ref{par:ch3-watershed-arc}. See also \fref{fig:Arbelaez09-watershed-arcs}.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
  \centering
  \subfigure[Input image]{%
   \includegraphics[width=0.25\textwidth]{images/examples/hawaii/hawaii.jpg}
@@ -203,7 +204,7 @@ See \fref{fig:ws-just-contour} for an example. Here we take into account only th
 
 Note that, unlike with \textit{greedy merge}, none of the transformations given here depend on the other patch. The watershed arc is uniquely determined by the pixel around which the watershed patch is centred.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \begin{center}
  \subfigure[Input image]{%
   \includegraphics[width=0.14\textwidth]{images/SE-SV-UCM/ws-just-contour/old_man.png}
@@ -263,9 +264,9 @@ as above, but enforcing adherence to the centre of the image patch; the examples
 \subparagraph{Line estimated with {\bf linear least squares (LLS)}:} 
 \label{par:ch4-line-fitting-lls}
 least squares minimisation, taking into account \textbf{all} the watershed arc pixels. By linear least squares minimisation we find the parameters of the linear form ($(x,y)$ are the coordinates of the pixel position):
-\[
+\begin{equation}
  Dx+Ey+F=0
-\]
+\end{equation}
 See the examples in Figures \ref{fig:sub:ws-line-fitting-lls} and \ref{fig:sub:ws-line-fitting-lls2}. Also notice how in the second example  %(\fref{fig:ws-line-fitting2}) 
 the LLS line fitting (\fref{fig:sub:ws-line-fitting-lls2}) disagrees with the direction of the line determined by the parametric methods (Figures \ref{fig:sub:ws-line-fitting-ends2} and \ref{fig:sub:ws-line-fitting-centre2}).
 
@@ -281,7 +282,7 @@ the LLS line fitting (\fref{fig:sub:ws-line-fitting-lls2}) disagrees with the di
 
 \textbf{Future work:} Another possibility that we did not try is a PCA-based fit. As with the linear least squares fitting, it will take into account all pixels that are part of the watershed arc.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \begin{center}
  \subfigure[First example - location]{%
   \includegraphics[width=0.4\textwidth]{images/SE-SV-UCM/ws-line-fitting/elephants.png}
@@ -319,7 +320,7 @@ the LLS line fitting (\fref{fig:sub:ws-line-fitting-lls2}) disagrees with the di
 \label{fig:ws-line-fitting}
 \end{figure}
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \begin{center}
  \subfigure[Second example - location]{%
   \includegraphics[width=0.4\textwidth]{images/SE-SV-UCM/ws-line-fitting/elephants2.png}
@@ -361,9 +362,9 @@ the LLS line fitting (\fref{fig:sub:ws-line-fitting-lls2}) disagrees with the di
 \label{par:ch4-quadratic-lls-fitting}
 We extend the idea from the previous Section~\ref*{sec:ch4-patch-transformations}~\ref{par:ch4-line-fitting-lls} of applying linear least squares to fit the edge (a {\it watershed arc} intervening two regions, or a {\it boundary between regions}) data. The model takes into account each of the pixels $(x,y)$ that form the edge. We enrich %augment, boost
 the model by adding {\bf quadratic terms}. The higher-order terms allow for polynomial solutions of degree up to 2. By {\bf linear least squares minimisation} we find the parameters of the quadratic form (the higher-order terms are given in bold): % a quadratic form is a homogeneous polynomial of degree two in a number of variables
-\[
+\begin{equation}
  \mathbf{Ax^2+Bxy+Cy^2}+Dx+Ey+F=0
-\]
+\end{equation}
 
 When $A + B + C \ne 0$, the graph of the solutions is a \textbf{conic section} - an ellipse, a parabola, or a hyperbola. In the case of a hyperbola, whenever both branches of the hyperbola are present in the patch, we choose the one minimising the Euclidean distance (\ie, the {\it $L^2$ norm}) to the watershed arc edge (according to which the fit is made).
 % TODO add an image of that - two branches, and then only the one with the minimising branch
@@ -372,7 +373,7 @@ In \fref{fig:ws-quadratic-fitting} we show 6 examples of quadratic fitting. We h
 and local patch and adhere to % stick to
 the relevant for the fit information, namely the watershed contour whose pixels are used in the minimisation.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \begin{center}
   \begin{tabular}{ c c c c c c }
   \includegraphics[width=0.13\textwidth,frame]{images/SE-SV-UCM/ws-quadratic-fitting/ws1.png} &
@@ -433,15 +434,15 @@ After the matching problem is solved, edge pixels are either {\it hits} (true po
 In Bayesian terms, precision is the probability that the detector's signal is valid, and recall is the probability that the ground truth data was detected. 
 The reported number is the {\it F-measure} (or {\it F-score}), which is the harmonic mean of the precision and recall - a summary of the edge detection quality.
 
-\[
+\begin{equation}
 P=\frac{\left|S\cap\left(\bigcup\limits _{i=1}^{M}G_{i}\right)\right|}{|S|}
-\]
-\[
+\end{equation}
+\begin{equation}
 R=\frac{{\sum\limits _{i=1}^{M}\left|S\cap G_{i}\right|}}{\sum\limits _{i=1}^{M}\left|G_{i}\right|}
-\]
-\[
+\end{equation}
+\begin{equation}
 F=\frac{2PR}{P+R}
-\]
+\end{equation}
 
 where $S$ and $\{G_{i}\}_{i=1}^{M}$ are boundary maps and $\cap$
 computes a bipartite graph assignment between them.
@@ -486,9 +487,9 @@ $N$ pixels; for us - $\binom{16 . 16}{2}=32 640$.
 \label{par:ch4-RIMC-maths}
 The RIMC is different from RI in that it takes a Monte Carlo subsample of the possible unique pairs of pixels and only considers their segment membership. It is inspired by the implementation of randomised label mapping to a simpler discrete space in training nodes of a decision forests in~\cite{DollarICCV13edges}. We define the RIMC between two segmentations.
 
-\[
+\begin{equation}
 RIMC(S,G)=\frac{1}{T}\sum\limits _{(j,k)\in B}\left[c_{jk}\mathbb{I}\left(G(j)=G(k)\right)+(1-c_{jk})\mathbb{I}\left(G(j)\neq G(k)\right)\right]
-\]
+\end{equation}
 
 where $B\subsetneq A$ - a random subset of the pairs of pixels.
 In our experiments $|B|=256$.
@@ -501,9 +502,9 @@ labelling between a machine generated segmentation on one hand, and \textbf{mult
 
 % between a test segmentation and multiple ground truths
 
-\[
+\begin{equation}
 PRI(S,\{G_{i}\}_{i=1}^{M})=\frac{1}{T}\sum\limits _{j<k}\left[c_{jk}p_{jk}+\left(1-c_{jk}\right)\left(1-p_{jk}\right)\right]
-\]
+\end{equation}
 
 where $p_{jk}$ - probability of $c_{jk}$; possible estimator of
 $p_{jk}$ is the sample mean of the corresponding Bernoulli distribution.
@@ -520,12 +521,12 @@ To be able to understand Segmentation covering and Volume Precision-Recall, whic
 Overlap of two regions % segments
 $s$ and $g$
 
-\[
+\begin{equation}
 \mathcal{O}\left(s,g\right)=\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
-\]
+\end{equation}
 For visualisation, see \fref{fig:overlap-IoU}.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
 \includegraphics[width=0.3\textwidth]{images/scoring_fcns/intersection-over-union_score_illustrated.png}
 \caption[Illustration of the \textit{Overlap} of two segments]{Illustration of the \textit{Overlap} of two segments. The score is computed as their intersection (\textit{tp}) divided by their union (\textit{tp} + \textit{fp} + \textit{fn}).}
@@ -535,9 +536,9 @@ For visualisation, see \fref{fig:overlap-IoU}.
 \subparagraph{Intersection over union (IoU)}\mbox{}\\
 The Intersection over union score (or utility) %also loss
 is popular in the computer vision community through its use in the PASCAL VOC challenge \cite{PASCAL-voc-2012}. It is applied for the benchmark of pixel-level semantic segmentation. There, the measure is applied per object class, counting the pixels - true positives (\textit{tp}), false positives (\textit{fp}), and false negatives (\textit{fn}) \wrt a human-annotated ground truth. Segmentation accuracy is then computed as
-\[
+\begin{equation}
  \text{accuracy} = \frac{\textit{tp}}{\textit{tp} + \textit{fp} + \textit{fn}}
-\]
+\end{equation}
 
 See also \fref{fig:overlap-IoU}.
 
@@ -550,17 +551,17 @@ and $G=\left\{ {g_{j}}\right\} _{j=1}^{q}$ with multiple (and different) number 
 
 \begin{enumerate}
 \item{\textbf{Normalise by dividing by the number of ground-truth segments}}
-\[
+\begin{equation}
 IoU(S,G)=\frac{\sum\limits _{i=1}^{p}\sum\limits _{j=1}^{q}\mathcal{O}\left(s_{i},g_{j}\right)}{\Gamma_{G}}
-\]
+\end{equation}
 where $\Gamma_{S}=p$ and $\Gamma_{G}=q$ - number of segments in each segmentation.
 
 The above is not symmetric \wrt $S$ and $G$, and would consequently not be sufficient as a metric on its own.
 
 \item{\textbf{Normalise by dividing by both the number of machine-provided and ground-truth segments}}
-\[
+\begin{equation}
 IoU(S,G)=\frac{\sum\limits _{i=1}^{p}\sum\limits _{j=1}^{q}\mathcal{O}\left(s_{i},g_{j}\right)}{\Gamma_{S}\Gamma_{G}}
-\]
+\end{equation}
 
 The above erroneously penalises two equal segmentations (perfect match) just for having larger amount of segments.
 \end{enumerate}
@@ -572,17 +573,17 @@ It is asymmetric, therefore two possible variants exist. The second version revi
 
 \begin{enumerate}
 \item{\textbf{Covering of the test segmentation with the ground truths}}
-\[
+\begin{equation}
 C\left(\left\{ {G_{i}}\right\} _{i=1}^{M}\longrightarrow S\right)=\frac{1}{M}\sum\limits _{i=1}^{M}\frac{1}{N}\sum\limits _{s\in S}\left|s\right|\max_{g\in G_{i}}\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
-\]
+\end{equation}
 
 where $N=\left|S\right|=\left|G_{i}\right|$ - number of pixels in the image.
 
 \item{\textbf{Covering of the ground truths with the test segmentation}}
 
-\[
+\begin{equation}
 C\left(S\longrightarrow\left\{ {G_{i}}\right\} _{i=1}^{M}\right)=\frac{1}{M}\sum\limits _{i=1}^{M}\frac{1}{N}\sum\limits _{g\in G_{i}}\left|g\right|\max_{s\in S}\frac{\left|s\cap g\right|}{\left|s\cup g\right|}
-\]
+\end{equation}
 \end{enumerate}
 A reasonable %sensible 
 way to combine the two cases of SC is missing.
@@ -602,18 +603,18 @@ In the way just described is how we use the VPR metric.
 \subparagraph{VPR not-normalised}\mbox{}\\
 The following is the first attempt in~\cite{Galasso13} at defining such region-centric metric.
 
-\[
+\begin{equation}
 \tilde{P}=\frac{1}{M}\sum\limits _{i=1}^{M}\frac{\sum\limits _{s\in\mathbb{S}}\max\limits _{g\in\mathbb{G}_{i}}\left|s\cap g\right|}{\left|\mathbb{S}\right|}=\frac{\sum\limits _{i=1}^{M}\sum\limits _{s\in\mathbb{S}}\max\limits _{g\in\mathbb{G}_{i}}\left|s\cap g\right|}{M\left|\mathbb{S}\right|}
-\]
+\end{equation}
 
-\[
+\begin{equation}
 \tilde{R}=\sum\limits _{i=1}^{M}\frac{\sum\limits _{g\in\mathbb{G}_{i}}\max\limits _{s\in\mathbb{S}}\left|s\cap g\right|}{\sum\limits _{j=1}^{M}\left|\mathbb{G}_{j}\right|}=\frac{\sum\limits _{i=1}^{M}\sum\limits _{g\in\mathbb{G}_{i}}\max\limits _{s\in\mathbb{S}}\left|s\cap g\right|}{\sum\limits _{i=1}^{M}\left|\mathbb{G}_{i}\right|}
-\]
+\end{equation}
 
 
-\[
+\begin{equation}
 \tilde{F}=\frac{2\tilde{P}\tilde{R}}{\tilde{P}+\tilde{R}}
-\]
+\end{equation}
 
 where $\mathbb{S}$ and $\{\mathbb{G}_{i}\}_{i=1}^{M}$ - segmentations,
 
@@ -627,32 +628,32 @@ $\left|\centerdot\right|$ counts the pixels in the segment.%voxel.
 This is the normalisation defined in~\cite{Galasso13} and utilised %employed 
 in their benchmark.
 
-\[
+\begin{equation}
 P=\frac{\sum\limits _{i=1}^{M}\sum\limits _{s\in\mathbb{S}}\max\limits _{g\in\mathbb{G}_{i}}\left|s\cap g\right|-\boxed{\sum\limits _{i=1}^{M}\max\limits _{g\in\mathbb{G}_{i}}\left|g\right|}}{M\left|\mathbb{S}\right|-\boxed{\sum\limits _{i=1}^{M}\max\limits _{g\in\mathbb{G}_{i}}\left|g\right|}}
-\]
+\end{equation}
 
-\[
+\begin{equation}
 R=\frac{\sum\limits _{i=1}^{M}\sum\limits _{g\in\mathbb{G}_{i}}\max\limits _{s\in\mathbb{S}}\left|s\cap g\right|-\boxed{\sum\limits _{i=1}^{M}\Gamma_{\mathbb{G}_{i}}}}{\sum\limits _{i=1}^{M}\left|\mathbb{G}_{i}\right|-\boxed{\sum\limits _{i=1}^{M}\Gamma_{\mathbb{G}_{i}}}}
-\]
+\end{equation}
 
-\[
+\begin{equation}
 F=\frac{2PR}{P+R}
-\]
+\end{equation}
 
 \subparagraph{VPR normalised (according to the model capacity of the test segmentation)}\mbox{}\\ % new
 Further, we define the following normalisation with the lower bound being computed on the side of the machine segmentation.
 
-\[
+\begin{equation}
 \hat{P}=\frac{\sum\limits _{i=1}^{M}\sum\limits _{s\in\mathbb{S}}\max\limits _{g\in\mathbb{G}_{i}}\left|s\cap g\right|-\boxed{M\Gamma_{\mathbb{S}}}}{M\left|\mathbb{S}\right|-\boxed{M\Gamma_{\mathbb{S}}}}
-\]
+\end{equation}
 
-\[
+\begin{equation}
 \hat{{R}}=\frac{\sum\limits _{i=1}^{M}\sum\limits _{g\in\mathbb{G}_{i}}\max\limits _{s\in\mathbb{S}}\left|s\cap g\right|-\boxed{M\max_{s\in\mathbb{S}}\left|s\right|}}{\sum\limits _{i=1}^{M}\left|\mathbb{G}_{i}\right|-\boxed{M\max_{s\in\mathbb{S}}\left|s\right|}}
-\]
+\end{equation}
 
-\[
+\begin{equation}
 \hat{{F}}=\frac{2\hat{P}\hat{R}}{\hat{P}+\hat{R}}
-\]
+\end{equation}
 
 \subsection{Symmetric and asymmetric metrics}
 Of the above metrics, BPR, RI, and not-normalised VPR are symmetric \wrt the segmentation under test and the ground truth segmentation. SC as well as the two normalised versions of VPR are asymmetric. VPR incorporates and develops the idea present in SC about a maximal \textit{Overlap}, but additionally provides normalisation. Therefore in our experiments in \cref{Chapter5} we do not consider SC.

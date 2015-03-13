@@ -6,7 +6,7 @@ In this chapter we review a recent segmentation method, introduced in \cite{Arbe
 in \cite{Arbelaez11}. The algorithm is known as {\tt gPb-OWT-UCM}, after the three stages of its pipeline. We used it to illustrate segmentation concepts in \sref{sec:ch1-segmentation-terminology}. As you can see in \fref{fig:gPb-OWT-UCM-high-level}, the method incorporates a self-sufficient edge detector - {\tt gPb} \cite{Maire2008using}. The output of the detection is further processed to yield contours at multiple scales by %, in effect 
 providing a hierarchical segmentation in an {\tt UCM} \cite{Arbelaez2006boundary}.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \includegraphics[width=1\textwidth]{images/gPb-OWT-UCM/gPb-OWT-UCM-high-level.png}
 \caption[High-level view of the {\tt gPb-OWT-UCM} algorithm]{High-level view of the {\tt gPb-OWT-UCM} - a segmenter that first extracts edges and subsequently uses them to obtain a multiscale segmentation.}
@@ -19,7 +19,7 @@ contours} in addition to edges.
 In this chapter we review {\tt gPb-OWT-UCM}, focusing mostly on the edges-to-contours part of the pipeline ({\tt OWT-UCM}). We discuss limitation of this approach and in \cref{Chapter4} propose an alternative solution for obtaining a hierarchy of closed contours from a non-oriented {\tt Pb} edge signal.
 
 \section{{\tt gPb-OWT-UCM} algorithm pipeline}
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \includegraphics[width=1\textwidth]{images/gPb-OWT-UCM/gPb-OWT-UCM_pipeline.png}
 \caption[{\tt gPb-OWT-UCM} detailed pipeline]{{\tt gPb-OWT-UCM} detailed algorithm pipeline. We are explicitly including the ``watershed transform'' operation and its output - watershed contours, as it is crucial both to this technique (to be described in \sref{sec:ch3-watershed}) and to our method, which we propose in \cref{Chapter4}. Notice how {\tt OWT} requires as input an {\bf oriented boundary signal} $oPb(x,y,\theta)$, which the {\tt gPb} edge detector provides.}
@@ -74,7 +74,7 @@ So for each of the local features, an oriented gradient operator is computed at 
 
 %- In contrast to [2] and [28], which use a logistic regression classifier to combine cues, we learn the weights by gradient ascent on the F-measure using the training images and corresponding ground truth of the BSDS.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
 \includegraphics[width=1\textwidth]{images/gPb-OWT-UCM/gPb-algorithm-details-mPb_sPb_gPb.pdf}
 \caption[{\tt gPb-OWT-UCM} pipeline with focus on the edge-detection stage - {\tt gPb}]{{\tt gPb-OWT-UCM} pipeline with focus on the edge-detection stage. The {\tt gPb} combines the results of the two edge detectors - {\bf multiscale} and {\bf spectral}.}
@@ -110,9 +110,9 @@ to produce the oriented spectral edge detector $sPb(x,y,\theta)$.
 \subsubsection{{\tt gPb} - a combination of {\tt mPb} and {\tt sPb}}
 \label{sec:ch3-Pb_mPb_sPb_gPb}
 As we just learnt, {\tt mPb} detector fires at all edges. {\tt sPb}, being a spectral method, fires only at salient edges \cite{Fowlkes04,Yu2005segmentation}. {\tt gPb} provides a simple way to combine the two results, see also \fref{fig:gPb-algorithm-details-mPb_sPb_gPb}. The weights $\alpha$ and $\beta$ for the {\bf linear combination} 
-\[
+\begin{equation}
  gPb(x,y,\theta)=\alpha \cdot mPb(x,y,\theta) + \beta \cdot sPb(x,y,\theta)
-\]
+\end{equation}
 are learnt on the training subset of BSDS500 \cite{BSDS500resources} (similarly to the learning of the weights for the local cues combination). % the weights are learned by gradient ascent on the F-measure using the BSDS training images.
 
 \paragraph{Performance comparison of the {\tt gPb} components:} 
@@ -128,7 +128,7 @@ As the eigenvectors correspond to the most prominent of edges, the {\tt sPb} pro
 
 {\tt gPb} successfully benefits from the better of the two algorithms {\tt mPb} or {\tt sPb} in their respective superior regime.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
  \centering
  \includegraphics[width=0.6\textwidth]{images/gPb-OWT-UCM/Pb_mPb_sPb_gPb.png}
  \caption[{\tt gPb} evolution - plot results on the BSDS500 benchmark.]{{\tt gPb} evolution - evaluation results on the BSDS500 benchmark. See the text for details. Plot courtesy of \cite{Arbelaez11}.}
@@ -168,7 +168,7 @@ segmentation produced by it is an {\bf oversegmentation}, due to a catchment bas
 %- A major problem with this method is that it very often results in severe over segmentation, such as in the segmentation below. There have been several attempts at overcoming this problem. Meyer and Beucher proposed a marker-controlled strategy. Markers are placed on the image to represent objects. The Watershed transformation is then run by flooding from the markers. This requires prior knowledge of the objects in the image or even manual input.
 
 
-\begin{figure}[ht!]
+\begin{figure}[t]
  \centering
  \includegraphics[width=0.5\textwidth]{images/gPb-OWT-UCM/watershed-transformation-forming-regions.png}
  \caption[Watershed transformation - forming the regions]{Watershed transformation - forming the regions. {\bf Left:} the topological surface, with the local minima circled (8-neighbourhood is used. % in {\tt OWT}).
@@ -205,7 +205,7 @@ Watershed arcs are recursively subdivided region boundaries, purpose being to si
 Maire \etal \cite{Maire2008using} applied the idea of an approximation %of a boundary 
 with a line first to {\bf edges} in order to facilitate the localisation of junctions (and thus ``close'' contours). \fref{fig:Maire08using-contour-subdivision} shows a few edge fragments in a local image patch and (overlaid) their {\it line segment} approximations.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
  \centering
  \includegraphics[width=0.4\textwidth,frame]{images/gPb-OWT-UCM/Maire2008using-contour-subdivision.png}
  \caption[Edges subdivision - an image patch]{{\bf Edges subdivision} into approximating linear pieces (the solid line segments). The intersections of the underlying straight lines (dashed and dotted line) would serve for junction detection. Courtesy of~\cite{Maire2008using}.}
@@ -217,7 +217,7 @@ The above scheme is easily transferable to {\bf watershed contours}. The procedu
 its endpoints. The {\it subdivision} is scale-invariant: the process stops when the maximal distance from an arc point to the {\it line segment} approximating it becomes smaller than a fixed fraction of the latter's % its %the segment's 
 length. See also \fref{fig:Arbelaez11-contour-subdivision}.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
  \centering
  \includegraphics[width=1\textwidth]{images/gPb-OWT-UCM/Arbelaez11-contour-subdivision.png}
  \caption[Region boundary subdivision]{{\bf Region boundary subdivision} (courtesy of~\cite{Arbelaez11}). {\bf Left:} Colour-coded are given the initial watershed arcs - the entire  %full 
@@ -229,7 +229,7 @@ length. See also \fref{fig:Arbelaez11-contour-subdivision}.
 Now that the watershed arcs provide a sufficient simplification by subdividing a region boundary, an approximate orientation $\mathbf\theta$ can be assigned to each arc. The score to associate with each pixel on this arc is taken from the corresponding oriented boundary $gPb(x,y,\mathbf{\theta})$. Finally the scores from the watershed pixels are {\bf averaged per region boundary} (see \fref{fig:OWT_Arbelaez11} {\bf Left} and {\bf Far right}). 
 By taking orientation into consideration, the {\tt OWT} reduces inaccurate high scores in the proximity of strong edges.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
  \centering
  \includegraphics[width=1\textwidth]{images/gPb-OWT-UCM/OWT_Arbelaez11.png}
  \caption[{\tt OWT} compared to na\"{\i}ve value transfer]{{\tt OWT} compared to na\"{\i}ve value transfer (courtesy of~\cite{Arbelaez11}). {\bf Far left:} The maximal boundary strength across orientations $gPb(x,y)$. {\bf Left:} Na\"{\i}ve approach creates artefacts (see erroneously split region between statue's heads). {\bf Middle:} Subdivision of region boundaries into arcs. Magenta lines are the approximating {\it line segments}. {\bf Right:} $gPb(x,y,\theta)$ for 4 different $\theta$; 8 are used in practice. {\bf Far right:} {\tt OWT} leads to a reduction in artefacts close to strong boundaries.}

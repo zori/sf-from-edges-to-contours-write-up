@@ -23,7 +23,13 @@
 \definecolor{dark-blue}{rgb}{0.2,0.2,0.6}
 
 \setlength{\parindent}{8pt}
+
+% Zori: attempt to fix floats to be on top of page
 \makeatletter
+% \setlength{\@fptop}{0pt}
+% \setlength{\@fpbot}{0pt plus 1fil}
+%\makeatother <- it's after the \def 's
+
 \DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
 \def\@onedot{\ifx\@let@token.\else.\null\fi\xspace}
 
@@ -35,6 +41,7 @@
 \def\wrt{w.r.t\onedot}
 \def\dof{d.o.f\onedot}
 \def\etal{\emph{et al}\onedot}
+% Zori: also italicise "per se" 
 \makeatother
 
 \newcommand{\argmax}{\operatornamewithlimits{argmax}}

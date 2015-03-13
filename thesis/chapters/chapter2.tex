@@ -51,7 +51,7 @@ we review the method of Doll{\'a}r and Zitnick \cite{DollarICCV13edges,Dollar201
 \section{Structured edge algorithm outline}
 The key to edge extraction using SF is that a decision for a single point is made based on an {\bf image patch centred at it}. A large enough patch contains low-level features as well as mid-level context information (see \fref{fig:srf-structure-in-edge-patches}). For improved accuracy, multiple patches (not just the one centred around the pixel) contribute to the final conclusion as to the presence or absence of an edge in the particular pixel. % decision
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \includegraphics[width=0.5\textwidth]{images/srf/structure-in-edge-patches.png}
 \caption[Local patches exhibit similarities in edge structure]{Local edge patches exhibit similarities in structure. Image patches and the human-%hand-
@@ -85,7 +85,7 @@ As the segmentation patch space is high-dimensional and complex, it is non-trivi
 
 \textbf{Proxy label space:} They introduce a mapping to a simpler, lower-dimensional discrete space. The information gain computed on it is a sufficient approximation of that of the original output space without being prohibitively expensive to compute. Thus it is possible to compute distance, or, analogously, similarity, between output segmentation. In effect, similar output segmentations are clustered together.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \subfigure[A training sample is a pair of image patch and its corresponding ground-truth segmentation]{%
   \includegraphics[width=0.5\textwidth]{images/srf/structured-decision-tree-training.png}
@@ -107,6 +107,7 @@ Part of the accuracy in prediction of the RF framework comes from ensuring suffi
 Unlike other structured learning methods, no optimisation is required to make a prediction. Inference using SF is straightforward. A decision forest is an ensemble of $T$ \textit{independent} trees. To make a prediction, the individual predictions of the trees are combined as prescribed by the ensemble model. Here averaging is performed on the output edge patches.
 
 \subsection{Structured decision tree inference}
+\label{sec:ch2-structured-forest-inference}
 The test sample - a feature vector computed based on an input image patch $x$, travels down the tree. Decisions whether it should be routed to the left or right child of a node are made according to the parameters learnt during training. When a leaf node is reached, it contains a set of most likely segmentations, and each of those could be associated with the input $x$.
 
 \textbf{Ensemble model:} In the context of random forests the term ``ensemble model'' defines how to combine multiple predictions into a single prediction. Somewhat confusing, in the paper \cite{DollarICCV13edges}, this refers to two different things:
@@ -117,7 +118,7 @@ The test sample - a feature vector computed based on an input image patch $x$, t
  \item{in {\bf detection:}} to make the final edge extraction, a means of combining multiple overlapping decisions is necessary. Details will be given shortly in \sref{sec:ch2-edge-detection}.
 \end{enumerate}
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \subfigure[Image patches used as input, which ended up clustered in the same structured tree leaf.]{%
   \includegraphics[width=0.45\textwidth]{images/srf/sf-leaf-imgs.png}
@@ -131,7 +132,7 @@ The test sample - a feature vector computed based on an input image patch $x$, t
 \label{fig:srf-leaf}
 \end{figure}
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \subfigure[Decision tree inference]{%
   \includegraphics[width=0.57\textwidth]{images/srf/srf-tree-inference.png}
@@ -176,7 +177,7 @@ SE is not the only algorithm that detects edges while using local neighbourhood 
 A different approach is taken by Hallman and Fowlkes in their \textbf{Oriented edge forests (\texttt{OEF})} paper \cite{Hallman2014} which was published towards the end of the current research work. They use a decision forest classifier to learn to distinguish between {\bf straight-line edges} of different {\bf position and orientation} within an image patch, see \fref{fig:OEF-oriented-patch-space}. Although they use a set of pre-defined edge classes, subsequent refinement of the edges (similar to the local {\it sharpening} introduced in \cite{Dollar2015PAMI}) % adds  a  subsequent  refinement  step  to  improve edge localisation.
 helps them capture fine variations in edge shape and improves spatial localisation. {\tt OEF} currently (as of February 2015) achieves best results on the BSDS500 benchmark.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
 \includegraphics[width=0.8\textwidth]{images/OEF-oriented-patch-space.png} % not in srf/ subfolder as it is more ``related work''
 \caption[{\tt OEF} decision forest predicts a probability distribution over a fixed patch space]{{\tt OEF} decision forest predicts a probability distribution over a fixed patch space (given on the left). Images courtesy of~\cite{Hallman2014}}
@@ -205,7 +206,8 @@ the {\it trained Structured forest}, for the following reasons. {\tt SE}:
  \item is an accurate edge detector,
  \item is fast at training time (which is carried out %done 
  offline),
- \item achieves real-time speed at test time - during edge detection,
+ \item achieves high %real-time 
+ speed at test time, in the edge detection phase, % extraction,
  \item has potential as a general-purpose edge detector, %TODO add note - gPb seems to be highly-tuned for the BSDS500 dataset
  \item is able to predict a most-likely segmentation for a given input patch,
  \item can be augmented to store all those {\bf intermediate predictions} made during the edge extraction.

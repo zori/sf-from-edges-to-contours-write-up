@@ -3,30 +3,41 @@
 \chapter{Experiments}
 \label{Chapter5}
 \settocdepth{subsection}
-The majority of our experiments focuses on weighting the watershed locations. That corresponds to the \textbf{\texttt{Structured voting (SV)}} stage of the pipeline {\tt SE-SV-UCM}, which we propose in \cref{Chapter4} for the task of going from edges to contours.
+The majority of our experiments focuses on weighting the watershed locations. That corresponds to the \textbf{\texttt{Structured voting (SV)}} stage of our  {\tt SE-SV-UCM} pipeline, which we propose in \cref{Chapter4} for the task of going from edges to contours.
 
-\textbf{Dataset:} For the evaluation of our segmentation results we work on the Berkeley Segmentation Dataset (BSDS500)~\cite{Arbelaez11}. Since its introduction in 2001, it has by now become a standard dataset for both the task of edge detection as well as that of image segmentation.
+\textbf{Dataset:} For the evaluation of our segmentation results we work on the Berkeley Segmentation Dataset (BSDS500)~\cite{Arbelaez11}. It is a standard dataset for both the task of edge detection as well as that of image segmentation.
 
-\textbf{Benchmark:} We report results on the benchmark~\cite{Galasso13Benchmark} introduced in~\cite{Galasso13} which can evaluate segmentation hierarchies against given ground-truth segmentations. It demonstrates the trade-off between an oversegmentation and a more accurate object-centric segmentation.
+\textbf{Benchmark:} We report results on the benchmark by Galasso \etal~\cite{Galasso13Benchmark} introduced in~\cite{Galasso13} which can evaluate segmentation hierarchies against given ground-truth segmentations. It demonstrates the trade-off between an oversegmentation and a more accurate object-centric segmentation.
 
-\textbf{Watershed weighting strategy:} The {\tt Structured voting} requires a choice of a watershed weighting strategy. The purpose of the weighting is associating a \textbf{score} with each of the watershed locations' pixels. That score must faithfully reflect the strength of the underlying boundary. This way we endeavour % hope % aim, strive %So we want 
-to correctly evaluate how good is the boundary evidence presented by the most likely segmentation - the one determined by the structured forest. 
+\textbf{Watershed contours weighting strategy:} The {\tt Structured voting} requires a choice of a watershed contours weighting strategy. The purpose of the weighting is associating a \textbf{score} with each of the watershed pixels. That score must faithfully reflect the strength of the underlying boundary. 
+We do the scoring by quantify how much the segmentation estimated by a structured decision tree confirms the boundary evidence present in the watershed image.
+%This way we endeavour % hope % aim, strive %So we want 
+% to correctly evaluate how good is the boundary evidence presented by the most likely segmentation - the one determined by the structured forest. 
 
-The first aspect of our voting strategy is making the structured forest patch and the watershed locations patch comparable. The watershed patch is an oversegmentation, and in this sense, contains much more information, not exclusively about the location of the boundary that we would like to evaluate. So we strive to simplify the watershed patch, keeping only important information about it - the shape of the boundary under consideration, or the constitution of the segmentation in the patch. Such a simplification in the context of our algorithm we call {\bf watershed patch transformation}. %``watershed patch transformation''. 
+The first aspect of our voting strategy is making the structured forest patch and the watershed locations patch comparable. 
+The watershed patch is an oversegmentation. It contains not only the boundary that we would like to reason about, but also other potential boundaries. 
+%The watershed patch is an oversegmentation, and in this sense, contains much more information, not exclusively about the location of the boundary that we would like to evaluate. 
+Therefore we strive to simplify the watershed patch, keeping only important information about it - the shape of the boundary under consideration, or the constitution of the segmentation in the patch. Such a simplification in the context of our algorithm we call {\bf watershed patch transformation}. %``watershed patch transformation''. 
 
 The second particular to a watershed weighting strategy is the choice of a scoring function. We view the task as a segmentation benchmark problem, where one of the patches is the ground truth segmentation, and the other the segmentation under test. We analyse and apply a selection of boundary- and region-based metrics.
 
 In the rest of the chapter we briefly describe the dataset and evaluation metrics used, in order to help understand the experiments. Afterwards, we give a detailed account of our most important experiments and the conclusions we draw based on them.
 
-\section{Evaluation setup} % framework, organisation
-\subsection{Dataset}
+% \section{Evaluation setup} % framework, organisation
+
+\section{Dataset}
 \label{sec:ch5-BSDS500-dataset}
 % \subsubsection{BSDS500}
-The {\bf Berkeley Segmentation Dataset (BSDS)}, introduced in \cite{Martin01}, is a large dataset that covers a variety of complex scenarios in natural images. The photographs have been manually segmented by multiple participants. It therefore provides the ground truth label for each pixel as being on- or off-boundary. Initially the dataset featured 300 images (BSDS300). It was later extended - in the new dataset BSDS500 \cite{Arbelaez11} the original 300 images are used for training (200) and validation (100), and 200 new human-annotated images are added for testing. Again, each image has 5 to 10 hand-drawn annotations by different subjects. See \fref{fig:BSDS-annotations} for an example image and two of its ground-truth segmentations. %annotations by different people.
+The {\bf Berkeley Segmentation Dataset (BSDS)}, introduced in \cite{Martin01}, is a large dataset that covers a variety of complex scenarios in natural images. The photographs have been manually segmented by multiple participants. It therefore provides the ground truth label for each pixel as being on- or off-boundary. Initially the dataset featured 300 images (BSDS300) divided into a training set of 200 images, and a test set of 100 images. It was later extended - in the new dataset BSDS500 \cite{Arbelaez11} the original 300 images are used for training (200) and validation (100), and 200 new human-annotated images are added for testing. Each image has 5 to 10 hand-drawn annotations by different subjects. See \fref{fig:BSDS-annotations} for an example image and two of its ground-truth segmentations. %annotations by different people.
 
-BSDS is a widely used benchmark for both boundary detection and general image segmentation.
+BSDS is a widely used benchmark for both boundary detection and general image segmentation. 
 
-\begin{figure}[ht!]
+Apart from BSDS there is little choice of datasets of varied natural images with ground-truth segmentation. The Sowerby dataset \cite{Collins1999sowerby} contains 105 images for semantic segmentation. However, it is not publicly available, and contains only one segmentation for each image. While many image segmentation datasets are available \cite{YACVID2011} , the majority are specialised (\eg for analysis of urban environment, for semantic segmentation, or for the tasks of pedestrian detection, or human pose estimation) and for this reason lack a variability of scenes.
+
+Further, there is the NYU-Depth dataset \cite{Silberman2012} which contains video sequences from a variety of indoor scenes recorded with a Microsoft Kinect device (\ie an RGB camera and a depth camera). A subset of the dataset has each object labelled with a class and an instance number (\eg cup1, cup2, cup3, etc.) % Labelled: A subset of the video data accompanied by dense multi-class labels.
+It was another possible choice for us, especially given that Doll{\'a}r and Zitnick report results of {\tt SE} on this dataset, leveraging the depth channel of the RGBD images. However, we preferred the BSDS for the variability of boundaries in natural images.
+
+\begin{figure}[t]
 \begin{center}
   \begin{tabular}{ c c c }
   \includegraphics[width=0.3\textwidth]{images/examples/starfish/starfish.png} &
@@ -43,17 +54,17 @@ next to them.}
 \label{fig:BSDS-annotations}
 \end{figure}
 
-\subsubsection*{Difficulty of the dataset}
+\subsection*{Difficulty of the dataset}
 It is worth, perhaps, pointing attention to the challenge that this dataset presents.
 
-According to Gestalt psychologists \cite{Wertheimer1923untersuchungen,Kohler1929task,Koffka1935principles,Wertheimer1938laws}, human visual grouping is influenced by several common factor (\eg similarity, continuity, parallelism, closure, familiarity). Nevertheless, as we discussed in \sref{sec:ch1-problem-challenges}, different people have different understanding as to the relevant degree of detail for an image. 
+According to Gestalt psychologists \cite{Wertheimer1923untersuchungen,Kohler1929task,Koffka1935principles,Wertheimer1938laws}, human visual grouping is influenced by several common factor (\eg similarity, continuity, parallelism, closure, familiarity). Nevertheless, as we discussed in \sref{sec:ch1-problem-challenges}, different people have different notions of what constitutes a boundary. %understanding as to the relevant degree of detail for an image. 
 
 In an attempt to capture this variability in what people perceive as a ``natural'' segmentation, Martin \etal \cite{Martin01} only gave vague instructions to the BSDS annotators: \begin{quote}Divide each image into pieces, where each piece represents a distinguished thing in the image. It is important that all of the pieces have approximately equal importance. The number of things in each image is up to you. Something between 2 and 20 should be reasonable for any of our images.\end{quote}
 
 Consequently, annotations sometimes greatly differ in the level of granularity, see \fref{fig:sub:BSDS-perceptual-different} (but still {\it mostly} agree on boundary localisation). Also, they are typically more fine-grained than the coarse % basic %simplest 
 figure-\vs-ground assignment (see the blue nodes of the tree on \fref{fig:sub:BSDS-perceptual-perceptual-organisation-tree}) that some tasks require \cite{Ren2006figure,Sundberg2011occlusion}.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \subfigure[BSDS images each alongside 2 annotations - one coarse and one detailed]{ %a coarse and a detailed one]{%
   \includegraphics[width=0.4\textwidth]{images/BSDS/Li2013SemanticBenchmark-different-annotations-examples.png}
@@ -63,42 +74,49 @@ figure-\vs-ground assignment (see the blue nodes of the tree on \fref{fig:sub:BS
   \includegraphics[width=0.57\textwidth]{images/BSDS/Li2013SemanticBenchmark-perceptual-organisation-tree.png}
   \label{fig:sub:BSDS-perceptual-perceptual-organisation-tree}
  }
-\caption[Difficulty of BSDS - differences in the perceptual organisation of a scene]{Difficulty of BSDS - differences in the perceptual organisation of a scene. Images courtesy of \cite{Li2013SemanticBenchmark}.}
+\caption[Difficulty of BSDS: differences in the perceptual organisation of a scene]{Difficulty of BSDS: differences in the perceptual organisation of a scene. Images courtesy of \cite{Li2013SemanticBenchmark}.}
 \label{fig:BSDS-perceptual}
 \end{figure}
 
-\subsection{Evaluation metrics}
+\section{Evaluation metrics}
 \settocdepth{section}
-The benchmark that we use provides, among others, two precision-recall metrics - one boundary- and one region-oriented. % a boundary and a region oriented one.
+The benchmark which we use \cite{Galasso13Benchmark} (by Galasso \etal) provides, among others, two precision-recall metrics: one boundary- and one region-oriented. % a boundary and a region oriented one.
 
 % from \cite{Arbelaez11}
 %- One option is to regard the segment boundaries as contours and evaluate them as such. However, a methodology that directly measures the quality of the segments is also desirable. Some types of errors, e.g., a missing pixel in the boundary between two regions, may not be reflected in the boundary benchmark,but can have substantial consequences for segmentation quality, e.g., incorrectly merging large regions. One might argue that the boundary benchmark favours contour detectors over segmentation methods since the  former  are  not  burdened  with  the  constraint  of producing  closed  curves.  We  therefore  also  consider various region-based metrics.
 
-\subsubsection{BPR}
+\subsection{BPR}
 \label{sec:ch5-BPR-evaluation-metric}
-The Boundary Precision-Recall (BPR)~\cite{Arbelaez11} is a boundary-based metric and emphasises the correct placement of image edges. Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-BPR-maths} % avoid having both links by using ref*
+The Boundary Precision-Recall (BPR)~\cite{Arbelaez11} is a boundary-based metric that emphasises the correct placement of image edges. Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-BPR-maths} % avoid having both links by using ref*
 gives a mathematical account of % (corrected by Mathieu) gives mathematical account on 
 the metric and its properties. In case of segmentation, BPR is a good indicator of the {\bf localisation of the region boundaries}.
 
 \textbf{Impact of %small 
-local change in the boundary on the score:} A difference in the score of a single region boundary pixel should not greatly affect the edge detector output. Therefore, it correctly has only a small impact on the BPR metric. For the task of image segmentation however, a change in the strength of a single pixel could result in merging neighbouring regions. A ``weaker'' pixel among a strong intervening boundary could be thought of as a leakage, which will cause the {\tt UCM} procedure % algorithm 
-(featured in \sref{sec:ch3-UCM}) % TODO give the algorithm in an appendix
-to merge the two regions. In the hierarchical image segmentation framework, that means multiple levels of the segmentations hierarchy would change. Therefore a rigorous image segmentation benchmark metric should not be oblivious to such changes.
+local change in the boundary on the score:} A difference in the value of a single region boundary pixel should not greatly affect the edge detector output. Therefore, it correctly has only a small impact on the BPR metric. For the task of image segmentation however, a change in the strength of a single pixel could result in merging neighbouring regions. A ``weaker'' pixel among a strong intervening boundary could cause %be thought of as 
+a leakage, which will result in %cause 
+the {\tt UCM} procedure % algorithm 
+(see %featured in 
+\sref{sec:ch3-UCM}) % TODO give the algorithm in an appendix
+merging the two regions. In the hierarchical image segmentation framework, that means multiple levels of the segmentations hierarchy would change. Therefore a rigorous image segmentation benchmark metric should not be oblivious to such changes.
 
-\subsubsection{VPR}
-To address the above issue, the other metric that we report is the Volume Precision-Recall (VPR) introduced by Galasso \etal~\cite{Galasso13} to evaluate the accuracy of video segmentation algorithms. For images (or video still frames) the metric is a region-based metric, operating % applied 
+\subsection{VPR}
+To address the above issue we also report the Volume Precision-Recall (VPR) metric, introduced by Galasso \etal~\cite{Galasso13} to evaluate the accuracy of video segmentation algorithms. It is also applicable to images (this use case is equivalent to having individual video frames). In this scenario the metric is a region-based metric, operating % applied 
 in % into (corrected by Mathieu)
 a precision-recall framework. It is measuring the size of the regions and the overlap between the ground truth segmentation regions and the segmentation regions produced by the algorithm under test. 
-See Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-VPR-maths} for the formulae and discussion on the need for normalisation when evaluating segmentations.
+See Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-VPR-maths} for the formulae and discussion on the need for normalisation when evaluating segmentations. By measuring the region areas, rather than focusing on their boundaries, it can correctly penalise erroneour region merges caused by leakage, which BPR fails to do.
 
-\subsubsection{Reported numbers}
-\paragraph{For the precision-recall metrics BPR and VPR}\mbox{}\\\mbox{}\\
-Both BPR and VPR are able to evaluate {\bf individual segmentations} (which on the plots are depicted as a single dot - the model error), as well as {\bf segmentation hierarchies}, represented using the {\tt UCM} data structure (which on the plots constitute a curve). As stated in \sref{sec:ch4-boundary-and-region-metrics-maths}, for a single segmentation instance, the harmonic mean of the precision and recall, called the {\it F-measure} (or {\it F-score}), is 
+\subsection{Reported numbers}
+\subsubsection*{For the precision-recall metrics BPR and VPR}
+Both BPR and VPR are able to evaluate {\bf individual segmentations} (depicted as single dots on the plots), % are - the model error), 
+as well as {\bf segmentation hierarchies}, represented using the {\tt UCM} data structure (which on the plots constitute a curve). 
+
+As stated in \sref{sec:ch4-boundary-and-region-metrics-maths}, for a single segmentation instance, the harmonic mean of the precision and recall, called the {\it F-measure} (or {\it F-score}), is 
 reported ($F=2PR/(P+R)$).
 % reported. $F=\frac{2PR}{P+R}$.
 
-In case of a probability of boundary, or a hierarchy of segmentations, which is in fact the case in the majority of our experiments, globally optimal scores %- best over the whole hierarchy, 
-are reported. The scores are 3 in total: a best F-score (according to two criteria), as well as Average precision (\textbf{AP}). 
+In case of a probability of boundary, or a hierarchy of segmentations (the majority of our experiments), globally optimal scores %- best over the whole hierarchy, 
+are reported. %The scores are 3 in total: a best F-score (according to two criteria), as well as Average precision (\textbf{AP}). 
+Three complementary scores we commonly reported:
 
 \begin{enumerate}
  \item Optimal dataset score ({\bf ODS}) is the highest F-score achieved while having a fixed scale for all images in the test set. 
@@ -106,7 +124,7 @@ are reported. The scores are 3 in total: a best F-score (according to two criter
  \item {\bf AP} is the precision averaged on the recall range $R\in[0,1]$, or, alternatively, the area under the precision-recall curve (AUC).
 \end{enumerate}
 
-Note that in the case of edge detection benchmarked with BPR, $P$ is not a function of $R$. Both values are {\bf functions of the segmentation threshold}. Thus it is possible to have different precision and same recall - on different threshold of detail, \ie different locations along the curve.
+Note that in the case of edge detection benchmarked with BPR, $P$ is not a function of $R$. Both values are {\bf functions of the segmentation threshold}. Thus it is possible to have different precision and same recall. % - on different threshold of detail, \ie different locations along the curve.
 
 % TODO check if the following statement about ROC is indeed true
 % NOTE I remove it, since I am not that sure any more
@@ -114,17 +132,17 @@ Note that in the case of edge detection benchmarked with BPR, $P$ is not a funct
 % the receiver operating characteristic (ROC), used in statistics for comparing true-positive rate (TPR) against false-positive rate (FPR) of a binary classifier at various thresholds. In the ROC curve the TPR (or {\it sensitivity}) 
 % is a function of the FPR (or {\it fall-out}).
 
-\paragraph{Further region metrics}\mbox{}\\\mbox{}\\
+\subsubsection*{Further region metrics}
 Beside the aggregate measures for BPR and VPR, for the segmentation algorithms we also occasionally report the following complementary % supportive, interdependent
 region statistics. %(SC, PRI, VoI)
-\subparagraph{Segmentation covering of ground truth (SC):} This metric is an estimation of the best covering {\it of the ground truth} by the machine segments. We reviewed the metric in Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-SC-maths}.
+\paragraph{Segmentation covering of ground truth (SC):} This metric is an estimation of the best covering {\it of the ground truth} by the machine segments. We reviewed the metric in Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-SC-maths}.
 
-\subparagraph{Probabilistic Rand index (PRI):} The PRI~\cite{UnnikrishnanPH07}, due to Unnikrishnan \etal, is an extension of Rand index (RI)~\cite{rand1971objective}. It allows to assess the consistency of the labelling of pixel pairs between the segmentation algorithm under test on one hand, and {\it multiple} ground truth segmentations on the other. % hand. 
+\paragraph{Probabilistic Rand index (PRI):} The PRI~\cite{UnnikrishnanPH07}, due to Unnikrishnan \etal, is an extension of Rand index (RI)~\cite{rand1971objective}. It allows to assess the consistency of the labelling of pixel pairs between the segmentation algorithm under test on one hand, and {\it multiple} ground truth segmentations on the other. % hand. 
 %It is an attempt to address the small dynamic range exhibited by the RI by normalising with an empirical estimation ($p_{jk})$) of its expected value - different work
 As we mentioned in the formulae Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-PRI-maths}, PRI has the issue % drawback 
 of small dynamic range.
 
-\subparagraph{Variation of information (VoI):} The Variation of information (VoI), introduced in \cite{Meila05} measures the distance between two clusters of data - in our case, the human-annotated and the machine-generated segmentation. The distance is measured \wrt %, in terms of 
+\paragraph{Variation of information (VoI):} The Variation of information (VoI), introduced in \cite{Meila05} measures the distance between two clusters of data - in our case, the human-annotated and the machine-generated segmentation. The distance is measured \wrt %, in terms of 
 their average conditional entropy and mutual information. This is the only metric that we report which has a preference for lower score, 0 being the theoretical best in case of equivalent segmentations.
 
 \textbf{General preference:} For all metrics but VoI the general preference is ``higher is better''.
@@ -141,7 +159,7 @@ the watershed transformation cannot be applied to non-maximum-suppressed edges.
 
 Note that as {\tt SE} is an edge detection algorithm, none of the region metrics or the VPR are applicable to its output. Since {\tt gPb-OWT-UCM} is a segmenter, the boundaries of the segments in a segmentation constitute closed contours, so boundary-based metrics, such as BPR, are applicable.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \subfigure[BPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/SE_vs_gPb_OWT_UCM_BPR.png}
@@ -192,7 +210,7 @@ We apply a {\bf vanilla watershed} algorithm \cite{Beucher1992morphological,Najm
 In our benchmark plots (\fref{fig:SE-watershed}) the outcome of the experiment is not a Precision-Recall curve, but a single point, %dot, 
 indicative of the model error. Since the watershed transformation provides an oversegmentation of the image, the dot is located in the high-recall, low-precision range on the BPR plot (lower right). In contrast, oversegmentations occupy the low-recall, high-precision part of the VPR domain (upper left). 
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \subfigure[BPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/SE-watershed_BPR.png}
@@ -211,17 +229,18 @@ Note that the {\tt SE} algorithm implements non-maximum suppression as a post-pr
 
 When applying the watershed transform in the presence of a {\bf unique lake}, the {\bf watershed is empty}. To circumvent this problem, we use the {\tt SE} detector {\it before non-maxima suppression} as a topographic surface for the flooding.
 
-\section{Baseline: {\tt SE-UCM}}
+\section{{\tt SE-UCM} baseline}
 \label{sec:ch5-SE-UCM-baseline}
-As a baseline, we create a hierarchy of segmentations on top of the {\tt SE} detector result. This is in the spirit of \cite{Arbelaez2006boundary} who, however, use the edge detector {\tt Pb} which we described in \sref{sec:ch3-Pb}. 
+As a baseline, we create a hierarchical segmentation %hierarchy of segmentations 
+on top of the {\tt SE} detector result. What we do for this baseline can %could also 
+be explained % understood %thought 
+as our pipeline {\tt SE-SV-UCM} without structured voting ({\tt SV}). Instead of votes, the values from the probability of boundary (which is the output of the edge detector) are directly transferred as values for the watershed contours (effectively performing a ``trivial'' watershed weighting by reusing the edge detection numbers). % amounts, quantities, values). 
+We then build the multiscale hierarchy - {\tt UCM}, for a description see \sref{sec:ch3-UCM}. Benchmark plots are on \fref{fig:SE-watershed}. The {\tt SE-OWT} baseline is also in the spirit of \cite{Arbelaez2006boundary} which uses %who use 
+the edge detector {\tt Pb} that we described in \sref{sec:ch3-Pb}. 
 
-What we do for this baseline could also be understood %thought 
-as our pipeline {\tt SE-SV-UCM} without structured voting ({\tt SV}). Instead, the values from the probability of boundary, which is the output of the edge detector, are directly transferred as values for the watershed contours (effectively performing a ``trivial'' watershed weighting by reusing the edge detection numbers). % amounts, quantities, values). 
-We then build the multiscale hierarchy - {\tt UCM}, for a description see \sref{sec:ch3-UCM}. Benchmark plots are on \fref{fig:SE-watershed}.
+We observe the problem of strong edges ``bleeding'' into non-salient ones, despite lack of good local boundary evidence, as on the tikis examples (see \fref{fig:SE-UCM-tikis-bleeding-sub2}) between the heads of the middle and right statues. This issue is one of the motivations for the structured voting ({\tt SV}) described in \sref{sec:ch4-SE-SV-UCM_SV_details}. Similarly, this issue motivates the {\tt OWT} which picks which out of the 8 oriented probability of boundary signals will be used as an oversegmentation weight, see Figures 11 and 12 in \cite{Arbelaez11}.
 
-We observe the problem of strong edges ``bleeding'' into non-salient ones, despite lack of good local boundary evidence, as on the tikis examples (see \fref{fig:SE-UCM-tikis-bleeding-sub2}) between the heads of the middle and right statues. This issue is one of the motivations for the Structured voting (SV) described in \sref{sec:ch4-SE-SV-UCM_SV_details}.% Similarly
-
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
 \subfigure[Input image]{%
  \includegraphics[width=0.32\textwidth]{images/examples/tikis/tikis.jpg}
@@ -241,9 +260,9 @@ up-voted} due to strong vertical boundary in their vicinity (the outline of the 
 
 \section{{\tt (SE+sPb)-OWT-UCM}}
 \label{sec:ch5-SE_sPb-OWT-UCM}
-{\tt (SE+sPb)-OWT-UCM} is a modification of {\tt gPb-OWT-UCM} that we described in \cref{Chapter3}, where we replace the edge detector {\tt mPb} and use {\tt SE} instead (see \fref{fig:SE_sPb-OWT-UCM-details-SE_sPb_gPb}). Unlike the original method, we don't use multiscale information.
+{\tt (SE+sPb)-OWT-UCM} is a modification of {\tt gPb-OWT-UCM} (for the latter see \cref{Chapter3}), where we replace the edge detector {\tt mPb} and use {\tt SE} instead (see \fref{fig:SE_sPb-OWT-UCM-details-SE_sPb_gPb}). Unlike the original method, we don't use multiscale information.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
 \includegraphics[width=1\textwidth]{images/experiments/SE_sPb-OWT-UCM/SE_sPb-OWT-UCM-details-SE_sPb_gPb.pdf}
 \caption[{\tt (SE+sPb)-OWT-UCM} pipeline with focus on the edge-detection stage]{We replace the {\tt gPb} edge detector in {\tt gPb-OWT-UCM} with {\tt SE}. Compare to the detailed {\tt gPb-OWT-UCM} from \fref{fig:gPb-algorithm-details-mPb_sPb_gPb}.}
@@ -267,7 +286,7 @@ The VPR only manifests barely perceptible differences %improvement
 between the three methods 
 - see \fref{fig:SE_nnms_sPb-UCM_VPR}.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \subfigure[BPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/SE_nnms_sPb-UCM_BPR.png}
@@ -282,7 +301,7 @@ discover more salient edges - improved precision and slight decline in recall on
 \label{fig:SE_nnms_sPb-UCM}
 \end{figure}
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \begin{center}
   \begin{tabular}{ c c c }
   \includegraphics[width=0.3\textwidth]{images/experiments/SE_sPb-OWT-UCM/eagle.png} &
@@ -304,7 +323,7 @@ discover more salient edges - improved precision and slight decline in recall on
 
 \section[Structured voting]{Structured voting - experimental study of watershed weighting strategies} % Weighting strategies % Exploration of the Space of Weighting Strategies
 \label{sec:ch5-structured-voting}
-All experiments presented here are instances of the general algorithm described in \sref{sec:ch4-SE-SV-UCM_SV_details}. Each of them implements the SV differently, \ie, in the following we offer a systematic exploration of the space of watershed weighting strategies.
+All experiments presented here are instances of the general algorithm described in \sref{sec:ch4-SE-SV-UCM_SV_details}. Each of them implements the {\tt SV} differently, \ie, in the following we offer a systematic exploration of the space of watershed weighting strategies.
 
 \subsection{Superpixels and Rand index}
 We leave the watershed patch to be an oversegmentation, which in fact it is. The output of the watershed transform that we use has {\bf explicit} the boundaries between segments, which would hinder a region-based metric. Therefore, we transform a watershed patch to have {\bf implicit segment boundaries} - the locations of transition between differently labelled segments. See \sref{sec:ch1-segmentation-terminology} for the definitions and \fref{fig:sub:segmentation-segm-labelling} for examples of the two types of segmentation representation. With a representation as a {\bf segmentation labelling} we can use a region-based metric for the patches comparison.
@@ -315,7 +334,7 @@ We conduct the comparison between watershed and a tree leaf patch using as a sco
 
 \begin{enumerate}
  \item{\bf Rand Index (RI):} a count of the number of pairs of locations that belong to the same segment in both patches. For a $16\times16$ segmentation patch, that means $32 640$ pairs of locations. Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-RI-maths} contains the formula of the RI.
- \item{\bf Rand Index Monte Carlo (RIMC):} ours randomised subsample version of RI, which takes only a fraction $\rho$ of the pairs of locations into consideration. We defined %mathematically 
+ \item{\bf Rand Index Monte Carlo (RIMC):} our randomised subsample version of RI, which takes only a fraction $\rho$ of the pairs of locations into consideration. We defined %mathematically 
  the metric in Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-RIMC-maths}. We experience no reduction in performance \wrt RI for a fraction as small as $\rho\approx\frac{1}{128}$, \ie, 256 out of the $32 640$ possible pairs of locations in a $16 \times 16$ patch. This scoring function is inspired from the way features are subsampled to introduce randomness when training a decision tree in~\cite{DollarICCV13edges,Dollar2013toolbox}.
 \end{enumerate}
 
@@ -327,9 +346,10 @@ of watershed and decision tree patches.
 We first address the second of our conclusions from the previous experiment. We merge segments in the watershed patch according to each of the $T$ leaf patches (where $T$ is the number of trees in the decision forest). Thus we end up with $T$ distinct ``merged'' watershed patches. This approach seems to be too greedy, however. The watershed patch eventually becomes overly adapted to the tree leaf patch it is being compared to. As a consequence, this watershed transformation is not discriminative enough.
 
 \subsubsection{Fair greedy merge}
-To remedy this shortcoming of the na\"{\i}ve greedy merge, we introduce what we call ``fairness'' in the greedy merge approach. As described previously, we cast votes only on the watershed locations. That means, the patches that we consider contain a potential boundary location at their central pixel. It is the strength of this boundary that we strive to quantify. We enforce the greedy merge to respect a boundary-at-centre-location condition by preventing excessive merge of the segments around the central pixel of the patch.
+To remedy this shortcoming of the na\"{\i}ve greedy merge, we introduce what we call ``fairness'' in the greedy merge approach. As described previously, we cast votes only on the watershed locations. That means, the patches that we consider contain a potential boundary location at their central pixel. It is the strength of this boundary that we strive to quantify. We force %enforce (suggested by Mathieu)
+the greedy merge to respect a boundary-at-centre-location condition by preventing excessive merge of the segments around the central pixel of the patch.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \subfigure[Input image]{%
   \includegraphics[width=0.5\textwidth]{images/experiments/ws-greedy-merge/corrida.png}
@@ -367,7 +387,7 @@ To remedy this shortcoming of the na\"{\i}ve greedy merge, we introduce what we 
 
 \fref{fig:segs-to-greedy-merge-RIMC} shows the improvement we get over watershed oversegmentation with the last two experiments.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \subfigure[BPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/segs-to-greedy-merge-RIMC-BPR.png}
@@ -390,7 +410,8 @@ This is our best performing weighting strategy. As we explained in Section~\ref*
 
 \tref{tab:line-fitting-experiments} summarises performance results from the line fitting methods \wrt different scoring functions. For brevity, we only included % report
 the ODS F-measure of the BPR metric and remark, that the BPR and VPR curves, as well as the region metrics confirm the ranking of the experiments. 
-It is notable that all 3 types of scoring functions - VPR, RI, BPR perform reasonably well with this watershed transformation. We include results for the two types of normalisation for VPR - on the side of the watershed, and on the side of the tree leaf patch.
+It is notable that all 3 types of scoring functions: VPR, RI, BPR, give reasonably good results %perform reasonably well 
+with this watershed transformation. We include results for the two types of normalisation for VPR - on the side of the watershed, and on the side of the tree leaf patch.
 
 % TODO prettify (make the cells equally big); UPDATE with new results
 \begin{table}[htbp]
@@ -421,11 +442,11 @@ This approach does not guarantee closed contours - the part of the region bounda
 
 \fref{fig:watershed-arc-experiment} utilises the same scoring function - BPR, to allow for the fair comparison of two patch transformations: the watershed arc which we described here and the line fitting from the previous sections' set of experiments. 
 
-Our conclusion from this experiment is that the combination of only the edge with the BPR provides poor means of judging the evidence of boundary in the leaves of the structured forest. Watershed arc is a very brittle cue per se. % intrinsically, in itself
+Our conclusion from this experiment is that the combination of only the edge with the BPR provides poor means of judging the evidence of boundary in the leaves of the structured forest. Watershed arc is a very brittle cue {\it per se}. % intrinsically, in itself
 
 Further, as we explained in Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-BPR-maths}, BPR is parametrised on the pixel distance threshold for which a match between the two segmentation boundaries is to be made. While for natural images a value of 3 or 4 pixels works fine, this parameter is a bit of an issue for small local patches of size $16\times 16$. There is no generic way to correctly choose such a distance for all pairs of a forest segmentation patch and a watershed contours patch. Accurate localisation of boundaries seems to be crucial for this weighting strategy, and this is not the case with the leaf segmentations and the watershed.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \subfigure[BPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/watershed-arc-experiment_BPR.png}
@@ -433,20 +454,24 @@ Further, as we explained in Section~\ref*{sec:ch4-boundary-and-region-metrics-ma
  \subfigure[VPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/watershed-arc-experiment_VPR.png}
  }
-\caption[{\bf Watershed arc} compared to fitting a line as a patch transformation - plots]{{\bf Watershed arc} compared to fitting a line through the end points of the watershed arc as a patch transformation. The scoring function for the two experiments was the BPR metric with a distance threshold for the bipartite matching = 3 pixels.}
+\caption[{\bf Watershed arc} compared to fitting a line as a patch transformation - plots]{{\bf Watershed arc} compared to fitting a line through the end points of the watershed arc as a patch transformation. The scoring function for the two experiments was the BPR metric with a distance threshold for the bipartite matching of %= 
+3 pixels.}
 \label{fig:watershed-arc-experiment}
 \end{figure}
 
 \subsection{Quadratic fitting} % conic n=2; Polynomial
 This experiment implements the patch transformation described in Section~\ref*{sec:ch4-patch-transformations}~\ref{par:ch4-quadratic-lls-fitting}. This richer model allows not only for fitting a {\bf line}, but also for any of the 3 conic sections - a {\bf parabola}, a {\bf hyperbola}, or an {\bf ellipse}, to explain the data. See \fref{fig:ws-quadratic-fitting} for a few examples of the thus transformed watershed patches.
 
-As discussed in Section~\ref*{sec:ch4-patch-transformations}~\ref{par:ch4-quadratic-lls-fitting}, this seems to be too complex a model, thwarted by degenerate cases. At times the best fitting parameters would yield a 3-dimensional surface that only just misses to intersect the patch plane, % $Z=0$ plane
+As discussed in Section~\ref*{sec:ch4-patch-transformations}~\ref{par:ch4-quadratic-lls-fitting}, this seems to be too complex a model, thwarted by degenerate cases. At times the best fitting parameters would yield a 3-dimensional surface that 
+misses (intersecting) the patch plane, 
+%only just misses to intersect the patch plane, % $Z=0$ plane
 leading to an empty patch as the solution for a transformed watershed.
 
 In \fref{fig:quadratic-lls-fitting} and \tref{tab:quadratic-lls-fitting} we show the results of comparing the two linear least squares (LLS) approaches - the {\bf linear} \vs the {\bf quadratic} one. The missing recall in \fref{fig:quadratic-lls-fitting-BPR}, respectively, missing precision in \fref{fig:quadratic-lls-fitting-VPR} for the quadratic model indicates that the method has a tendency to {\bf undersegment}. 
-Indeed, \fref{fig:quadratic-lls-fitting-visual} confirms this, additionally offering a visual comparison of the outputs of the two algorithms. The quadratic model performs poorly and leads to pronounced {\bf artefacts} where small closed contours are chosen above long extended ones. Notice how VPR \fref{fig:quadratic-lls-fitting-VPR} and the region metrics in \tref{tab:quadratic-lls-fitting} much better reflect the supremacy of the simpler linear model to the quadratic one. % superiority
+Indeed, \fref{fig:quadratic-lls-fitting-visual} confirms this, additionally offering a visual comparison of the outputs of the two algorithms. The quadratic model performs poorly and leads to pronounced {\bf artefacts} where small closed contours are chosen above long extended ones. Notice how VPR \fref{fig:quadratic-lls-fitting-VPR} and the region metrics in \tref{tab:quadratic-lls-fitting} much better reflect the supremacy of the simpler linear model over %to 
+the quadratic one. % superiority
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \subfigure[BPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/SE-quadratic_BPR.png}
@@ -481,7 +506,7 @@ Indeed, \fref{fig:quadratic-lls-fitting-visual} confirms this, additionally offe
 \label{tab:quadratic-lls-fitting}
 \end{table}
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \subfigure[Input image]{%
   \includegraphics[width=0.31\textwidth]{images/experiments/quadratic-lls/old_man_input.png}
@@ -496,13 +521,15 @@ Indeed, \fref{fig:quadratic-lls-fitting-visual} confirms this, additionally offe
 \label{fig:quadratic-lls-fitting-visual}
 \end{figure}
 
-\section[Oracle for Structured voting]{Oracle for Structured voting - experiments using ground truth}
+\section[Oracle case]{Oracle case}
 \label{sec:ch5-oracle}
-To evaluate the correctness of our weighting strategies, we've implemented an oracle for our pipeline. The question we wanted to answer is ``how well could we perform segmentation in the presence of perfect information?'' Our Structured voting (SV) lends itself easily to such an experiment using the ground truth segmentation. 
+To evaluate the correctness of our weighting strategies, we have implemented an oracle for our pipeline. 
+The question we wanted to answer was: ``How well could we perform segmentation in the presence of perfect information?''
+% The question we wanted to answer is ``how well could we perform segmentation in the presence of perfect information?''
+Our Structured voting ({\tt SV}) lends itself easily to such an experiment using the ground truth segmentation. 
 
 \subsection{Oracle definition}
-For the oracle, just like in the regular experiments (in \sref{sec:ch5-structured-voting}), when scoring a given pixel on the watershed regions boundary, one of the patches is cropped centred around that same pixel location in the watershed contours image. The second patch, as we alluded %to 
-in \sref{sec:ch4-asymmetry-VPR-assigning-patches-S-G} when discussing argument assignment for asymmetric metrics, is a ground truth segmentation patch. This is different from SV (\sref{sec:ch5-structured-voting}), which uses the trained model - the inferred most likely segmentation learnt by the structured forest.
+For the oracle, just like in the regular experiments (in \sref{sec:ch5-structured-voting}), when scoring a given pixel on the watershed regions boundary, one of the patches is cropped centred around that same pixel location in the watershed contours image. The second patch, as we alluded to in \sref{sec:ch4-asymmetry-VPR-assigning-patches-S-G} when discussing argument assignment for asymmetric metrics, is a ground truth segmentation patch. This is different from {\tt SV} (\sref{sec:ch5-structured-voting}), which uses the trained model - the inferred most likely segmentation learnt by the structured forest.
 
 % oracle - experiments with the ground truth 4 methods + 4 corresponding oracles
 % (a). quadratic LLS + VPR normalised on the side of the watershed
@@ -510,17 +537,19 @@ in \sref{sec:ch4-asymmetry-VPR-assigning-patches-S-G} when discussing argument a
 % (c). watershed arc + BPR 3
 % (d). line (ends) + RI
 
-\subsection{Compared weighting strategies}
-We have chosen to compare here four methods and their corresponding oracles. \fref{fig:oracle} contains their precision-recall quantitative results and \tref{tab:oracle} all the measures that we report. Each method uses a different {\bf patch transformation} and a different {\bf scoring function} than the others: 
+\subsection{Comparing weighting strategies}
+We compare four methods and their corresponding oracles. \fref{fig:oracle} contains their precision-recall quantitative results and \tref{tab:oracle} all the measures that we report. Each method uses a different {\bf patch transformation} and a different {\bf scoring function}: % than the others: 
 \begin{enumerate}
  \item[(a)] quadratic LLS fitting (Section~\ref*{sec:ch4-patch-transformations}~\ref{par:ch4-quadratic-lls-fitting}) + VPR normalised on the side of the watershed (Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-VPR-maths}),
  \item[(b)] fairer greedy merge (Section~\ref*{sec:ch4-patch-transformations}~\ref{par:ch4-fair-greedy-merge}) + VPR normalised on the side of the trees (Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-VPR-maths}),
  \item[(c)] watershed arc (Section~\ref*{sec:ch4-patch-transformations}~\ref{par:ch4-watershed-arc}) + BPR (Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-RI-maths}), and 
  \item[(d)] %parametric 
- fitted line through the end vertices of the watershed arc (Section~\ref*{sec:ch4-patch-transformations}~\ref{par:ch4-line-ends}) + RI (Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-RI-maths}).
+ linear interpolation between % fitted line through 
+ the end vertices of the watershed arc (Section~\ref*{sec:ch4-patch-transformations}~\ref{par:ch4-line-ends}) + RI
+(Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-RI-maths}).
 \end{enumerate}
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \subfigure[BPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/oracle_BPR.png}
@@ -562,49 +591,55 @@ We have chosen to compare here four methods and their corresponding oracles. \fr
 \multicolumn{1}{|r|}{oracle: (d)} & .85 & .86 & .91 & .80 & .82 & .85 & .70 & .87 & 1.31 \\
 \hline
 \end{tabular}
-\caption[4 of our methods compared to their oracle versions]{4 of our methods compared to their {\bf oracle} versions - benchmark scores on the validation subset of BSDS500~\cite{BSDS500resources}. See the text for details.}
+\caption[Four of our methods compared to their oracle versions]{Four of our methods compared to their {\bf oracle} versions - benchmark scores on the validation subset of BSDS500~\cite{BSDS500resources}. See the text for details.}
 \label{tab:oracle}
 \end{table}
 
 % Ranking of oracles confirms Correct Weighting Strategies % NOTE not quite :)
 \subsection{Conclusions of the oracle experiments}
 \begin{enumerate}
- \item a weak patch transformation as the quadratic LLS fitting cannot be helped even by a good scoring function {\bf (a)}. Since this SV is very conservative and only finds a few edges, there is a lot of lost recall in the BPR metric. The VPR, however, provides a more realistic evaluation. The fact that the presence of perfect leaf information does not improve the segmentation shows us that this is quite poor way of closing edge into contours.
- \item we consider the rest of the methods - {\bf (b), (c), (d)} to be valid, successful ways of obtaining hierarchical segmentations. All of them do benefit from the improved comparison with the ground truth (and not the SF leaves). Both in BPR and VPR the improvement is of minimum 0.10.
- \item the method that most benefits from the oracle information on the BPR metric is {\bf (c)} where the watershed transformation leaves just a watershed contour as a cue. It is therefore highly %very 
+ \item A weak patch transformation such as the quadratic LLS fitting cannot be helped even by a good scoring function {\bf (a)}. Since this {\tt SV} is very conservative and only finds a few edges, there is a lot of lost recall in the BPR metric. Nevertheless, on the BPR metric the oracle shows a great improvement over the experiment (from ODS F-measure of 0.54 to 0.67). 
+ The VPR, however, correctly reflects the weakness of the method as a hierarchical segmenter: the oracle fails to improve on the experiments. The two curves overlap, but the ODS score of the oracle case is worse. % provides a more realistic evaluation. 
+ The fact that the presence of perfect leaf information does not improve the segmentation shows us that this is quite poor way of closing edge into contours.
+ \item We consider the rest of the methods - {\bf (b), (c), (d)} to be valid, successful ways of obtaining hierarchical segmentations. All of them do benefit from the improved comparison with the ground truth (and not the structured forest leaves). Both in BPR and VPR the improvement is of minimum 0.10.
+ \item The method that most benefits from the oracle information on the BPR metric is {\bf (c)} where the watershed transformation leaves just a watershed contour as a cue. It is therefore highly %very 
  sensitive to fine changes (and hence, prone to err in the presence of noise and errors from the SF) in the localisation of the boundary.
- \item the ranking of the oracles agrees with the ranking of the methods.
- \item on BPR metric {\bf (d)} is clearly better in the high-recall regime, while {\bf (b)} and {\bf (c)} outperform it in the high-precision. Analogous conclusion may be drawn for VPR.
- \item the oracle is a more ``impartial'' way of judging the quality of a weighting strategy, since it removes the SF factor from the evaluation (and replaces it with ``perfect information'').
+ \item Importantly, the {\emph ranking of the oracles agrees with the ranking of the methods}.
+%  \item The BPR metric {\bf (d)} is clearly better in the high-recall regime, while {\bf (b)} and {\bf (c)} outperform it in the high-precision. Analogous conclusion may be drawn for VPR.
+%  \item The oracle is a more ``impartial'' way of judging the quality of a weighting strategy, since it removes the SF factor from the evaluation (and replaces it with ``perfect information'').
 \end{enumerate}
 
-\section{Hardest negative mining}
-To help determine where the voting fails the most we have implemented a ``hardest negative mining'' tool. It would address the watershed locations in which the oracle and the machine-generated score differ the most. We also applied the tool for the comparison of the baseline (SE-UCM from \sref{sec:ch5-SE-UCM-baseline}) to the method under test. The tool facilitates a case-by-case %case-to-case 
-inspection (per votes cast for a given pixel location), but does not provide a means for holistic analysis of the whole image or of the dataset.
+\section{Hard %Hardest 
+negative mining}
+To help determine where the voting fails %the most 
+we have implemented a ``hard negative mining'' tool. It finds %would address 
+the watershed locations in which the oracle and the {\tt SE}-generated score differ the most. We also applied the ``hard negative mining'' tool for the comparison of the baseline (SE-UCM from \sref{sec:ch5-SE-UCM-baseline}) to the method under test. The tool facilitates a case-by-case %case-to-case 
+inspection (per vote cast for a given pixel location), but does not provide a means for holistic analysis of the whole image or of the dataset.
 
-In both cases (looking up to the oracle, or the baseline) it appears that we are mostly thwarted by poor leaves. As the example in \fref{fig:srf-leaf} showed, the leaves of the SF are not that homogeneous \wrt the structure of the segmentation patches that are clustered within them. 
-The medoid segmentation patch, which is the only one casting a vote as to the presence of a boundary, is not necessarily representative of the set of segmentations that reached the leaf node of the tree.
+In both cases (looking up to the oracle, or the baseline) it appears that we are mostly thwarted by poor leaves. As we explained in \sref{sec:ch2-structured-forest-inference}, the medoid of all the patches in a decision tree leaf is the representative segmentation for that leaf. However, sometimes this medoid is not the perceptually best representative: it fails to correctly represent the structure of most of the patches in the leaves. Often the medoid patch is a background patch, while quite a few of the rest of the patches in the leaves exhibit some similar shape. As the example in \fref{fig:srf-leaf} showed, the leaves of the SF are not that homogeneous \wrt the structure of the segmentation patches that are clustered within them. 
+The medoid segmentation patch is the only one casting a vote and not necessarily representative of the set of segmentations that reached the leaf node of the tree.
 
-This is not detrimental for the SE detector, since, as we touched upon in \cref{Chapter2}, every vote is averaged out with 256 other that come from neighbouring patch decisions. 
+This is not detrimental for the {\tt SE} detector, since, as we explained %touched upon 
+in \cref{Chapter2}, every vote is averaged out with 255 others %256 other 
+that come from neighbouring patch decisions. 
 
-Our approach however does not cast quite so many votes. A watershed arc typically consists of 7-10 pixels, and with $T=4$, that makes it for approximately no more than 40 votes per location. 
+Our approach however does not cast quite so many votes. A watershed arc typically consists of 7-10 pixels, and with $T=4$, that makes %it 
+for no more than 40 votes per location (approximately). 
 With so few votes per location, our approach would need much better leaves to counter the observed lack of %strong 
 agreement in the leaves of the decision forest.
 
 % TODO figure of decision forest leaf, pref. different leaves
 
 \section{Voting scope}
-The aim of using the SF patches is to capture as much of the context as possible. The scope of the voting is equally important - we expect that giving votes a larger ``say'' by spatially increasing their influence should boost the segmenter's performance.
+The aim of using the structured forest patches is to capture as much of the context as possible. The scope of the voting is equally important, we expect that giving votes a larger ``say'' by spatially increasing their influence should boost the segmenter's performance.
 
-In this section we describe two types of voting scope experiments - reducing and expanding the scope of votes.
+In this section we describe two voting scope experiments: reducing and expanding the scope of votes. \textbf{Reducing output scope} %This series of experiments 
+aims at proving that casting a vote on a larger area is desirable, by doing exactly the opposite.
 
-\subsection{Reducing output scope}
-This series of experiments aims at proving that casting a vote on a larger area is desirable, by doing exactly the opposite.
+\subsection{Degraded baseline SE-UCM}
+The SE-UCM baseline we described in \sref{sec:ch5-SE-UCM-baseline} has the patch size parameter $d=16$ pixels, as proposed in \cite{DollarICCV13edges}. We degrade this baseline, by making the SF output smaller patches: $1\times1$, $2\times2$, $4\times4$, or $8\times8$ patch. The results are given in \fref{fig:degraded-baseline}. Notice that patches smaller than $4\times 4$ even result in a failure to achieve the high recall associated with the watershed oversegmentation (see \sref{sec:ch5-watershed-proof-of-concept}).
 
-\subsubsection{Degraded baseline SE-UCM}
-The SE-UCM baseline we described in \sref{sec:ch5-SE-UCM-baseline} has the patch size parameter $d=16$ pixels, as proposed in \cite{DollarICCV13edges}. We degrade this baseline, by making the SF output smaller patches - a pixel, or a $2\times2$, $4\times4$, $8\times8$ patch. The results are given in \fref{fig:degraded-baseline}. Notice that patches smaller than $4\times 4$ even result in a failure to achieve the high recall associated with the watershed oversegmentation (see \sref{sec:ch5-watershed-proof-of-concept}).
-
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \subfigure[BPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/degraded-baseline_BPR.png}
@@ -612,21 +647,23 @@ The SE-UCM baseline we described in \sref{sec:ch5-SE-UCM-baseline} has the patch
  \subfigure[VPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/degraded-baseline_VPR.png}
  }
-\caption[Voting scope - reducing the SF patch size - plots]{Voting scope - reducing the SF patch size for the baseline. The original SE-UCM baseline (sref{sec:ch5-SE-UCM-baseline}) uses $16\times16$ pixels output patches. Reducing the patches size proves detrimental to %gravely %greatly diminished
+\caption[Voting scope: reducing the SF patch size - plots]{Voting scope: reducing the SF patch size for the baseline. The original {\tt SE-UCM} baseline (sref{sec:ch5-SE-UCM-baseline}) uses $16\times16$ pixels output patches. Reducing the patch's size proves detrimental to %gravely %greatly diminished
 the detector's performance.}
 \label{fig:degraded-baseline}
 \end{figure}
 
-\subsubsection{Reduced vote scope by dispensing with spatial averaging}
-As described in \sref{sec:ch4-SE-SV-UCM_SV_details}, we apportion % NOTE smart word! :-)
+\subsection{Reduced vote scope by dispensing with spatial averaging}
+As described in \sref{sec:ch4-SE-SV-UCM_SV_details}, we smooth % apportion % NOTE smart word! :-) UPDATE: not so smart; Rodrigo suggested smooth, merge, agregate
 the individual votes cast on the watershed contours, by averaging them {\bf per watershed arc}. Apart from increasing the scope of the votes, this has the added benefit of denoising the weighting. 
 
 To confirm % check, make sure
 that averaging of the votes is critical for the operation %functioning 
-of our SE-SV-UCM pipeline, we dispense with the averaging per intervening edge. We cast just $T$ votes (where $T$ is the number of trees in the decision forest) on a single pixel of the watershed location (we do however average those $T$, in order to associate a score with the pixel location). As expected, that severely diminishes performance in comparison to averaging on the watershed arc. % not region boundary yet
-This is due to the reduction of the voting scope to 1 pixel. {\bf Excessive localisation therefore hinders performance}. \fref{fig:reduced-vote-scope} shows the plots resulting from modifying one of our best-performing SV methods: the watershed transformation is fitting a line that adheres to the centre of the patch (as we describe in Section~\ref*{sec:ch4-patch-transformations}~\ref{par:ch4-line-centre}) and the scoring function - VPR normalised on the side of the watershed patch (see Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-VPR-maths}).
+of our SE-SV-UCM pipeline, we dispense with the averaging per intervening edge. We cast just $T$ votes (where $T$ is the number of trees in the decision forest) on a single pixel of the watershed location (we do however average those $T$, in order to associate a score with the pixel location). 
+As expected, reducing voting scope severely diminishes performance in comparison to averaging on the watershed arc. % not region boundary yet
+The decrease in performance is due to the reduction of the voting scope to 1 pixel. Therefore we conclude that {\bf excessive localisation of the support patches hinders performance}.
+\fref{fig:reduced-vote-scope} shows the plots resulting from modifying one of our best-performing {\tt SV} methods: the watershed transformation is fitting a line that adheres to the centre of the patch (as we describe in Section~\ref*{sec:ch4-patch-transformations}~\ref{par:ch4-line-centre}) and the scoring function - VPR normalised on the side of the watershed patch (see Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-VPR-maths}).
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \centering
  \subfigure[BPR]{%
   \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/reduced-vote-scope_BPR.png}
@@ -641,7 +678,22 @@ This is due to the reduction of the voting scope to 1 pixel. {\bf Excessive loca
 \subsection{Expanding voting scope}
 The above two experiments showed us that decreasing the scope of the votes greatly reduces the segmenter's performance. It is therefore natural to seek strategies to expand the voting scope and allow for larger spatial context to be influenced by an individual vote.
 
-In the following we will discuss and modify the central line fitting-VPR method, as it is one of the best that we tried hitherto. So far all experiments used the {\bf watershed arc} as an image edge for both 1) averaging the votes on all pixels from the {\it watershed arc}, and 2) watershed transformation - fitting a line through the patch centre and the end points of the {\it watershed arc}. In the plots \fref{fig:voting-scope-line-centre-VPR-ws} this setup is labelled `arc - arc'.
+% TODO make oracles plot lines the same colour as the corresponding experiments
+\begin{figure}[t]
+\centering
+ \subfigure[BPR]{%
+  \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/scope_of_voting_oracle_disagreement__line_centre_VPR_ws_BPR.png}
+ }
+ \subfigure[VPR]{%
+  \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/scope_of_voting_oracle_disagreement__line_centre_VPR_ws_VPR.png}
+ }
+\caption[Increasing the voting scope - plots]{Results of increasing the voting scope. The three segmentation methods and their oracles are variants of our best performing weighting strategy - central line fitting, combined with VPR normalised on the side of the watershed. A description of VPR is given in Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-VPR-maths}).}
+\label{fig:voting-scope-line-centre-VPR-ws}
+\end{figure}
+
+In the following we will discuss and modify the central line fitting-VPR method, as it is one of the best that we tried up to now. %hitherto. 
+So far all experiments used the {\bf watershed arc} as an image edge for both 1) averaging the votes from all pixels on the %on all pixels from the 
+{\it watershed arc}, and 2) watershed transformation - fitting a line through the patch centre and the end points of the {\it watershed arc}. \fref{fig:voting-scope-line-centre-VPR-ws} this setup is labelled `arc - arc'.
 
 % from my email 2015-02-10
 %
@@ -659,43 +711,46 @@ In the following we will discuss and modify the central line fitting-VPR method,
 
 We extend the scope in two ways:
 \begin{enumerate}
- \item{`region boundary - arc'} in \fref{fig:voting-scope-line-centre-VPR-ws}. 1) We extend the edge on which we allow a single vote to influence - it is now the whole intervening {\bf region boundary}, not just the subdivided watershed arc, and 2) we still use the {\bf subdivided arcs} when transforming the watershed patch. 
+ \item{`region boundary - arc'} in \fref{fig:voting-scope-line-centre-VPR-ws}. 
+ 1) We extend the 
+ edge which a single vote is allowed to influence. It is now the whole intervening {\bf region boundary}, not just the subdivided watershed arc 
+ % edge on which we allow a single vote to influence - it is now the whole intervening {\bf region boundary}, not just the subdivided watershed arc, and 2) we 
+ 2) We 
+ still use the {\bf subdivided arcs} when transforming the watershed patch. 
  \item{`region boundary - region boundary'} in \fref{fig:voting-scope-line-centre-VPR-ws}. We let the {\bf region boundary} be used for both 1) casting the vote and for 2) transforming the watershed patch.
 \end{enumerate}
 
 
-% TODO make oracles plot lines the same colour as the corresponding experiments
-\begin{figure}[ht!]
-\centering
- \subfigure[BPR]{%
-  \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/scope_of_voting_oracle_disagreement__line_centre_VPR_ws_BPR.png}
- }
- \subfigure[VPR]{%
-  \includegraphics[trim=1.5cm 0cm 1.9cm 0cm, clip=true, width=0.48\textwidth]{images/plots/scope_of_voting_oracle_disagreement__line_centre_VPR_ws_VPR.png}
- }
-\caption[Increasing the voting scope - plots]{Results of increasing the voting scope. The three segmentation methods and their oracles are variants of our best performing weighting strategy - central line fitting, combined with VPR normalised on the side of the watershed. A description of VPR is given in Section~\ref*{sec:ch4-boundary-and-region-metrics-maths}~\ref{par:ch4-VPR-maths}).}
-\label{fig:voting-scope-line-centre-VPR-ws}
-\end{figure}
+Results in \fref{fig:voting-scope-line-centre-VPR-ws} prove to be somewhat inconclusive. %Simply judging 
+Judging by the experiments, the `arc - arc' approach is only slightly % not marginally
+better than the 2 new methods we tried both on BPR and VPR. We consider however the oracle to be a better indicator of the quality of the method. In the oracle scenario, the best oracle method on the BPR metric is the worst performing one on the VPR metric (the `oracle: region boundary - arc' method, the pink dashed-and-dotted line in %the plots in 
+\fref{fig:voting-scope-line-centre-VPR-ws}).
 
-Results prove to be somewhat inconclusive. Simply judging by the experiments, the `arc - arc' approach is only slightly % not marginally
-better than the 2 new methods we tried both on BPR and VPR. We consider, however, the oracle to be a better indicator of the quality of the method. However, in the oracle scenario, the best oracle method on the BPR metric is the worst performing one on the VPR metric (the `oracle: region boundary - arc' method - the pink dashed-and-dotted line in the plots in \fref{fig:voting-scope-line-centre-VPR-ws}).
-
-So deciding between subdivided watershed arc and region boundary for the scope of voting and the watershed transformation is not really crucial for performance and, indeed, place a {\bf minor role} in comparison with other factors like choice of patch transformation and of scoring function.
+%So 
+Deciding between subdivided watershed arc and region boundary for the scope of voting and the watershed transformation is not %really 
+crucial for quality %performance 
+and, indeed, plays %place 
+a {\bf minor role} in comparison with other factors like choice of patch transformation and of scoring function.
 
 \section{Discussion}
 
-\tref{tab:all-results} provides comparison with state-of-the art and a detailed report of the results featured in this chapter.
+\tref{tab:all-results} provides comparison with state-of-the-art and a detailed report of the results featured in this chapter.
 % TODO here is a table of all results we will show. What to do with it, can't just dump all the data without proper analysis / conclusion?
 \input{chapters/chapter5-all-results.tex}
 
-Important conclusions of the experiments:
+Conclusions of the experiments:
 \begin{enumerate}
  \item both watershed transformations and scoring functions are important,
  % \item scoring functions matter,
  \item a suitable %smart
  watershed transformation could greatly aid a ``weaker'' scoring function (\eg the benefit of greedy merge when using RI scoring function),
  \item our best watershed transformation has reasonable performance with all the scoring functions tried,
- \item oracle confirms the ranking of our experiments,
- \item simpler models work better for transforming the watershed patch (\eg quadratic and polynomial fitting are the worst performing experiments regardless of the scoring function used),
+ \item oracle cases confirm the ranking of our experiments,
+ \item simpler models work better for transforming the watershed patch, % (\eg quadratic and polynomial fitting are the worst performing experiments regardless of the scoring function used),
  \item voting scope is very important; a decrease in the voting scope seriously damages results; successfully increasing the voting scope is not trivial.
 \end{enumerate}
+
+% TODO add small transition to the next chapter
+Despite our best efforts, we did not improve on the {\tt SE-OWT} baseline method. While there are still open avenues for exploration in our structured voting approach, this outcome raises the %general 
+question of whether or not there is perspective in further pursuing structured voting. Nevertheless, in the course of our experiments we came to many insights about the nature of the problem of obtaining scored oversegmentation %watershed 
+contours. We summarise our findings and give future research directions in the following \cref{Chapter6}.
