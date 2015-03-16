@@ -63,17 +63,34 @@
 % (b). fairer greedy merge + VPR normalised on the side of the trees
 % (c). watershed arc + BPR 3
 % (d). line (ends) + RI
+\hline 
 \multicolumn{1}{|r|}{(a)} & .54 & .56 & .40 & .40 & .40 & .25 & .34 & .55 & 2.45 \\
+\hline 
 \multicolumn{1}{|r|}{(b)} & .65 & .67 & .66 & .69 & .71 & .71 & .54 & .80 & 1.96 \\
+\hline 
 \multicolumn{1}{|r|}{(c)} & .63 & .65 & .60 & .66 & .67 & .62 & .51 & .78 & 2.13 \\
+\hline 
 \multicolumn{1}{|r|}{(d)} & .67 & .69 & .70 & .67 & .69 & .71 & .52 & .80 & 1.99 \\
+\hline
+\hline 
 \multicolumn{1}{|r|}{oracle: (a)} & .67 & .68 & .57 & .31 & .31 & .18 & .33 & .49 & 2.43 \\
+\hline
 \multicolumn{1}{|r|}{oracle: (b)} & .74 & .76 & .76 & .80 & .81 & .83 & .69 & .87 & 1.53 \\
+\hline 
 \multicolumn{1}{|r|}{oracle: (c)} & .84 & .85 & .86 & .76 & .77 & .74 & .64 & .84 & 1.60 \\
+\hline 
 \multicolumn{1}{|r|}{oracle: (d)} & .85 & .86 & .91 & .80 & .82 & .85 & .70 & .87 & 1.31 \\
 \hline
+\hline
+\hline
+% Voting scope: dispensing with spatial averaging of votes
+% line centre fitting + VPR normalised on the side of the watershed
+\multicolumn{1}{|l|}{averaging (on watershed arc)} & {\bf .69} & {\bf .71} & {\bf .73} & {\bf .70} & {\bf .72} & {\bf .73} & {\bf .56} & {\bf .81} & {\bf 1.84} \\ % 
+\hline
+\multicolumn{1}{|l|}{no averaging (per-pixel)} & .29 & .29 & .14 & .09 & .09 & .04 & .31 & .34 & 2.42 \\
+\hline
 \end{tabular}
-\caption[Benchmark scores for SoA and ours]{State-of-the-art edge detection and segmentation methods, and all our experiments - benchmark scores on BSDS500~\cite{BSDS500resources}.}
+\caption[Benchmark scores for SoA and ours]{State-of-the-art edge detection and segmentation methods (on the test subset), and all our experiments described in this thesis (on the validation subset); benchmark scores on BSDS500~\cite{BSDS500resources}. In the bottom part of the table we highlight our best-performing method (line fitting through the centre of the patch + VPR normalised on the side of the watershed, see \sref{sec:ch5-reduced-vote-scope}).}
 %The table shows aggregate measures (ODS, OSS, AP) for boundary precision-recall (BPR), volume precision-recall (VPR) and 
 %includes region statistics (SC, PRI, VoI).}
 \label{tab:all-results}

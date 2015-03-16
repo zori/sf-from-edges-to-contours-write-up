@@ -198,7 +198,9 @@
 \begin{table}[h]
 \begin{minipage}{0.2\textwidth}
 \centering
-\includegraphics[scale=0.7]{./Figures/logo_uds}
+% use new logo
+\includegraphics[scale=0.24]{./Figures/UdS_Logo_NEU}
+% \includegraphics[scale=0.7]{./Figures/logo_uds}
 \end{minipage}
 ~\hfill~
 \begin{minipage}{0.5\textwidth}

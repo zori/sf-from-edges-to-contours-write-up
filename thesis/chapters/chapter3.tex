@@ -26,14 +26,15 @@ In this chapter we review {\tt gPb-OWT-UCM}, focusing mostly on the edges-to-con
 \label{fig:gPb-OWT-UCM-pipeline}
 \end{figure}
 
-The {\tt OWT-UCM} has been advertised \cite{Arbelaez09} as a {\it generic} approach that would allow to obtain contours from {\it any} edge detection algorithm, while preserving boundary quality. As it can also be seen in the detailed pipeline in \fref{fig:gPb-OWT-UCM-pipeline}, this is not quite the case. %correct. 
+The {\tt OWT-UCM} has been advertised \cite{Arbelaez09} as a {\it generic} approach that would allow to obtain contours from {\it any} edge detection algorithm, while preserving boundary quality. As %it 
+can also be seen in the detailed pipeline in \fref{fig:gPb-OWT-UCM-pipeline}, this is not quite the case. %correct. 
 The algorithm {\tt OWT} requires as its input from the detector %output to be 
 an {\it oriented probability of boundary} $oPb(x,y,\theta)$ indicating the strength of the edge at pixel location $(x,y)$ with orientation $\theta$ (see also Section~\ref*{sec:ch2-alternative-capturing-context}~\ref{par:ch2-oPb}).
 
 It is an {\bf objective of the current thesis} to offer a truly universally applicable approach, which can operate on non-oriented output of edge detectors ($Pb(x,y)$) to produce a hierarchical segmentation - {\tt UCM} (see \cref{Chapter4} for %an introduction to 
 our proposal).
 
-\subsection{First stage of the pipeline - edge detection} % gPb
+\subsection{First stage of the pipeline: edge detection} % gPb
 \label{sec:ch3-gPb}
 The {\tt Pb} edge detector of Martin, Fowlkes and Malik \cite{Martin2004learning} utilises local cues - colour, brightness, and texture, to judge for the presence of a boundary. 
 
@@ -89,7 +90,8 @@ So for each of the local features, an oriented gradient operator is computed at 
 % \]
 % NOTE and so what? :D
 
-Spectral clustering is a technique often employed for image segmentation, among others. Details on it are given in \cite{Leung1998contour,Shi2000normalized,Fowlkes2003learning,Fowlkes04}, here we only provide the key %most relevant 
+Spectral clustering is a technique often employed for image segmentation, among other applications. % among others. 
+Details on it are given in \cite{Leung1998contour,Shi2000normalized,Fowlkes2003learning,Fowlkes04}, here we only provide the key %most relevant 
 points for the %gist 
 {\tt sPb} detector, which is based on % inspired
 spectral clustering. 
@@ -124,7 +126,8 @@ a perfect score as the dataset contains multiple annotations. Hence, the human s
 
 Note how the single scale {\tt Pb} is ``missing'' high recall in comparison to {\tt mPb}, which computes each of the features at 3 different (channel-specific) scales. 
 
-As the eigenvectors correspond to the most prominent of edges, the {\tt sPb} provides for higher precision (at the expense of recall). 
+As the eigenvectors correspond to the most prominent of edges, the {\tt sPb} provides %for 
+higher precision (at the expense of recall). 
 
 {\tt gPb} successfully benefits from the better of the two algorithms {\tt mPb} or {\tt sPb} in their respective superior regime.
 
@@ -137,9 +140,9 @@ As the eigenvectors correspond to the most prominent of edges, the {\tt sPb} pro
 
 In our own experiments described in \cref{Chapter5}, we will use similar reasoning to compare a method employing spectral clustering to one which does not use globalisation, see \sref{sec:ch5-SE_sPb-OWT-UCM}.
 
-\subsection{Second stage of the pipeline - weighting the watershed} % OWT
+\subsection{Second stage of the pipeline: weighting the watershed} % OWT
 The key idea for the last two stages %phases 
-of the pipeline - {\tt OWT-UCM}, is that weighted watershed contours can be converted into a hierarchical segmentation.
+of the pipeline, {\tt OWT-UCM}, is that weighted watershed contours can be converted into a hierarchical segmentation.
 
 \subsubsection{Watershed}
 \label{sec:ch3-watershed}
@@ -162,8 +165,10 @@ Alternative way to understand the operation is by imagining ``water'' flooding t
 \fref{fig:watershed-transformation-forming-regions} shows a toy example illustrating how the regions are formed.
 %- The figure below depicts how the regions are found. (a) is a matrix showing typical GMI values with the LMIs circled. (b) shows the morphological gradient directions for the matrix in (a).
 
-\paragraph{Output of the watershed transformation:} A well-known shortcoming of the watershed transform is that the 
-segmentation produced by it is an {\bf oversegmentation}, due to a catchment basin forming around every regional minimum.
+\paragraph{Output of the watershed transformation:} A well-known shortcoming of the watershed transform is that 
+it produces an {\bf oversegmentation}, 
+% the segmentation produced by it is an {\bf oversegmentation}, 
+due to a catchment basin forming around every regional minimum.
 
 %- A major problem with this method is that it very often results in severe over segmentation, such as in the segmentation below. There have been several attempts at overcoming this problem. Meyer and Beucher proposed a marker-controlled strategy. Markers are placed on the image to represent objects. The Watershed transformation is then run by flooding from the markers. This requires prior knowledge of the objects in the image or even manual input.
 
@@ -190,7 +195,8 @@ In practice the vanilla watershed implementation in MATLAB \cite{MATLABwatershed
 \settocdepth{subsubsection}
 \label{sec:ch3-OWT}
 So far %As they are, 
-the watershed contours are unweighed, and provide only one segmentation - the trivial oversegmentation. To obtain hierarchical segmentation, we must {\bf weight} each contour, so that its value corresponds to its saliency. %of the underlying boundary. 
+the watershed contours are unweighted, %unweighed, 
+and provide only one segmentation - the trivial oversegmentation. To obtain hierarchical segmentation, we must {\bf weight} each contour, so that its value corresponds to its saliency. %of the underlying boundary. 
 
 Na\"{\i}vely copying the value from the $gPb(x,y)$ signal as a score to the watershed contours produces artefacts (see \fref{fig:OWT_Arbelaez11}). In the proximity of strong boundaries, other weaker boundaries are scored higher, since their shape and orientation are not taken into account. Hence, the score from strong boundaries ``bleeds'' into their vicinity.
 
@@ -208,7 +214,8 @@ with a line first to {\bf edges} in order to facilitate the localisation of junc
 \begin{figure}[t]
  \centering
  \includegraphics[width=0.4\textwidth,frame]{images/gPb-OWT-UCM/Maire2008using-contour-subdivision.png}
- \caption[Edges subdivision - an image patch]{{\bf Edges subdivision} into approximating linear pieces (the solid line segments). The intersections of the underlying straight lines (dashed and dotted line) would serve for junction detection. Courtesy of~\cite{Maire2008using}.}
+ \caption[Subdivision of edges: an image patch]{{\bf Subdivision of edges} % or Edges' subdivision
+ into approximating linear pieces (the solid line segments). The intersections of the underlying straight lines (dashed and dotted line) would serve for junction detection. Courtesy of~\cite{Maire2008using}.}
  \label{fig:Maire08using-contour-subdivision}
 \end{figure}
 
@@ -237,7 +244,7 @@ By taking orientation into consideration, the {\tt OWT} reduces inaccurate high 
 \end{figure}
 
 
-\subsection{Third stage of the pipeline - {\tt UCM}}
+\subsection{Third stage of the pipeline: {\tt UCM}}
 \label{sec:ch3-UCM}
 The {\it Ultrametric contour map} ({\tt UCM}) was introduced in \cite{Arbelaez2006boundary}. It constitutes a convenient data structure for the representation of a hierarchical segmentation, as we hinted in the introductory \cref{Chapter1}. 
 
@@ -249,15 +256,20 @@ The {\tt UCM} data structure represents a tree, at the leaves of which are the s
 
 \section{Limitations of {\tt gPb-OWT-UCM}} %quantisation} % or drawbacks, don't say 'flaws'
 \textbf{Low speed at test time:} One undeniable % undoubted, unquestionable, indisputable
-limitation of the {\tt gPb-OWT-UCM} method is that it is slow on detection. On the BSDS500 dataset the segmenter takes on average 200 seconds per image.
+limitation of the {\tt gPb-OWT-UCM} method is that it is slow on detection. On the BSDS500 dataset the CPU implementation of the segmenter takes on average $200$ seconds per image.
+Catanzaro \etal \cite{Catanzaro2009efficient} target the slowest part of the pipeline: the edge extractor, and offer an efficient parallelised %Graphics Processing Unit (GPU) 
+GPU implementation of the {\tt gPb}. It reduces the running time to ~1.8 seconds per image using a NVidia GTX280 GPU, which is an improvement of two orders of magnitude over the CPU implementation.
 
 \textbf{Oriented signals:} %Quantisation:} 
 Another issue has mostly to do with the concept of using quantisation per angle orientation to estimate the strength of the boundary, as well as the weights for the pixels on the watershed contours. % It is a crude substitute for an actual edge and therefore, incapable of capturing fine variations in the boundary shape.
 It is a crude substitute for the actual image edge and misses on using the shape of the edge to capture fine variations in the boundary constitution. % structure, makeup, formation
 
-\textbf{OWT-UCM is not very convenient for general segmentation based on edge detection:} The algorithm is in essence an elaborate pipeline that does not easily accommodate different edge detectors. It has as an intrinsic ingredient the oriented probability of boundary. Nevertheless, many algorithms (\eg \cite{Kisilev2013Learning,Arbelaez2014multiscale,Isola2014crisp,Hallman2014}) re-use the second and third stage of the {\tt gPb-OWT-UCM} pipeline to also obtain segmentation in addition to their extracted edges. They are then forced to provide oriented boundary signal $oPb(x,y,\theta)$. Whenever there is a mismatch between the angle quantisation, results are %reported to be
+\textbf{\texttt{OWT-UCM} is not very convenient for general segmentation based on edge detection:} The algorithm is in essence an elaborate pipeline that does not easily accommodate different edge detectors. It has as an intrinsic ingredient the oriented probability of boundary. Nevertheless, many algorithms (\eg \cite{Kisilev2013Learning,Arbelaez2014multiscale,Isola2014crisp,Hallman2014}) re-use the second and third stage of the {\tt gPb-OWT-UCM} pipeline to also obtain segmentation in addition to their extracted edges. They are then forced to provide oriented boundary signal $oPb(x,y,\theta)$: an 8-channel image in order to apply {\tt OWT-UCM}. Whenever there is a mismatch between the angle quantisation, results are %reported to be
 unsatisfactory % poor, bad, substandard, weak, mediocre, sub par, insufficient
-- see Section~\ref*{sec:ch2-alternative-capturing-context}~\ref{par:ch2-oPb}.
+- see Section~\ref*{sec:ch2-alternative-capturing-context}~\ref{par:ch2-OEF-OWT-UCM}.
 
-In \cref{Chapter4} we propose a more coherent % logical and consistent
-and principled approach, which has the potential of addressing the above issues. It makes use of the detailed structured information present in local image patches containing edges. By applying this local knowledge it dispenses with the computation of oriented gradient signals for a fixed number of orientations that is so prevalent in the {\tt gPb-OWT-UCM} pipeline.
+\textbf{\texttt{OWT-UCM} is limited by angle binning}, while it should imitate the human examples. Unlike {\tt SE}, it does not leverage learning to capture image edge structure.
+
+In \cref{Chapter4} we propose a different %more coherent % logical and consistent
+%and principled 
+approach, which has the potential of addressing the above issues. It makes use of the detailed structured information present in local image patches containing edges. By applying this local knowledge it dispenses with the computation of oriented gradient signals for a fixed number of orientations that is so prevalent in the {\tt gPb-OWT-UCM} pipeline.

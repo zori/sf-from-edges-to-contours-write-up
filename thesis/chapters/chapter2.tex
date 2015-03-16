@@ -15,11 +15,12 @@ forms of local structure (some examples in \fref{fig:srf-structure-in-edge-patch
 
 \textbf{Capturing more context:} A family of learning approaches have tried to leverage local context to organise images - discover image edges, or recognise %discern
 figure from background objects. First the Boosted Edge Learning (BEL) algorithm~\cite{Dollar2006supervised} made at each location in the image an independent binary decision as to the presence or absence of image edge. Noticing the abundance of edge structure in a local patch, \textit{sketch tokens}~\cite{LimZD13} and \textit{shapemes}~\cite{Ren2006figure} organise local edge shapes by clustering. 
-The Structured forest ({\bf SF})~\cite{DollarICCV13edges} takes this idea a step further and keeps all local segmentation patches it has seen at training time in the leaves of its decision trees. By abstaining from using pre-defined classes of edge patches, clustering, or averaging \textbf{to model local edge context}, the SF framework has the potential to learn subtle variations in edge structure. It is flexible - it is able to adapt to the training dataset at hand by letting the data speak for itself. That is one of the reasons for its highly accurate edge detection.
+The Structured forest ({\bf SF})~\cite{DollarICCV13edges} takes this idea a step further and keeps all local segmentation patches it has seen at training time in the leaves of its decision trees. By abstaining from using pre-defined classes of edge patches, clustering, or averaging \textbf{to model local edge context}, the SF framework has the potential to learn subtle variations in edge structure. It is flexible - it is able to adapt to the training dataset at hand by letting the data speak for themselves. % suggested by Mathieu itself. 
+That is one of the reasons for its highly accurate edge detection.
 
 \textbf{Structured forest ``knows'' image edge context:} Precisely the ability of the structured forest to predict a local segmentation mask given an input image patch is so important to us. Even better, the edge detector {\tt SE} could provide as a by-product the segmentation predictions that it has made at every image location. We would like to use this information in order to obtain image segmentation.
 
-In this chapter we review the {\tt SE} edge detector and elucidate why it is a good first-step choice for our task of semantic segmentation.
+In this chapter we review the {\tt SE} edge detector and elucidate why it is a good first-step choice for our task of hierarchical image segmentation.
 
 \section{Structured forests}
 Structured random forests~\cite{KontschiederBBP11,DollarICCV13edges} is a machine learning algorithm, an extension of random forests which allows the use of structured input data and\slash or the making of structured predictions.
@@ -27,7 +28,10 @@ Structured random forests~\cite{KontschiederBBP11,DollarICCV13edges} is a machin
 \settocdepth{section} % avoid listing this in the toc, but give it a number in the text
 \subsection{Random decision forests}
 \settocdepth{subsection}
-Random forest (RF) is a recently introduced~\cite{Breiman01} learning approach which has found applications in computer vision~\cite{KontschiederBBP11,LimZD13,DollarICCV13edges,Dollar2015PAMI} due to its speed both at training and testing time, high accuracy, and robustness to noise.
+Random forest %is a recently introduced~
+\cite{Breiman01} 
+is a 
+learning approach which has found applications in computer vision~\cite{KontschiederBBP11,LimZD13,DollarICCV13edges,Dollar2015PAMI} due to its speed both at training and testing time, high accuracy, and robustness to noise.
 
 A random decision forest is a collection %an ensemble %a combination 
 of tree predictors - classifiers or regressors~\cite{breiman1984classification}. Here ``tree'' is used in the computer science sense to denote an abstract data structure (ADS) - a graph without cycles. 
@@ -61,29 +65,32 @@ drawn edges present in them. Cropped from BSDS500, courtesy of \cite{DollarICCV1
 
 {\tt SE} is an example of supervised machine learning. During training time it is presented with patches and their ground truth annotations (local segmentations). It learns parameters that enable it to make predictions at testing time as to the most likely segmentation of fresh, {\bf unseen} so far {\bf patches}. For edge detection, it agglomerates those multiple patch decisions to obtain a probability of boundary ({\bf Pb} - see \fref{fig:sub:edge_detection-pb} and \fref{fig:sub:edge_detection-pb-cc}) - a probabilistic edge map for an entire image.
 
-\section{Training - growing a decision forest}
-A RF is trained by recursively growing its decision trees. 
+\section{Training: growing a decision forest}
+A random forest is trained by recursively growing its decision trees. 
 
-\textbf{Input training data:} For the task of edge detection, the training data is a total of 1 million training samples. A training sample is a pair of an image patch and a corresponding to it ground-truth segmentation patch. Half of those are positive examples - a patch containing an edge and its hand-labelled segmentation. The other half are negative examples - so-called ``background patches'', their segmentation is trivial - a single class label on the whole patch, but the input patch contains important information that the SF would learn from. 
+\textbf{Input training data:} For the task of edge detection, the training data is a total of 1 million training samples. A training sample is a pair of an image patch and a corresponding to it ground-truth segmentation patch. Half of those are positive examples - a patch containing an edge and its hand-labelled segmentation. The other half are negative examples, so-called ``background patches''. Their segmentation is trivial: a single class label on the whole patch, but the input patch contains important information that the structured forest would learn from. 
 
-\textbf{Sifting the patches from the root down the tree:} To grow a decision tree means to learn what is a good way of redistributing the input data presented to the tree (at its root node) into its leaves. Such a distribution to the tree leaves would be good if in the end similar training samples are grouped together - in the same decision tree leaf. Notice that a ``perfect'' distribution of the patches would have each leaf contain a single patch. Such decision trees, however, overfit the training. In a trained structured decision tree, each leaf contains many patches, and all leaves contain patches.
+\textbf{Sifting the patches from the root down the tree:} To grow a decision tree means to learn what is a good way of redistributing the input data presented to the tree (at its root node) into its leaves. Such a distribution to the tree leaves would be good if in the end similar training samples are grouped together - in the same decision tree leaf. Notice that a ``perfect'' distribution of the patches would have each leaf contain a single patch. Such decision trees, however, overfit the training data. In a trained structured decision tree, each leaf contains many patches, and all leaves contain patches.
 
 In the following we discuss {\bf binary} decision trees, as this is the data structure used in practice by the {\tt SE} algorithm. It is trivial to extend the algorithm to use general trees by making a multi-class decision at each node. 
 
 % \textbf{Training is redistributing the data towards the leaves of a binary tree:} 
 \subsection{Learning the split function}
 \textbf{Pushing the patches down the tree is equivalent to learning how to split each inner node:} So at each node a binary decision must be made how to separate the training data into the left and right child sub-trees. Initially the root of the tree contains all training data available to the tree. A split function $h(x,\theta_j)\in\{0,1\}$ determines to which child an input training sample $x$ is forwarded. The parameter $\theta_j$ is what must be learnt for each node $j$ during training. A criterion based on {\bf information gain} is introduced to decide on optimal %good 
-splits. Splitting is done in such a way so as to minimise entropy in the nodes. In this algorithm Gini impurity is used. Some of the improvements proposed by Nowozin~\cite{Nowozin12improvedinformation,nowozin2014decision} regarding entropy estimators are adopted in this work. Growing by splitting a node continues until either 1) a certain maximal tree depth is reached, or 2) sufficient purity of nodes is achieved.
+splits. Splitting is done in such a way as to %in such a way so as to 
+minimise entropy in the nodes. In this algorithm Gini impurity is used. Some of the improvements proposed by Nowozin~\cite{Nowozin12improvedinformation,nowozin2014decision} regarding entropy estimators are adopted in this work. Growing by splitting a node continues until either 1) a certain maximal tree depth is reached, or 2) sufficient purity of nodes is achieved.
 
-The goal is to cluster in the leaves of the trained structured decision tree segmentation patches that correspond to input features which are as similar as possible. The nett effect is that similar segmentation patches should end up in the same leaf, see \fref{fig:structured-decision-tree-node-split}.
+The goal is to cluster in the leaves of the trained structured decision tree segmentation patches that correspond to input features which are as similar as possible. The net %nett 
+effect is that similar segmentation patches should end up in the same leaf, see \fref{fig:structured-decision-tree-node-split}.
 
 \settocdepth{section}
-\subsection{Key contribution of the work}
+\subsection{Key contribution of {\tt SE} algorithm}
 \settocdepth{subsection}
-The ``structured output'' in the case of the {\tt SE} algorithm is a $d\times d$ segmentation patch (in practice they set $d = 16$). 
+The ``structured output'' in the case of the {\tt SE} algorithm is a $d\times d$ segmentation patch (in practice %they set 
+$d = 16$ is used). 
 As the segmentation patch space is high-dimensional and complex, it is non-trivial to compute information gain in order to split the set of inputs into two subsets.
 
-\textbf{Proxy label space:} They introduce a mapping to a simpler, lower-dimensional discrete space. The information gain computed on it is a sufficient approximation of that of the original output space without being prohibitively expensive to compute. Thus it is possible to compute distance, or, analogously, similarity, between output segmentation. In effect, similar output segmentations are clustered together.
+\textbf{Proxy label space:} A mapping to a simpler, lower-dimensional discrete space is introduced. The information gain computed on it is a sufficient approximation of that of the original output space without being prohibitively expensive to compute. Thus it is possible to compute distance, or, analogously, similarity, between output segmentation. In effect, similar output segmentations are clustered together.
 
 \begin{figure}[t]
 \centering
@@ -101,7 +108,7 @@ As the segmentation patch space is high-dimensional and complex, it is non-trivi
 \settocdepth{section}
 \subsection{Introducing randomness for diversity of the decision forest}
 \settocdepth{subsection}
-Part of the accuracy in prediction of the RF framework comes from ensuring sufficient diversity of trees. One way to achieve this, and how it is done in the {\tt SE} algorithm, is by introducing randomness at each decision node. This is done by subsampling the input features that are taken into account when optimising the split at the tree node. SF achieves robust results by combining the output of $T$ decorrelated trees. Because of the small correlation of the trees in the ensemble, even small forests manage good performance - later we use {\tt SE} with $T=4$.
+Part of the accuracy in prediction of the random forest framework comes from ensuring sufficient diversity of trees. One way to achieve this, and how it is done in the {\tt SE} algorithm, is by introducing randomness at each decision node. This is done by subsampling the input features that are taken into account when optimising the split at the tree node. SF achieves robust results by combining the output of $T$ decorrelated trees. Because of the small correlation of the trees in the ensemble, even small forests manage good performance - later we use {\tt SE} with $T=4$.
 
 \section{Inference}
 Unlike other structured learning methods, no optimisation is required to make a prediction. Inference using SF is straightforward. A decision forest is an ensemble of $T$ \textit{independent} trees. To make a prediction, the individual predictions of the trees are combined as prescribed by the ensemble model. Here averaging is performed on the output edge patches.
@@ -110,7 +117,8 @@ Unlike other structured learning methods, no optimisation is required to make a 
 \label{sec:ch2-structured-forest-inference}
 The test sample - a feature vector computed based on an input image patch $x$, travels down the tree. Decisions whether it should be routed to the left or right child of a node are made according to the parameters learnt during training. When a leaf node is reached, it contains a set of most likely segmentations, and each of those could be associated with the input $x$.
 
-\textbf{Ensemble model:} In the context of random forests the term ``ensemble model'' defines how to combine multiple predictions into a single prediction. Somewhat confusing, in the paper \cite{DollarICCV13edges}, this refers to two different things:
+\textbf{Ensemble model:} In the context of random forests the term ``ensemble model'' defines how to combine multiple predictions into a single prediction. Somewhat confusingly, %confusing, 
+in the paper \cite{DollarICCV13edges}, this refers to two different things:
 \begin{enumerate}
  \item{in {\bf decision tree inference:}} in order to associate a prediction with each leaf (like in \fref{fig:srf-tree-inference}). 
  To this end, the {\bf medoid} segmentation patch \textit{for the proxy output space} is chosen. This is the one that minimises the sum of distances to all others in the leaf patch, see \fref{fig:srf-leaf}. The medoid is the {\bf only patch} that is subsequently {\bf used}, out of all those patches that made it to the same tree leaf. 
@@ -170,7 +178,7 @@ the contents of a specific dataset.
 \settocdepth{section}
 \subsection{An alternative way of capturing context}
 \label{sec:ch2-alternative-capturing-context}
-SE is not the only algorithm that detects edges while using local neighbourhood information.
+{\tt SE} is not the only algorithm that detects edges while using local neighbourhood information.
 
 \subsubsection{Oriented edge forests for edge detection}
 \paragraph{Edge extraction}\mbox{}\\\mbox{}\\
@@ -180,7 +188,7 @@ helps them capture fine variations in edge shape and improves spatial localisati
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.8\textwidth]{images/OEF-oriented-patch-space.png} % not in srf/ subfolder as it is more ``related work''
-\caption[{\tt OEF} decision forest predicts a probability distribution over a fixed patch space]{{\tt OEF} decision forest predicts a probability distribution over a fixed patch space (given on the left). Images courtesy of~\cite{Hallman2014}}
+\caption[{\tt OEF} predicts a probability distribution over a fixed patch space]{{\tt OEF} decision forest predicts a probability distribution over a fixed patch space (given on the left). Images courtesy of~\cite{Hallman2014}}
 \label{fig:OEF-oriented-patch-space}
 \end{figure}
 
@@ -190,15 +198,17 @@ helps them capture fine variations in edge shape and improves spatial localisati
 The output of the {\tt OEF} algorithm is an {\bf oriented probability of boundary} %(oPb)} 
 $oPb(x,y,\theta)$. In their scenario, {\it oriented probability of boundary} means ``for a given angle $\theta$, what is the probability of having a {\bf straight-line edge} at (roughly) this angle''.
 
-Another edge detector - {\tt gPb} (for {\it global probability of boundary}) \cite{Maire2008using} also makes use of {\it oPb}. The {\tt OWT-UCM} method, described in \cite{Arbelaez09} is a generic machinery which allows to create a hierarchy of segmentations out of any {\it oPb} detector output. The two ideas are combined in one pipeline: gPb-OWT-UCM \cite{Arbelaez11}, which we will discuss %describe 
+Another edge detector - {\tt gPb} (for {\it global probability of boundary}) \cite{Maire2008using} also makes use of {\it oPb}. The {\tt OWT-UCM} method, described in \cite{Arbelaez09} is a generic machinery which allows to create a hierarchy of segmentations out of any {\it oPb} detector output. The two ideas are combined into %in 
+one pipeline: gPb-OWT-UCM \cite{Arbelaez11}, which we will discuss %describe 
 in detail in \cref{Chapter3}. 
 
 \subparagraph{{\tt OEF-OWT-UCM}}\mbox{}\\\mbox{}\\
+\label{par:ch2-OEF-OWT-UCM}
 As already mentioned, {\tt OEF} produces an {\it oPb}. It could therefore be expected that it would be a natural fit for the {\tt OWT-UCM} algorithm. The resulting procedure, which Hallman \etal title {\tt OEF-OWT-UCM} allows to use the edges extracted by OEF %edge detection results 
 in order to obtain a hierarchical image segmentation. They report, however, misalignments due to quantisation mismatch of the orientation angles between their algorithm and {\tt gPb-OWT-UCM} of \cite{Arbelaez11}.
 
 \subsection{Strong points and limitations of {\tt SE}}
-While the {\tt SE} algorithm is a state-of-the-art edge detector, it does not provide a segmentation. One still need to ``connect'' the resulting edges to extract complete contours. % that seem so obvious for the human eye+mind.
+While the {\tt SE} algorithm is a state-of-the-art edge detector, it does not provide a segmentation. One still needs to ``connect'' the resulting edges to extract complete contours. % that seem so obvious for the human eye+mind.
 
 In our algorithm, which we will describe in \cref{Chapter4}, we choose to use {\tt SE} for edge extraction, as well as %and 
 the {\it trained Structured forest}, for the following reasons. {\tt SE}:

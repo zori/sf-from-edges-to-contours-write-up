@@ -9,15 +9,17 @@ Image edge detection and image segmentation are key problems in computer vision.
 In recent years innovative approaches have lead to significant advances %improvements for 
 in the task of {\bf edge detection}. 
 While a certain edge model is imperative, % required, needed % a requirement
-few segmentation algorithms rely on edge information %make use of edge detection output 
+few segmentation algorithms %rely on edge information 
+make use of edge detection output 
 as a first step towards %to 
 {\bf image segmentation}. Consequently, many edge detection algorithms re-use the same approach to obtain image segmentation in addition %additionally 
 to their edge detection output.
 
 Therefore, the field of image segmentation is limited by lack of research on hierarchical segmentation methods which are based on edge detection output. % edge-based hierarchical segmentation. 
 We investigate a technique % possibility 
-to obtain image segmentation given an edge detector output, which is an alternative to a currently popular % widely-used  
-method. We propose a principled solution that uses the inherent structure and context from local patches. We utilise that to grade the salience of region boundaries - a prerequisite for a multiscale segmentation.
+to obtain image segmentation given an edge detector output, which is an alternative to currently popular % widely-used  
+method \cite{Arbelaez11}. We propose a solution that uses the inherent structure from discriminatively trained local patches. We take a patches comparison approach, utilising the trained patches to quantify %score %grade 
+the salience of region boundaries, which is a prerequisite for a multiscale segmentation.
 
 \section{Problem definition}
 We address the problem of generic % or general? 
@@ -54,7 +56,7 @@ object detection and recognition, segmentation, structure from motion, and track
   \includegraphics[width=0.35\textwidth]{images/examples/koala/koala_gPb_cc.png} % koala_SE_cc % hawaii/Pb_arbelaez2011-039.png}
   \label{fig:sub:edge_detection-pb-cc}
  }
-\caption[Edge detection - edge map and probability of boundary]{{\bf Edge detection}. Note that for ease of view, % for illustrative purposes % illustration
+\caption[Edge detection: edge map and probability of boundary]{{\bf Edge detection}. Note that for ease of view, % for illustrative purposes % illustration
 the negative of \protect\subref{fig:sub:edge_detection-edge-map} and \protect\subref{fig:sub:edge_detection-pb} are shown, \ie the darker the pixel, the higher the probability of an edge. Visualisation code for \protect\subref{fig:sub:edge_detection-pb-cc} courtesy of Hallman and Fowlkes~\cite{Hallman2014}.}
 \label{fig:edge_detection}
 \end{figure}
@@ -128,7 +130,7 @@ regions which correspond to objects, parts of objects, or background. The purpos
   \includegraphics[width=0.35\textwidth]{images/examples/koala/koala_ucm_cc.png}
   \label{fig:sub:segmentation-ucm-cc}
  }
-\caption[Image segmentation - segmentation, contour, region, hierarchical segmentation]{{\bf Image segmentation}. As in \fref{fig:edge_detection}, we show the negative of the probabilistic output. For segmentations we use the mean pixel colour from the image to represent the whole segment. The {\tt UCM}s are enlarged to make details easier to discern.}
+\caption[Image segmentation: segmentation, region, contour]{{\bf Image segmentation}. As in \fref{fig:edge_detection}, we show the negative of the probabilistic output. For segmentations we use the mean pixel colour from the image to represent the whole segment. The {\tt UCM}s are enlarged to make details easier to discern.}
 \label{fig:segmentation}
 \end{figure}
 
@@ -279,7 +281,7 @@ help achieve high-quality results. We review {\tt gPb} in \sref{sec:ch3-gPb}.
 Image segmentation is a 
 % difficult %complex 
 % problem that has received lots of research in the past. 
-longstanding and difficult computer vision research problem.
+long-standing and difficult computer vision research problem.
 Many segmentation techniques have been developed, but each has its weaknesses and limitations. It is therefore currently not easy to select %choose 
 a universally best {\it general segmentation} method.
 %- A universal algorithm for segmenting images certainly does not exist and, on the contrary, most techniques are tailored on particular applications and may work under certain hypothesis.
